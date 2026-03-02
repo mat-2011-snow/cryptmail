@@ -1,0 +1,1553 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRYPTMAIL // 極秘通信システム v9.4.1</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Noto+Sans+JP:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --purple: #ff00cc;
+    --purple-bright: #a855f7;
+    --purple-glow: #c084fc;
+    --red: #ef4444;
+    --green: #22c55e;
+    --green-dim: #16a34a;
+    --cyan: #06b6d4;
+    --yellow: #eab308;
+    --bg: #030712;
+    --bg2: #0a0f1e;
+    --bg3: #0f172a;
+    --border: #1e293b;
+    --border-bright: #334155;
+    --text: #e2e8f0;
+    --text-dim: #64748b;
+    --text-muted: #374151;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Share Tech Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  /* Scanlines overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.08) 2px,
+      rgba(0,0,0,0.08) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* Noise texture */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9998;
+    opacity: 0.4;
+  }
+
+  @keyframes flicker {
+    0%,100% { opacity: 1; }
+    92% { opacity: 1; }
+    93% { opacity: 0.4; }
+    94% { opacity: 1; }
+    96% { opacity: 0.6; }
+    97% { opacity: 1; }
+  }
+
+  @keyframes pulse-glow {
+    0%,100% { box-shadow: 0 0 5px var(--purple), 0 0 20px rgba(124,58,237,0.3); }
+    50% { box-shadow: 0 0 10px var(--purple-bright), 0 0 40px rgba(168,85,247,0.5); }
+  }
+
+  @keyframes blink {
+    0%,100% { opacity: 1; } 50% { opacity: 0; }
+  }
+
+  @keyframes scroll-text {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+  }
+
+  @keyframes countdown-flash {
+    0%,100% { color: var(--red); }
+    50% { color: #fca5a5; text-shadow: 0 0 10px var(--red); }
+  }
+
+  @keyframes glitch {
+    0%,100% { transform: translate(0); }
+    20% { transform: translate(-2px, 1px); }
+    40% { transform: translate(2px, -1px); }
+    60% { transform: translate(-1px, 2px); }
+    80% { transform: translate(1px, -2px); }
+  }
+
+  /* TOP WARNING TICKER */
+  .ticker {
+    background: repeating-linear-gradient(90deg, #1a0a00 0px, #1a0a00 20px, #0f0500 20px, #0f0500 40px);
+    border-bottom: 2px solid var(--red);
+    padding: 6px 0;
+    overflow: hidden;
+    position: relative;
+  }
+  .ticker::before {
+    content: '[WARN] 警告 ';
+    position: absolute;
+    left: 0;
+    background: var(--red);
+    color: #000;
+    font-weight: bold;
+    padding: 0 12px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    font-size: 11px;
+    z-index: 10;
+  }
+  .ticker-inner {
+    display: inline-block;
+    white-space: nowrap;
+    animation: scroll-text 25s linear infinite;
+    color: var(--red);
+    font-size: 11px;
+    letter-spacing: 1px;
+    padding-left: 80px;
+  }
+
+  /* HEADER */
+  .header {
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(180deg, rgba(124,58,237,0.08) 0%, transparent 100%);
+    animation: flicker 8s infinite;
+  }
+
+  .logo {
+    font-family: 'Orbitron', monospace;
+    font-weight: 900;
+    font-size: 22px;
+    color: var(--purple-glow);
+    text-shadow: 0 0 20px var(--purple), 0 0 40px rgba(124,58,237,0.5);
+    letter-spacing: 4px;
+  }
+
+  .logo span {
+    color: var(--red);
+    animation: blink 1s infinite;
+  }
+
+  .status-bar {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+
+  .status-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 6px var(--green);
+    display: inline-block;
+    animation: blink 2s infinite;
+  }
+
+  .status-dot.red { background: var(--red); box-shadow: 0 0 6px var(--red); }
+
+  /* SECURITY CLEARANCE BANNER */
+  .clearance-banner {
+    background: linear-gradient(135deg, #1a0a2e 0%, #0a0f1e 50%, #1a0a2e 100%);
+    border: 1px solid var(--purple);
+    border-left: 4px solid var(--purple-bright);
+    margin: 16px 24px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: pulse-glow 3s infinite;
+    font-size: 11px;
+  }
+
+  .clearance-level {
+    font-family: 'Orbitron', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    color: #000;
+    background: var(--purple-bright);
+    padding: 2px 8px;
+    letter-spacing: 2px;
+    white-space: nowrap;
+  }
+
+  /* MAIN LAYOUT */
+  .main {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 0;
+    height: calc(100vh - 168px);
+    overflow: hidden;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .sidebar-header {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .compose-btn {
+    background: var(--purple);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+    border-top: 1px solid var(--border);
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .compose-btn:hover {
+    background: var(--purple-bright);
+    box-shadow: 0 0 20px rgba(168,85,247,0.4);
+  }
+
+  .inbox-list {
+    flex: 1;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--purple) transparent;
+  }
+
+  .inbox-item {
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(30,41,59,0.5);
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+  }
+
+  .inbox-item:hover, .inbox-item.active {
+    background: rgba(124,58,237,0.1);
+    border-left: 3px solid var(--purple);
+    padding-left: 13px;
+  }
+
+  .inbox-item .from {
+    font-size: 11px;
+    color: var(--purple-glow);
+    margin-bottom: 4px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .inbox-item .subject {
+    font-size: 12px;
+    color: var(--text);
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .inbox-item .meta {
+    font-size: 10px;
+    color: var(--text-dim);
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .lock-badge {
+    background: rgba(239,68,68,0.2);
+    border: 1px solid var(--red);
+    color: var(--red);
+    font-size: 9px;
+    padding: 1px 6px;
+  }
+
+  .timer-badge {
+    background: rgba(234,179,8,0.15);
+    border: 1px solid var(--yellow);
+    color: var(--yellow);
+    font-size: 9px;
+    padding: 1px 6px;
+  }
+
+  .unread-dot {
+    width: 6px; height: 6px;
+    background: var(--cyan);
+    border-radius: 50%;
+    box-shadow: 0 0 6px var(--cyan);
+    margin-left: auto;
+  }
+
+  /* MAIN CONTENT */
+  .content {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .panel {
+    flex: 1;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--purple) transparent;
+  }
+
+  /* COMPOSE PANEL */
+  .compose-panel {
+    padding: 24px;
+    display: none;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .compose-panel.active { display: flex; }
+
+  .panel-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 13px;
+    color: var(--purple-glow);
+    letter-spacing: 3px;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .panel-title .step-indicator {
+    font-size: 10px;
+    color: var(--text-dim);
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  /* FORM */
+  .form-group {
+    padding: 16px 24px;
+    border-bottom: 1px solid rgba(30,41,59,0.4);
+  }
+
+  .form-label {
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .required-badge {
+    color: var(--red);
+    font-size: 9px;
+    border: 1px solid rgba(239,68,68,0.4);
+    padding: 0 4px;
+  }
+
+  .security-badge {
+    color: var(--green);
+    font-size: 9px;
+    border: 1px solid rgba(34,197,94,0.4);
+    padding: 0 4px;
+  }
+
+  .form-input, .form-textarea, .form-select {
+    width: 100%;
+    background: rgba(10,15,30,0.8);
+    border: 1px solid var(--border);
+    border-bottom: 2px solid var(--border-bright);
+    color: var(--text);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    padding: 10px 14px;
+    outline: none;
+    transition: all 0.2s;
+    caret-color: var(--purple-bright);
+  }
+
+  .form-input:focus, .form-textarea:focus, .form-select:focus {
+    border-color: var(--purple);
+    border-bottom-color: var(--purple-bright);
+    box-shadow: 0 0 0 1px rgba(124,58,237,0.3), inset 0 0 20px rgba(124,58,237,0.05);
+    background: rgba(15,23,42,0.9);
+  }
+
+  .form-textarea {
+    resize: vertical;
+    min-height: 120px;
+    line-height: 1.6;
+  }
+
+  .form-select {
+    appearance: none;
+    cursor: pointer;
+  }
+
+  .password-wrapper {
+    position: relative;
+  }
+
+  .password-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  .password-strength {
+    margin-top: 6px;
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+
+  .strength-bars {
+    display: flex;
+    gap: 3px;
+  }
+
+  .strength-bar {
+    width: 20px; height: 3px;
+    background: var(--border-bright);
+    transition: all 0.3s;
+  }
+
+  .strength-bar.active { background: var(--green); box-shadow: 0 0 4px var(--green); }
+  .strength-bar.medium { background: var(--yellow); box-shadow: 0 0 4px var(--yellow); }
+  .strength-bar.weak { background: var(--red); box-shadow: 0 0 4px var(--red); }
+
+  /* WARNING BOXES */
+  .warning-box {
+    margin: 8px 0;
+    padding: 10px 14px;
+    border-left: 3px solid var(--yellow);
+    background: rgba(234,179,8,0.05);
+    font-size: 10px;
+    color: var(--yellow);
+    line-height: 1.6;
+  }
+
+  .danger-box {
+    margin: 8px 0;
+    padding: 10px 14px;
+    border-left: 3px solid var(--red);
+    background: rgba(239,68,68,0.05);
+    font-size: 10px;
+    color: var(--red);
+    line-height: 1.6;
+  }
+
+  .info-box {
+    margin: 8px 0;
+    padding: 10px 14px;
+    border-left: 3px solid var(--cyan);
+    background: rgba(6,182,212,0.05);
+    font-size: 10px;
+    color: var(--cyan);
+    line-height: 1.6;
+  }
+
+  /* SUBMIT AREA */
+  .submit-area {
+    padding: 20px 24px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .confirm-checklist {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 10px;
+    color: var(--text-dim);
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    background: rgba(10,15,30,0.5);
+  }
+
+  .checklist-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+  .checklist-item:hover { color: var(--text); }
+  .checklist-item input { cursor: pointer; accent-color: var(--purple); }
+  .checklist-item.checked { color: var(--green); }
+
+  .send-btn {
+    background: linear-gradient(135deg, #4c1d95, #7c3aed);
+    color: white;
+    border: 1px solid var(--purple-bright);
+    padding: 14px;
+    font-family: 'Orbitron', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    cursor: pointer;
+    transition: all 0.3s;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .send-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.5s;
+  }
+
+  .send-btn:hover::before { transform: translateX(100%); }
+  .send-btn:hover { box-shadow: 0 0 30px rgba(124,58,237,0.6), 0 0 60px rgba(124,58,237,0.3); }
+  .send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* MESSAGE VIEW */
+  .message-view {
+    display: none;
+    flex-direction: column;
+  }
+  .message-view.active { display: flex; }
+
+  .message-header {
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(10,15,30,0.5);
+  }
+
+  .message-subject {
+    font-family: 'Orbitron', monospace;
+    font-size: 14px;
+    color: var(--text);
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+
+  .message-meta {
+    font-size: 10px;
+    color: var(--text-dim);
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .message-meta span { color: var(--purple-glow); }
+
+  .self-destruct-warning {
+    margin: 16px 24px;
+    padding: 12px 16px;
+    background: rgba(239,68,68,0.1);
+    border: 1px solid rgba(239,68,68,0.5);
+    border-left: 4px solid var(--red);
+    font-size: 11px;
+    color: var(--red);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: countdown-flash 2s infinite;
+  }
+
+  .countdown {
+    font-family: 'Orbitron', monospace;
+    font-size: 16px;
+    font-weight: 700;
+    min-width: 60px;
+  }
+
+  .message-body {
+    margin: 0 24px 24px;
+    padding: 20px;
+    background: rgba(10,15,30,0.5);
+    border: 1px solid var(--border);
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--text);
+    min-height: 150px;
+    white-space: pre-wrap;
+  }
+
+  /* PASSWORD MODAL */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(3,7,18,0.92);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.active { display: flex; }
+
+  .modal {
+    background: var(--bg2);
+    border: 1px solid var(--purple);
+    border-top: 3px solid var(--purple-bright);
+    padding: 0;
+    width: 440px;
+    animation: glitch 0.2s ease;
+    box-shadow: 0 0 60px rgba(124,58,237,0.3), 0 0 120px rgba(124,58,237,0.1);
+  }
+
+  .modal-header {
+    background: linear-gradient(135deg, rgba(124,58,237,0.2), rgba(168,85,247,0.1));
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--purple-glow);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .modal-body { padding: 24px 20px; }
+
+  .modal-warning {
+    font-size: 10px;
+    color: var(--red);
+    border: 1px solid rgba(239,68,68,0.3);
+    padding: 10px 12px;
+    margin-bottom: 16px;
+    background: rgba(239,68,68,0.05);
+    line-height: 1.6;
+  }
+
+  .modal-input-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .modal-label {
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+  }
+
+  .modal-input {
+    background: rgba(3,7,18,0.8);
+    border: 1px solid var(--border-bright);
+    border-bottom: 2px solid var(--purple);
+    color: var(--text);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 16px;
+    padding: 12px 14px;
+    outline: none;
+    letter-spacing: 4px;
+    text-align: center;
+    width: 100%;
+  }
+
+  .modal-input:focus {
+    border-color: var(--purple-bright);
+    box-shadow: 0 0 0 1px rgba(168,85,247,0.3);
+  }
+
+  .attempt-counter {
+    font-size: 10px;
+    color: var(--red);
+    text-align: center;
+  }
+
+  .modal-btn {
+    width: 100%;
+    background: var(--purple);
+    color: white;
+    border: none;
+    padding: 12px;
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 8px;
+  }
+
+  .modal-btn:hover { background: var(--purple-bright); box-shadow: 0 0 20px rgba(168,85,247,0.4); }
+
+  .modal-footer {
+    padding: 12px 20px;
+    border-top: 1px solid var(--border);
+    font-size: 9px;
+    color: var(--text-muted);
+    text-align: center;
+    line-height: 1.6;
+  }
+
+  /* SEND CONFIRM MODAL */
+  .confirm-modal-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .confirm-step {
+    padding: 12px 16px;
+    border-left: 3px solid transparent;
+    font-size: 11px;
+    color: var(--text-dim);
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    border-bottom: 1px solid rgba(30,41,59,0.4);
+  }
+
+  .confirm-step.done { border-left-color: var(--green); color: var(--green); }
+  .confirm-step.active { border-left-color: var(--yellow); color: var(--yellow); }
+  .confirm-step.pending { border-left-color: var(--border-bright); }
+
+  .step-num {
+    font-family: 'Orbitron', monospace;
+    font-size: 9px;
+    min-width: 20px;
+    text-align: center;
+    background: var(--border);
+    padding: 2px 4px;
+  }
+
+  .confirm-step.done .step-num { background: rgba(34,197,94,0.2); }
+  .confirm-step.active .step-num { background: rgba(234,179,8,0.2); }
+
+  /* ENCRYPTION PROGRESS */
+  .encrypt-progress {
+    padding: 16px 20px;
+  }
+
+  .progress-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 0;
+    font-size: 10px;
+    color: var(--text-dim);
+    border-bottom: 1px solid rgba(30,41,59,0.2);
+  }
+
+  .progress-bar-wrap {
+    flex: 1;
+    height: 3px;
+    background: var(--border);
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--purple), var(--purple-bright));
+    box-shadow: 0 0 6px var(--purple-bright);
+    width: 0%;
+    transition: width 0.8s ease;
+  }
+
+  .progress-done { color: var(--green); font-size: 10px; }
+
+  /* EMPTY STATE */
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    gap: 12px;
+    color: var(--text-muted);
+    font-size: 12px;
+    text-align: center;
+    padding: 40px;
+  }
+
+  .empty-icon {
+    font-size: 48px;
+    opacity: 0.3;
+    animation: blink 3s infinite;
+  }
+
+  /* FOOTER STATS */
+  .footer-stats {
+    position: fixed;
+    bottom: 0;
+    left: 0; right: 0;
+    background: rgba(3,7,18,0.9);
+    border-top: 1px solid var(--border);
+    padding: 6px 24px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 9px;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+  }
+
+  .footer-stats .highlight { color: var(--purple-glow); }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    top: 80px; right: 24px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--purple);
+    padding: 12px 16px;
+    font-size: 11px;
+    z-index: 2000;
+    transform: translateX(120%);
+    transition: transform 0.3s;
+    max-width: 280px;
+  }
+  .toast.show { transform: translateX(0); }
+  .toast.error { border-left-color: var(--red); color: var(--red); }
+  .toast.success { border-left-color: var(--green); color: var(--green); }
+
+  /* DELETED MESSAGE */
+  .deleted-msg {
+    padding: 40px;
+    text-align: center;
+    color: var(--text-muted);
+  }
+
+  .deleted-msg .big { font-size: 40px; margin-bottom: 16px; }
+  .deleted-msg p { font-size: 11px; line-height: 1.8; color: var(--red); }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--purple); }
+</style>
+</head>
+<body>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-inner">
+    ██ この通信システムは完全監視下にあります ██ 全メッセージは軍用256bit AES-GCM暗号化 ██ 不正アクセスは自動的に記録され当局に通報されます ██ このシステムの無断使用は厳重に禁止されています ██ メッセージは設定時刻に完全消去されます ██ 受信したメッセージの複製・スクリーンショットは禁止 ██ この接続はエンドツーエンド暗号化されています ██ セッションは非活動状態が続く場合自動終了します ██
+  </div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="logo">CRYPT<span>_</span>MAIL <span style="font-size:10px; color: var(--text-dim); font-family: 'Share Tech Mono'; font-weight:400; letter-spacing:2px;">// 極秘通信システム</span></div>
+  <div class="status-bar">
+    <span><span class="status-dot"></span> E2E暗号化: アクティブ</span>
+    <span><span class="status-dot red"></span> 監視: オン</span>
+    <span>セキュリティレベル: <span style="color:var(--red); font-weight:bold;">最高</span></span>
+    <span id="clock">--:--:--</span>
+  </div>
+</div>
+
+<!-- CLEARANCE BANNER -->
+<div class="clearance-banner">
+  <div class="clearance-level">TOP SECRET</div>
+  <div style="font-size:10px; color: var(--purple-glow); flex:1;">
+    この通信システムへのアクセスはセキュリティクリアランスレベル5以上の認証済みユーザーに限定されています。
+    全ての操作はログに記録されます。
+  </div>
+  <div style="font-size:9px; color: var(--text-dim); text-align:right; white-space:nowrap;">
+    セッションID: <span style="color:var(--cyan);" id="sessionId">--</span><br>
+    IPマスク: <span style="color:var(--green);">有効</span>
+  </div>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="main">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <button class="compose-btn" onclick="showCompose()">
+      + 新規極秘メッセージを作成
+    </button>
+    <div class="sidebar-header">
+      <span>受信ボックス</span>
+      <span style="color:var(--cyan);" id="unreadCount">0 件</span>
+    </div>
+    <div class="inbox-list" id="inboxList">
+      <!-- populated by JS -->
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+    <div class="panel" id="mainPanel">
+      <!-- EMPTY STATE -->
+      <div class="empty-state" id="emptyState">
+        <div class="empty-icon">[ENCRYPTED]</div>
+        <div style="font-family:'Orbitron',monospace; font-size:12px; color:var(--purple-glow); letter-spacing:2px;">待機中</div>
+        <div style="line-height:1.8; color:var(--text-muted)">
+          メッセージを選択するか<br>新規作成してください<br>
+          <span style="color:var(--red); font-size:10px;">// 全通信は暗号化されます</span>
+        </div>
+      </div>
+
+      <!-- COMPOSE FORM -->
+      <div id="composeForm" style="display:none;">
+        <div class="panel-title">
+          [LOCKED] 新規極秘メッセージ作成
+          <span class="step-indicator">// COMPOSE_NEW_MESSAGE</span>
+        </div>
+
+        <div class="danger-box" style="margin: 12px 24px 0;">
+          [WARN] 警告: このメッセージは量子暗号化されます。送信後の取り消しは不可能です。受信者のみが設定されたパスワードで閲覧できます。
+        </div>
+
+        <div class="form-group">
+          <div class="form-label">
+            件名
+            <span class="security-badge">暗号化対象</span>
+          </div>
+          <input class="form-input" id="compose-subject" type="text" placeholder="件名なし（省略可）">
+        </div>
+
+        <div class="form-group">
+          <div class="form-label">
+            宛先
+            <span class="required-badge">必須</span>
+          </div>
+          <input class="form-input" id="compose-to" type="text" placeholder="受信者のIDまたはメールアドレス">
+          <div class="warning-box" style="margin-top:8px;">
+            [ALERT] 入力されたアドレスはハッシュ化後に送信されます。平文での保存は一切行いません。
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="form-label">
+            本文
+            <span class="required-badge">必須</span>
+            <span class="security-badge">AES-256-GCM暗号化</span>
+          </div>
+          <textarea class="form-textarea" id="compose-body" placeholder="ここに極秘メッセージを入力してください...
+
+このメッセージは送信前に以下の処理が施されます:
+1. AES-256-GCM暗号化
+2. SHA-3チェックサム付与
+3. Zero-knowledge proof生成
+4. 分散サーバーへの断片配信"></textarea>
+          <div style="font-size:10px; color:var(--text-muted); margin-top:6px; display:flex; justify-content:space-between;">
+            <span>文字数: <span id="charCount" style="color:var(--cyan);">0</span></span>
+            <span>暗号化後推定サイズ: <span id="encSize" style="color:var(--cyan);">0</span> bytes</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="form-label">
+            閲覧パスワード
+            <span class="required-badge">必須 // 4文字以上</span>
+          </div>
+          <div class="password-wrapper">
+            <input class="form-input" id="compose-pass" type="password" placeholder="受信者がメッセージを開く際に必要なパスワード（4文字以上）">
+            <button class="password-toggle" onclick="togglePass('compose-pass', this)">[表示]</button>
+          </div>
+          <div class="password-strength" id="passStrength" style="margin-top:8px;">
+            <div class="strength-bars">
+              <div class="strength-bar" id="sb1"></div>
+              <div class="strength-bar" id="sb2"></div>
+              <div class="strength-bar" id="sb3"></div>
+              <div class="strength-bar" id="sb4"></div>
+              <div class="strength-bar" id="sb5"></div>
+            </div>
+            <span id="passStrengthLabel">強度: 未入力</span>
+          </div>
+          <div class="info-box" style="margin-top:8px;">
+            [INFO] パスワードはゼロ知識証明により検証されます。当システムはパスワードを保存しません。受信者に別チャンネルで伝達してください。
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="form-label">
+            自動消去タイマー
+            <span class="required-badge">必須</span>
+          </div>
+          <select class="form-select" id="compose-timer">
+            <option value="60">1分後に完全消去</option>
+            <option value="300">5分後に完全消去</option>
+            <option value="600" selected>10分後に完全消去</option>
+            <option value="3600">1時間後に完全消去</option>
+            <option value="86400">24時間後に完全消去</option>
+            <option value="604800">7日後に完全消去</option>
+          </select>
+          <div class="danger-box" style="margin-top:8px;">
+            [DESTROY] タイマー終了後、メッセージは全サーバーから完全に削除されます。復元は技術的に不可能です。この操作は取り消せません。
+          </div>
+        </div>
+
+        <div class="submit-area">
+          <div style="font-family:'Orbitron',monospace; font-size:10px; color:var(--text-dim); letter-spacing:2px; margin-bottom:4px;">
+            送信前確認チェックリスト
+          </div>
+          <div class="confirm-checklist" id="checklistForm">
+            <label class="checklist-item" id="cl1">
+              <input type="checkbox" onchange="updateChecklist()"> パスワードを受信者に別途伝達済みであることを確認した
+            </label>
+            <label class="checklist-item" id="cl2">
+              <input type="checkbox" onchange="updateChecklist()"> メッセージ内容に機密情報が含まれていることを確認した
+            </label>
+            <label class="checklist-item" id="cl3">
+              <input type="checkbox" onchange="updateChecklist()"> 自動消去タイマーの設定を確認した
+            </label>
+            <label class="checklist-item" id="cl4">
+              <input type="checkbox" onchange="updateChecklist()"> 送信後のメッセージ取り消しが不可能であることを理解した
+            </label>
+            <label class="checklist-item" id="cl5">
+              <input type="checkbox" onchange="updateChecklist()"> 当システムの利用規約（v9.4.1）に同意する
+            </label>
+          </div>
+
+          <button class="send-btn" id="sendBtn" disabled onclick="startSendProcess()">
+            [LOCKED] 暗号化して送信
+          </button>
+        </div>
+      </div>
+
+      <!-- MESSAGE VIEW -->
+      <div id="messageView" style="display:none;">
+        <!-- populated by JS -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER STATS -->
+<div class="footer-stats">
+  <span>CRYPTMAIL v9.4.1 // 極秘通信システム</span>
+  <span>暗号化エンジン: <span class="highlight">AES-256-GCM</span> // キー導出: <span class="highlight">PBKDF2-SHA512</span> // 認証: <span class="highlight">Ed25519</span></span>
+  <span>最終セキュリティスキャン: <span class="highlight" id="lastScan">--</span></span>
+</div>
+
+<!-- PASSWORD MODAL -->
+<div class="modal-overlay" id="passwordModal">
+  <div class="modal">
+    <div class="modal-header">
+      [ENCRYPTED] パスワード認証が必要です
+    </div>
+    <div class="modal-body">
+      <div class="modal-warning">
+        [WARN] このメッセージは暗号化されています。正しいパスワードを入力してください。<br>
+        不正なアクセス試行は記録され、3回失敗するとメッセージは即時消去されます。
+      </div>
+      <div class="modal-input-wrap">
+        <div class="modal-label">閲覧パスワードを入力 :</div>
+        <div class="password-wrapper">
+          <input class="modal-input" id="modalPassInput" type="password" placeholder="••••" maxlength="50"
+            onkeydown="if(event.key==='Enter') verifyPassword()">
+          <button class="password-toggle" onclick="togglePass('modalPassInput', this)" style="top:50%;">[表示]</button>
+        </div>
+      </div>
+      <div class="attempt-counter" id="attemptCounter"></div>
+      <button class="modal-btn" onclick="verifyPassword()">>> 復号して閲覧</button>
+    </div>
+    <div class="modal-footer">
+      このパスワードは当サーバーに保存されていません。<br>
+      パスワードを忘れた場合、メッセージの復元は技術的に不可能です。
+    </div>
+  </div>
+</div>
+
+<!-- SEND CONFIRM MODAL -->
+<div class="modal-overlay" id="sendModal">
+  <div class="modal">
+    <div class="modal-header">
+      [ALERT] 送信プロセス
+    </div>
+    <div class="modal-body" style="padding:0;">
+      <div class="confirm-modal-steps" id="sendSteps">
+        <div class="confirm-step pending" id="step1"><span class="step-num">1</span> 最終確認: 送信してもよいですか？</div>
+        <div class="confirm-step pending" id="step2"><span class="step-num">2</span> 本当に送信してもよいですか？</div>
+        <div class="confirm-step pending" id="step3"><span class="step-num">3</span> 取り消せませんが、それでも送信しますか？</div>
+        <div class="confirm-step pending" id="step4"><span class="step-num">4</span> パスワードを受信者に伝えましたか？</div>
+        <div class="confirm-step pending" id="step5"><span class="step-num">5</span> 暗号化中...</div>
+      </div>
+      <div class="encrypt-progress" id="encryptProgress" style="display:none;">
+        <div style="font-size:10px; color:var(--text-dim); margin-bottom:12px; letter-spacing:1px;">暗号化プロセス実行中...</div>
+        <div class="progress-item">
+          <span style="min-width:180px;">AES-256-GCM鍵生成</span>
+          <div class="progress-bar-wrap"><div class="progress-bar-fill" id="pb1"></div></div>
+          <span class="progress-done" id="pd1">待機</span>
+        </div>
+        <div class="progress-item">
+          <span style="min-width:180px;">PBKDF2-SHA512ハッシュ</span>
+          <div class="progress-bar-wrap"><div class="progress-bar-fill" id="pb2"></div></div>
+          <span class="progress-done" id="pd2">待機</span>
+        </div>
+        <div class="progress-item">
+          <span style="min-width:180px;">Zero-knowledge proof生成</span>
+          <div class="progress-bar-wrap"><div class="progress-bar-fill" id="pb3"></div></div>
+          <span class="progress-done" id="pd3">待機</span>
+        </div>
+        <div class="progress-item">
+          <span style="min-width:180px;">Ed25519署名</span>
+          <div class="progress-bar-wrap"><div class="progress-bar-fill" id="pb4"></div></div>
+          <span class="progress-done" id="pd4">待機</span>
+        </div>
+        <div class="progress-item">
+          <span style="min-width:180px;">分散サーバー配信</span>
+          <div class="progress-bar-wrap"><div class="progress-bar-fill" id="pb5"></div></div>
+          <span class="progress-done" id="pd5">待機</span>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer" id="sendModalFooter">
+      <button class="modal-btn" id="sendConfirmBtn" onclick="nextSendStep()" style="margin-top:0; padding:10px;">
+        >> はい、送信します
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== STATE =====
+let messages = [];
+
+let currentMsgId = null;
+let sendStep = 0;
+let attempts = {};
+let timers = {};
+let sessionId = Math.random().toString(36).substr(2,9).toUpperCase();
+
+// ===== INIT =====
+document.getElementById('sessionId').textContent = sessionId;
+setInterval(updateClock, 1000);
+updateClock();
+renderInbox();
+setInterval(tickTimers, 1000);
+setInterval(updateLastScan, 5000);
+updateLastScan();
+
+document.getElementById('compose-body').addEventListener('input', function() {
+  const len = this.value.length;
+  document.getElementById('charCount').textContent = len;
+  document.getElementById('encSize').textContent = Math.ceil(len * 1.6 + 28);
+});
+
+document.getElementById('compose-pass').addEventListener('input', function() {
+  updatePasswordStrength(this.value);
+});
+
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent = now.toTimeString().substr(0,8);
+}
+
+function updateLastScan() {
+  const now = new Date();
+  document.getElementById('lastScan').textContent = now.toTimeString().substr(0,8);
+}
+
+function renderInbox() {
+  const list = document.getElementById('inboxList');
+  list.innerHTML = '';
+  const unread = messages.filter(m => !m.read && !m.deleted).length;
+  document.getElementById('unreadCount').textContent = `${unread} 件未読`;
+
+  messages.forEach(msg => {
+    const div = document.createElement('div');
+    div.className = 'inbox-item' + (currentMsgId === msg.id ? ' active' : '');
+    div.onclick = () => openMessage(msg.id);
+
+    const mins = Math.floor(msg.remaining / 60);
+    const secs = msg.remaining % 60;
+    const timeStr = msg.remaining > 3600
+      ? `${Math.floor(msg.remaining/3600)}h`
+      : `${mins}:${String(secs).padStart(2,'0')}`;
+
+    div.innerHTML = `
+      <div class="from">
+        <span>${msg.from.split('@')[0]}</span>
+        ${!msg.read ? '<div class="unread-dot"></div>' : ''}
+      </div>
+      <div class="subject">${msg.deleted ? '[WARN] [消去済み]' : msg.subject}</div>
+      <div class="meta">
+        <span class="lock-badge">[LOCKED] PW保護</span>
+        ${!msg.deleted ? `<span class="timer-badge">[TIMER] ${timeStr}</span>` : '<span style="color:var(--red);font-size:9px;">消去完了</span>'}
+      </div>
+    `;
+    list.appendChild(div);
+  });
+}
+
+function tickTimers() {
+  messages.forEach(msg => {
+    if (!msg.deleted && msg.remaining > 0) {
+      msg.remaining--;
+      if (msg.remaining <= 0) {
+        msg.deleted = true;
+        msg.body = null;
+        if (currentMsgId === msg.id) {
+          showDeletedView();
+        }
+        showToast(`[WARN] メッセージ「${msg.subject}」が自動消去されました`, 'error');
+      }
+    }
+  });
+  renderInbox();
+  if (currentMsgId) {
+    const msg = messages.find(m => m.id === currentMsgId);
+    if (msg && !msg.deleted) {
+      const el = document.getElementById('countdown');
+      if (el) {
+        const m = Math.floor(msg.remaining/60), s = msg.remaining%60;
+        el.textContent = `${m}:${String(s).padStart(2,'0')}`;
+      }
+    }
+  }
+}
+
+function openMessage(id) {
+  currentMsgId = id;
+  renderInbox();
+  const msg = messages.find(m => m.id === id);
+
+  if (msg.deleted) {
+    showDeletedView();
+    return;
+  }
+
+  // Show subject/sender preview first, body locked behind password
+  showMessagePreview(msg);
+}
+
+function showMessagePreview(msg) {
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('composeForm').style.display = 'none';
+  const view = document.getElementById('messageView');
+  view.style.display = 'block';
+
+  const m = Math.floor(msg.remaining/60), s = msg.remaining%60;
+
+  view.innerHTML = `
+    <div class="panel-title">
+      [LOCKED] 件名プレビュー — 本文は暗号化済み
+      <span class="step-indicator">// MSG_ID: ${String(msg.id).padStart(6,'0')}</span>
+    </div>
+    <div class="self-destruct-warning">
+      [DESTROY] 自動消去カウントダウン:
+      <span class="countdown" id="countdown">${m}:${String(s).padStart(2,'0')}</span>
+      <span style="font-size:10px; animation:none; color:var(--red);">このメッセージはカウントダウン終了後、完全に消去されます</span>
+    </div>
+    <div class="message-header">
+      <div class="message-subject">${msg.subject}</div>
+      <div class="message-meta">
+        差出人: <span>${msg.from}</span> &nbsp;|&nbsp;
+        送信日時: <span>${msg.sent}</span> &nbsp;|&nbsp;
+        暗号化: <span>AES-256-GCM</span>
+      </div>
+    </div>
+    <div style="margin: 0 24px;">
+      <div class="danger-box" style="display:flex; align-items:center; justify-content:space-between; gap:16px;">
+        <span>[LOCKED] 本文は暗号化されています。閲覧にはパスワードが必要です。</span>
+        <button onclick="openPasswordModal()" style="background:var(--purple); color:white; border:none; padding:8px 18px; font-family:'Share Tech Mono',monospace; font-size:11px; letter-spacing:1px; cursor:pointer; white-space:nowrap; transition:all 0.2s;"
+          onmouseover="this.style.background='var(--purple-bright)'" onmouseout="this.style.background='var(--purple)'">
+          >> 本文を復号する
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function openPasswordModal() {
+  const id = currentMsgId;
+  attempts[id] = attempts[id] || 0;
+  document.getElementById('modalPassInput').value = '';
+  document.getElementById('attemptCounter').textContent =
+    attempts[id] > 0 ? `残り試行回数: ${3 - attempts[id]} 回` : '';
+  document.getElementById('passwordModal').classList.add('active');
+  setTimeout(() => document.getElementById('modalPassInput').focus(), 100);
+}
+
+function verifyPassword() {
+  const id = currentMsgId;
+  const msg = messages.find(m => m.id === id);
+  const input = document.getElementById('modalPassInput').value;
+
+  if (input === msg.password) {
+    document.getElementById('passwordModal').classList.remove('active');
+    msg.read = true;
+    renderInbox();
+    showMessageView(msg);
+    showToast('[OK] 復号成功。閲覧を開始します', 'success');
+  } else {
+    attempts[id] = (attempts[id] || 0) + 1;
+    document.getElementById('modalPassInput').value = '';
+    document.getElementById('modalPassInput').style.borderColor = 'var(--red)';
+    setTimeout(() => document.getElementById('modalPassInput').style.borderColor = '', 500);
+
+    if (attempts[id] >= 3) {
+      msg.deleted = true;
+      msg.body = null;
+      document.getElementById('passwordModal').classList.remove('active');
+      showDeletedView();
+      showToast('[DENIED] 認証失敗3回。メッセージを即時消去しました', 'error');
+    } else {
+      document.getElementById('attemptCounter').textContent =
+        `[WARN] パスワードが違います。残り試行: ${3 - attempts[id]} 回`;
+      showToast(`[WARN] 認証失敗 (${attempts[id]}/3)`, 'error');
+    }
+  }
+}
+
+function showMessageView(msg) {
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('composeForm').style.display = 'none';
+  const view = document.getElementById('messageView');
+  view.style.display = 'block';
+
+  const m = Math.floor(msg.remaining/60), s = msg.remaining%60;
+
+  view.innerHTML = `
+    <div class="panel-title">
+      [UNLOCKED] 復号完了 — メッセージ閲覧中
+      <span class="step-indicator">// MSG_ID: ${String(msg.id).padStart(6,'0')}</span>
+    </div>
+    <div class="self-destruct-warning">
+      [DESTROY] 自動消去カウントダウン:
+      <span class="countdown" id="countdown">${m}:${String(s).padStart(2,'0')}</span>
+      <span style="font-size:10px; animation:none; color:var(--red);">このメッセージはカウントダウン終了後、完全に消去されます</span>
+    </div>
+    <div class="message-header">
+      <div class="message-subject">${msg.subject}</div>
+      <div class="message-meta">
+        差出人: <span>${msg.from}</span> &nbsp;|&nbsp;
+        送信日時: <span>${msg.sent}</span> &nbsp;|&nbsp;
+        暗号化: <span>AES-256-GCM</span>
+      </div>
+    </div>
+    <div class="message-body">${msg.body}</div>
+    <div style="padding:0 24px 24px;">
+      <div class="danger-box">
+        [PROHIBITED] 注意: このメッセージのスクリーンショット、コピー、転送は禁止されています。違反は記録されます。
+      </div>
+    </div>
+  `;
+}
+
+function showDeletedView() {
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('composeForm').style.display = 'none';
+  const view = document.getElementById('messageView');
+  view.style.display = 'block';
+  view.innerHTML = `
+    <div class="deleted-msg">
+      <div class="big">[PURGED]</div>
+      <p>このメッセージは完全に消去されました。<br>
+      全サーバーから削除済み。<br>
+      技術的な復元は不可能です。<br><br>
+      <span style="font-size:9px; color:var(--text-muted);">// SECURELY_DELETED // NON_RECOVERABLE</span></p>
+    </div>
+  `;
+}
+
+function showCompose() {
+  currentMsgId = null;
+  renderInbox();
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('messageView').style.display = 'none';
+  document.getElementById('composeForm').style.display = 'block';
+  document.getElementById('compose-subject').value = '';
+  document.getElementById('compose-to').value = '';
+  document.getElementById('compose-body').value = '';
+  document.getElementById('compose-pass').value = '';
+  document.getElementById('charCount').textContent = '0';
+  document.getElementById('encSize').textContent = '0';
+  document.querySelectorAll('.checklist-item input').forEach(c => c.checked = false);
+  document.querySelectorAll('.checklist-item').forEach(c => c.classList.remove('checked'));
+  document.getElementById('sendBtn').disabled = true;
+  updatePasswordStrength('');
+}
+
+function updateChecklist() {
+  const items = document.querySelectorAll('#checklistForm input[type=checkbox]');
+  const allChecked = Array.from(items).every(i => i.checked);
+  document.getElementById('sendBtn').disabled = !allChecked;
+  items.forEach((inp, i) => {
+    const label = inp.closest('.checklist-item');
+    if (inp.checked) label.classList.add('checked');
+    else label.classList.remove('checked');
+  });
+}
+
+function updatePasswordStrength(pw) {
+  const bars = ['sb1','sb2','sb3','sb4','sb5'];
+  bars.forEach(b => {
+    document.getElementById(b).className = 'strength-bar';
+  });
+
+  let score = 0;
+  if (pw.length >= 4) score++;
+  if (pw.length >= 8) score++;
+  if (/[A-Z]/.test(pw) && /[a-z]/.test(pw)) score++;
+  if (/[0-9]/.test(pw)) score++;
+  if (/[^A-Za-z0-9]/.test(pw)) score++;
+
+  const cls = score <= 2 ? 'weak' : score <= 3 ? 'medium' : 'active';
+  for (let i = 0; i < score; i++) {
+    document.getElementById(bars[i]).classList.add(cls);
+  }
+
+  const labels = ['未入力','非常に弱い','弱い','普通','強い','非常に強い'];
+  document.getElementById('passStrengthLabel').textContent = `強度: ${labels[score]}`;
+}
+
+function togglePass(id, btn) {
+  const input = document.getElementById(id);
+  input.type = input.type === 'password' ? 'text' : 'password';
+  btn.textContent = input.type === 'password' ? '[表示]' : '[非表示]';
+}
+
+// ===== SEND PROCESS =====
+function startSendProcess() {
+  const pw = document.getElementById('compose-pass').value;
+  if (!pw || pw.length < 4) {
+    showToast('[WARN] パスワードは4文字以上必要です', 'error');
+    return;
+  }
+  const body = document.getElementById('compose-body').value;
+  if (!body.trim()) {
+    showToast('[WARN] 本文を入力してください', 'error');
+    return;
+  }
+
+  sendStep = 0;
+  document.querySelectorAll('[id^=step]').forEach(el => el.className = 'confirm-step pending');
+  document.getElementById('encryptProgress').style.display = 'none';
+  document.getElementById('sendModalFooter').style.display = 'block';
+  document.getElementById('sendConfirmBtn').textContent = '>> はい、送信します';
+  document.getElementById('sendConfirmBtn').disabled = false;
+  document.getElementById('sendModal').classList.add('active');
+  updateSendStep();
+}
+
+function updateSendStep() {
+  const steps = ['step1','step2','step3','step4','step5'];
+  steps.forEach((s,i) => {
+    const el = document.getElementById(s);
+    if (i < sendStep) el.className = 'confirm-step done';
+    else if (i === sendStep) el.className = 'confirm-step active';
+    else el.className = 'confirm-step pending';
+  });
+}
+
+function nextSendStep() {
+  sendStep++;
+  if (sendStep < 4) {
+    updateSendStep();
+  } else if (sendStep === 4) {
+    updateSendStep();
+    document.getElementById('sendConfirmBtn').textContent = '>> 暗号化を開始する';
+  } else if (sendStep === 5) {
+    updateSendStep();
+    document.getElementById('sendModalFooter').style.display = 'none';
+    document.getElementById('encryptProgress').style.display = 'block';
+    runEncryption();
+  }
+}
+
+function runEncryption() {
+  const pbs = ['pb1','pb2','pb3','pb4','pb5'];
+  const pds = ['pd1','pd2','pd3','pd4','pd5'];
+  let idx = 0;
+  function next() {
+    if (idx >= pbs.length) {
+      setTimeout(finishSend, 500);
+      return;
+    }
+    document.getElementById(pds[idx]).textContent = '実行中...';
+    let w = 0;
+    const interval = setInterval(() => {
+      w += Math.random() * 15 + 5;
+      if (w >= 100) { w = 100; clearInterval(interval); document.getElementById(pds[idx]).textContent = '完了 [OK]'; idx++; setTimeout(next, 200); }
+      document.getElementById(pbs[idx]).style.width = w + '%';
+    }, 60);
+  }
+  next();
+}
+
+function finishSend() {
+  document.getElementById('sendModal').classList.remove('active');
+
+  const subject = document.getElementById('compose-subject').value || '（件名なし）';
+  const body = document.getElementById('compose-body').value;
+  const pw = document.getElementById('compose-pass').value;
+  const timerVal = parseInt(document.getElementById('compose-timer').value);
+
+  const newMsg = {
+    id: messages.length + 1,
+    from: 'me@cryptmail.gov',
+    subject,
+    body,
+    password: pw,
+    timer: timerVal,
+    remaining: timerVal,
+    sent: new Date().toLocaleString('ja-JP').replace(/\//g,'-').slice(0,16),
+    read: true,
+    deleted: false
+  };
+  messages.unshift(newMsg);
+  renderInbox();
+  showToast('[OK] メッセージを暗号化して送信しました', 'success');
+  showCompose();
+}
+
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>
