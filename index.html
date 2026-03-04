@@ -883,6 +883,285 @@
   .deleted-msg .big { font-size: 40px; margin-bottom: 16px; }
   .deleted-msg p { font-size: 11px; line-height: 1.8; color: var(--red); }
 
+
+  /* ===== TITLE SCREEN ===== */
+  .title-screen {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 800;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+  }
+  .title-screen.hidden { display: none; }
+
+  .title-scanlines {
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.12) 2px, rgba(0,0,0,0.12) 4px);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  @keyframes title-flicker {
+    0%,100% { opacity:1; } 91%{opacity:1;} 92%{opacity:0.3;} 93%{opacity:1;} 96%{opacity:0.7;} 97%{opacity:1;}
+  }
+  @keyframes title-pulse {
+    0%,100% { text-shadow: 0 0 20px var(--purple), 0 0 60px rgba(124,58,237,0.5), 0 0 100px rgba(124,58,237,0.2); }
+    50% { text-shadow: 0 0 40px var(--purple-bright), 0 0 80px rgba(168,85,247,0.7), 0 0 120px rgba(168,85,247,0.3); }
+  }
+  @keyframes title-glitch {
+    0%,90%,100% { clip-path:inset(0 0 0 0); transform:translate(0); }
+    92% { clip-path:inset(10% 0 80% 0); transform:translate(-4px,0); }
+    94% { clip-path:inset(60% 0 10% 0); transform:translate(4px,0); }
+    96% { clip-path:inset(30% 0 40% 0); transform:translate(-2px,0); }
+  }
+  @keyframes fade-in {
+    from { opacity:0; transform:translateY(16px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+  @keyframes idle-countdown {
+    from { width: 100%; }
+    to   { width: 0%; }
+  }
+
+  .title-inner {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    animation: title-flicker 10s infinite;
+  }
+
+  .title-eyebrow {
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 6px;
+    margin-bottom: 20px;
+    animation: fade-in 1s ease both;
+  }
+
+  .title-logo {
+    font-family: 'Orbitron', monospace;
+    font-weight: 900;
+    font-size: 56px;
+    color: var(--purple-glow);
+    letter-spacing: 8px;
+    animation: title-pulse 3s infinite, title-glitch 8s infinite, fade-in 1s ease both;
+    margin-bottom: 8px;
+  }
+
+  .title-logo .blink-cursor {
+    color: var(--red);
+    animation: blink 1s infinite;
+  }
+
+  .title-tagline {
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 4px;
+    margin-bottom: 48px;
+    animation: fade-in 1.2s ease both;
+  }
+
+  .title-divider {
+    width: 320px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--purple), var(--purple-bright), var(--purple), transparent);
+    margin-bottom: 40px;
+    animation: fade-in 1.4s ease both;
+  }
+
+  .title-pw-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: 320px;
+    animation: fade-in 1.6s ease both;
+  }
+
+  .title-pw-label {
+    font-size: 9px;
+    color: var(--text-muted);
+    letter-spacing: 3px;
+    align-self: flex-start;
+  }
+
+  .title-pw-input {
+    width: 100%;
+    background: rgba(10,15,30,0.9);
+    border: 1px solid var(--border-bright);
+    border-bottom: 2px solid var(--purple);
+    color: var(--text);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 20px;
+    padding: 12px 16px;
+    outline: none;
+    letter-spacing: 6px;
+    text-align: center;
+    transition: all 0.2s;
+    caret-color: var(--purple-bright);
+  }
+  .title-pw-input:focus {
+    border-color: var(--purple-bright);
+    box-shadow: 0 0 0 1px rgba(168,85,247,0.3), inset 0 0 20px rgba(124,58,237,0.05);
+  }
+  .title-pw-input.error {
+    border-color: var(--red);
+    border-bottom-color: var(--red);
+    box-shadow: 0 0 0 1px rgba(239,68,68,0.3);
+    animation: glitch 0.3s ease;
+  }
+
+  .title-pw-error {
+    font-size: 10px;
+    color: var(--red);
+    letter-spacing: 1px;
+    height: 14px;
+    transition: opacity 0.2s;
+  }
+
+  .title-start-btn {
+    width: 320px;
+    background: linear-gradient(135deg, #4c1d95, #7c3aed);
+    color: white;
+    border: 1px solid var(--purple-bright);
+    padding: 16px;
+    font-family: 'Orbitron', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+    animation: fade-in 1.8s ease both;
+    margin-top: 8px;
+  }
+  .title-start-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.5s;
+  }
+  .title-start-btn:hover::before { transform: translateX(100%); }
+  .title-start-btn:hover { box-shadow: 0 0 40px rgba(124,58,237,0.7), 0 0 80px rgba(124,58,237,0.3); }
+
+  .title-footer {
+    position: fixed;
+    bottom: 20px;
+    font-size: 9px;
+    color: var(--text-muted);
+    letter-spacing: 2px;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    animation: fade-in 2s ease both;
+  }
+
+  .idle-bar-wrap {
+    width: 200px;
+    height: 1px;
+    background: var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .idle-bar-fill {
+    height: 100%;
+    background: var(--purple);
+    width: 100%;
+  }
+
+  /* ===== PASSWORD GATE (第2関門) ===== */
+  .pw-gate-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(3,7,18,0.95);
+    backdrop-filter: blur(10px);
+    z-index: 600;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+  .pw-gate-overlay.active { display: flex; }
+
+  .pw-gate-modal {
+    background: var(--bg2);
+    border: 1px solid var(--purple);
+    border-top: 3px solid var(--purple-bright);
+    width: 400px;
+    box-shadow: 0 0 60px rgba(124,58,237,0.3);
+    animation: glitch 0.2s ease;
+  }
+  .pw-gate-header {
+    background: linear-gradient(135deg, rgba(124,58,237,0.2), rgba(168,85,247,0.1));
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--purple-glow);
+  }
+  .pw-gate-body { padding: 24px 20px; }
+  .pw-gate-warn {
+    font-size: 10px;
+    color: var(--red);
+    border: 1px solid rgba(239,68,68,0.3);
+    padding: 10px 12px;
+    margin-bottom: 16px;
+    background: rgba(239,68,68,0.05);
+    line-height: 1.6;
+  }
+  .pw-gate-input {
+    width: 100%;
+    background: rgba(3,7,18,0.8);
+    border: 1px solid var(--border-bright);
+    border-bottom: 2px solid var(--purple);
+    color: var(--text);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 20px;
+    padding: 12px 14px;
+    outline: none;
+    letter-spacing: 6px;
+    text-align: center;
+    margin-bottom: 6px;
+  }
+  .pw-gate-input:focus { border-color: var(--purple-bright); box-shadow: 0 0 0 1px rgba(168,85,247,0.3); }
+  .pw-gate-input.error { border-color: var(--red); animation: glitch 0.3s ease; }
+  .pw-gate-error { font-size: 10px; color: var(--red); text-align: center; min-height: 16px; margin-bottom: 10px; }
+  .pw-gate-btn {
+    width: 100%;
+    background: var(--purple);
+    color: white;
+    border: none;
+    padding: 12px;
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .pw-gate-btn:hover { background: var(--purple-bright); box-shadow: 0 0 20px rgba(168,85,247,0.4); }
+  .pw-gate-footer {
+    padding: 10px 20px;
+    border-top: 1px solid var(--border);
+    font-size: 9px;
+    color: var(--text-muted);
+    text-align: center;
+    line-height: 1.6;
+  }
+
   /* Scrollbar */
   ::-webkit-scrollbar { width: 4px; }
   ::-webkit-scrollbar-track { background: transparent; }
@@ -1378,6 +1657,53 @@
   </div>
 </div>
 
+
+<!-- ===== TITLE SCREEN ===== -->
+<div class="title-screen" id="titleScreen">
+  <div class="title-scanlines"></div>
+  <div class="title-inner">
+    <div class="title-eyebrow">// SECURE COMMUNICATION SYSTEM //</div>
+    <div class="title-logo">CRYPT<span class="blink-cursor">_</span>MAIL</div>
+    <div class="title-tagline">極秘通信システム — END-TO-END ENCRYPTED</div>
+    <div class="title-divider"></div>
+    <div class="title-pw-wrap">
+      <div class="title-pw-label">// アクセスコードを入力</div>
+      <div style="position:relative; width:100%;">
+        <input class="title-pw-input" id="titlePwInput" type="password" placeholder="••••"
+          onkeydown="if(event.key==='Enter') titlePwSubmit()"
+          oninput="clearTitleError()">
+        <button onclick="togglePass('titlePwInput', this)"
+          style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-dim);cursor:pointer;font-family:'Share Tech Mono',monospace;font-size:11px;">[表示]</button>
+      </div>
+      <div class="title-pw-error" id="titlePwError"></div>
+    </div>
+    <button class="title-start-btn" onclick="titlePwSubmit()">
+      &gt;&gt; 開始する
+    </button>
+  </div>
+  <div class="title-footer">
+    <span id="idleMsg">// アイドル状態でこの画面に戻ります</span>
+    <div class="idle-bar-wrap"><div class="idle-bar-fill" id="idleBar"></div></div>
+    <span>CRYPTMAIL v9.4.1 // TOP SECRET</span>
+  </div>
+</div>
+
+<!-- ===== PASSWORD GATE 第2関門 ===== -->
+<div class="pw-gate-overlay" id="pwGateOverlay">
+  <div class="pw-gate-modal">
+    <div class="pw-gate-header">[AUTH] セカンダリ認証 — 第2関門</div>
+    <div class="pw-gate-body">
+      <div class="pw-gate-warn">[WARN] セカンダリアクセスコードが必要です。<br>3回失敗するとセッションはリセットされます。</div>
+      <input class="pw-gate-input" id="pwGateInput" type="password" placeholder="••••"
+        onkeydown="if(event.key==='Enter') pwGateSubmit()"
+        oninput="document.getElementById('pwGateError').textContent=''">
+      <div class="pw-gate-error" id="pwGateError"></div>
+      <button class="pw-gate-btn" onclick="pwGateSubmit()">&gt;&gt; 認証する</button>
+    </div>
+    <div class="pw-gate-footer">このコードは当サーバーに保存されていません。</div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
@@ -1677,8 +2003,8 @@ let sessionId = Math.random().toString(36).substr(2,9).toUpperCase();
 
 // ===== INIT =====
 window.addEventListener('DOMContentLoaded', () => {
-  // 起動時に利用規約を強制表示
-  showTerms();
+  // 起動時にタイトル画面を表示
+  showTitleScreen();
 
   document.getElementById('sessionId').textContent = sessionId;
   setInterval(updateClock, 1000);
@@ -2112,6 +2438,118 @@ async function finishSend() {
   showCompose();
 }
 
+
+// ===== TITLE SCREEN & AUTH =====
+const PW1_HASH = '7ac25d5d84cae3dcc037c52a93dfe320fe83b2a6abe787451b4fc15aeba2c9e7';
+const PW2_HASH = 'aeb32cfe00d196040e9758c276853282721fbd222038a54e9ae04d6686066e1b';
+
+let idleTimer = null;
+let idleBarAnim = null;
+let pwGateAttempts = 0;
+const IDLE_SECONDS = 60;
+
+async function sha256(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+function showTitleScreen() {
+  window._termsAgreed = false;
+  window._pw1Passed = false;
+  window._pw2Passed = false;
+  pwGateAttempts = 0;
+  document.getElementById('titleScreen').classList.remove('hidden');
+  document.getElementById('titlePwInput').value = '';
+  document.getElementById('titlePwError').textContent = '';
+  document.getElementById('termsOverlay').classList.remove('active');
+  document.getElementById('pwGateOverlay').classList.remove('active');
+  startIdleBar();
+}
+
+function startIdleBar() {
+  const bar = document.getElementById('idleBar');
+  if (bar) {
+    bar.style.transition = 'none';
+    bar.style.width = '100%';
+    setTimeout(() => {
+      bar.style.transition = `width ${IDLE_SECONDS}s linear`;
+      bar.style.width = '0%';
+    }, 50);
+  }
+}
+
+function resetIdleTimer() {
+  clearTimeout(idleTimer);
+  idleTimer = setTimeout(() => {
+    showTitleScreen();
+  }, IDLE_SECONDS * 1000);
+}
+
+// アイドル検出
+['mousemove','keydown','mousedown','touchstart','scroll','click'].forEach(ev => {
+  document.addEventListener(ev, resetIdleTimer, true);
+});
+
+async function titlePwSubmit() {
+  const val = document.getElementById('titlePwInput').value;
+  const hash = await sha256(val);
+  if (hash === PW1_HASH) {
+    document.getElementById('titleScreen').classList.add('hidden');
+    clearTimeout(idleTimer);
+    resetIdleTimer();
+    // 利用規約へ
+    showTerms();
+  } else {
+    const input = document.getElementById('titlePwInput');
+    const err = document.getElementById('titlePwError');
+    input.classList.add('error');
+    err.textContent = '[DENIED] アクセスコードが無効です';
+    input.value = '';
+    setTimeout(() => input.classList.remove('error'), 600);
+  }
+}
+
+function clearTitleError() {
+  document.getElementById('titlePwError').textContent = '';
+}
+
+// 利用規約同意後 → 第2関門
+function handleTAgree() {
+  window._termsAgreed = true;
+  hideTerms();
+  // 第2関門を開く
+  document.getElementById('pwGateInput').value = '';
+  document.getElementById('pwGateError').textContent = '';
+  document.getElementById('pwGateOverlay').classList.add('active');
+  setTimeout(() => document.getElementById('pwGateInput').focus(), 100);
+}
+
+async function pwGateSubmit() {
+  const val = document.getElementById('pwGateInput').value;
+  const hash = await sha256(val);
+  if (hash === PW2_HASH) {
+    document.getElementById('pwGateOverlay').classList.remove('active');
+    window._pw2Passed = true;
+    showToast('[OK] 認証完了。システムへのアクセスが許可されました。', 'success');
+    // チェックリストのTOS項目を自動チェック
+    const cl5 = document.querySelector('#cl5 input[type=checkbox]');
+    if (cl5 && !cl5.checked) { cl5.checked = true; updateChecklist(); }
+  } else {
+    pwGateAttempts++;
+    const input = document.getElementById('pwGateInput');
+    const err = document.getElementById('pwGateError');
+    input.classList.add('error');
+    input.value = '';
+    setTimeout(() => input.classList.remove('error'), 600);
+    if (pwGateAttempts >= 3) {
+      err.textContent = '[CRITICAL] 認証失敗3回。セッションをリセットします...';
+      setTimeout(() => showTitleScreen(), 1500);
+    } else {
+      err.textContent = `[DENIED] コードが無効です。残り試行: ${3 - pwGateAttempts} 回`;
+    }
+  }
+}
+
 function showToast(msg, type = '') {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -2131,10 +2569,7 @@ function showTerms() {
 }
 
 function hideTerms() {
-  // 同意済みの場合のみ閉じられる
-  if (window._termsAgreed) {
-    document.getElementById('termsOverlay').classList.remove('active');
-  }
+  document.getElementById('termsOverlay').classList.remove('active');
 }
 
 function tocScroll(e, id) {
