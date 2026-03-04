@@ -887,6 +887,213 @@
   ::-webkit-scrollbar { width: 4px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--purple); }
+
+  /* ===== TERMS PAGE ===== */
+  .terms-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 500;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .terms-overlay.active { display: flex; }
+
+  .terms-topbar {
+    border-bottom: 1px solid var(--border);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(180deg, rgba(124,58,237,0.08) 0%, transparent 100%);
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  .terms-read-bar {
+    position: absolute;
+    bottom: -1px; left: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--purple), var(--purple-bright));
+    box-shadow: 0 0 6px var(--purple);
+    transition: width 0.1s;
+    width: 0%;
+  }
+
+  .terms-body-wrap {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  .terms-toc {
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--purple) transparent;
+  }
+
+  .terms-toc-hdr {
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--border);
+    font-size: 9px;
+    color: var(--text-dim);
+    letter-spacing: 3px;
+    display: flex;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+  }
+
+  .terms-toc a {
+    display: block;
+    padding: 7px 16px;
+    font-size: 10px;
+    color: var(--text-dim);
+    text-decoration: none;
+    border-left: 3px solid transparent;
+    transition: all 0.15s;
+    letter-spacing: 0.5px;
+  }
+  .terms-toc a:hover { color: var(--purple-glow); border-left-color: var(--purple); background: rgba(124,58,237,0.08); }
+
+  .terms-toc-ftr {
+    padding: 12px 16px;
+    border-top: 1px solid var(--border);
+    font-size: 9px;
+    color: var(--text-muted);
+    line-height: 1.8;
+    margin-top: auto;
+  }
+
+  .terms-scroll {
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--purple) transparent;
+    padding-bottom: 60px;
+  }
+
+  .t-hero {
+    padding: 26px 36px 18px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(135deg, rgba(124,58,237,0.06) 0%, transparent 60%);
+  }
+  .t-doc-id { font-size: 9px; color: var(--text-muted); letter-spacing: 3px; margin-bottom: 10px; }
+  .t-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 20px; font-weight: 900;
+    color: var(--purple-glow);
+    text-shadow: 0 0 20px var(--purple);
+    letter-spacing: 4px; margin-bottom: 6px;
+  }
+  .t-subtitle { font-size: 10px; color: var(--text-dim); letter-spacing: 1px; margin-bottom: 14px; }
+  .t-meta {
+    display: grid; grid-template-columns: repeat(4,1fr);
+    gap: 1px; background: var(--border); border: 1px solid var(--border);
+  }
+  .t-meta-cell { background: var(--bg2); padding: 7px 12px; font-size: 9px; }
+  .t-meta-cell .lbl { color: var(--text-muted); letter-spacing: 2px; margin-bottom: 3px; }
+  .t-meta-cell .val { color: var(--cyan); font-size: 11px; }
+
+  .t-section { padding: 22px 36px; border-bottom: 1px solid rgba(30,41,59,0.5); }
+  .t-sec-hdr { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
+  .t-sec-num {
+    font-family: 'Orbitron', monospace; font-size: 10px; font-weight: 700;
+    color: #000; background: var(--purple); padding: 3px 8px;
+    letter-spacing: 1px; white-space: nowrap; margin-top: 2px;
+  }
+  .t-sec-num.red { background: var(--red); }
+  .t-sec-num.yellow { background: var(--yellow); }
+  .t-sec-num.cyan { background: var(--cyan); }
+  .t-sec-num.green { background: var(--green); }
+  .t-sec-title {
+    font-family: 'Orbitron', monospace; font-size: 12px; font-weight: 700;
+    color: var(--text); letter-spacing: 2px; line-height: 1.4;
+  }
+  .t-body { font-family: 'Noto Sans JP', sans-serif; font-size: 13px; line-height: 2; color: #94a3b8; margin-bottom: 10px; }
+
+  .t-list { list-style: none; margin: 10px 0; }
+  .t-list li {
+    padding: 7px 0 7px 20px; border-bottom: 1px solid rgba(30,41,59,0.3);
+    font-family: 'Noto Sans JP', sans-serif; font-size: 13px; color: #94a3b8;
+    line-height: 1.8; position: relative;
+  }
+  .t-list li::before { content: '>>'; position: absolute; left: 0; color: var(--purple); font-family: 'Share Tech Mono', monospace; font-size: 10px; top: 10px; }
+  .t-list li:last-child { border-bottom: none; }
+
+  .t-tag { font-family: 'Share Tech Mono', monospace; font-size: 9px; color: var(--red); border: 1px solid rgba(239,68,68,0.4); padding: 1px 6px; margin-right: 6px; vertical-align: middle; }
+  .t-tag.green { color: var(--green); border-color: rgba(34,197,94,0.4); }
+  .t-tag.yellow { color: var(--yellow); border-color: rgba(234,179,8,0.4); }
+
+  .t-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1px; background: var(--border); border: 1px solid var(--border); margin: 10px 0;
+  }
+  .t-grid-cell {
+    background: rgba(239,68,68,0.04); padding: 9px 12px;
+    display: flex; align-items: flex-start; gap: 8px;
+    font-family: 'Noto Sans JP', sans-serif; font-size: 12px; color: #94a3b8; line-height: 1.5;
+  }
+  .t-grid-cell::before { content: '[X]'; color: var(--red); font-family: 'Share Tech Mono', monospace; font-size: 10px; white-space: nowrap; margin-top: 1px; }
+
+  .t-table { width: 100%; border-collapse: collapse; margin: 10px 0; font-size: 11px; }
+  .t-table th { background: rgba(124,58,237,0.2); border: 1px solid var(--border); padding: 7px 10px; text-align: left; font-family: 'Orbitron', monospace; font-size: 9px; color: var(--purple-glow); letter-spacing: 2px; }
+  .t-table td { border: 1px solid var(--border); padding: 7px 10px; font-family: 'Noto Sans JP', sans-serif; font-size: 12px; color: #94a3b8; }
+  .t-table tr:hover td { background: rgba(124,58,237,0.05); }
+  .t-lv { font-family: 'Share Tech Mono', monospace; font-size: 10px; padding: 2px 6px; white-space: nowrap; }
+  .t-lv.low { color: var(--yellow); border: 1px solid rgba(234,179,8,0.4); }
+  .t-lv.mid { color: #f97316; border: 1px solid rgba(249,115,22,0.4); }
+  .t-lv.high { color: var(--red); border: 1px solid rgba(239,68,68,0.4); }
+  .t-lv.crit { color: var(--red); border: 1px solid var(--red); background: rgba(239,68,68,0.1); }
+
+  .t-danger { padding: 10px 14px; border-left: 3px solid var(--red); background: rgba(239,68,68,0.05); font-size: 10px; color: var(--red); line-height: 1.7; margin: 8px 0; }
+  .t-warn   { padding: 10px 14px; border-left: 3px solid var(--yellow); background: rgba(234,179,8,0.05); font-size: 10px; color: var(--yellow); line-height: 1.7; margin: 8px 0; }
+  .t-info   { padding: 10px 14px; border-left: 3px solid var(--cyan); background: rgba(6,182,212,0.05); font-size: 10px; color: var(--cyan); line-height: 1.7; margin: 8px 0; }
+
+  .t-sep { display: flex; align-items: center; gap: 12px; padding: 0 36px; margin: 4px 0; }
+  .t-sep-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--purple), transparent); }
+  .t-sep-txt { font-size: 9px; color: var(--text-muted); letter-spacing: 2px; }
+
+  .t-agree-section {
+    margin: 16px 36px 40px;
+    background: linear-gradient(135deg, rgba(124,58,237,0.08), rgba(168,85,247,0.04));
+    border: 1px solid var(--purple); border-top: 3px solid var(--purple-bright);
+    padding: 20px; animation: pulse-glow 4s infinite;
+  }
+  .t-agree-title { font-family: 'Orbitron', monospace; font-size: 11px; color: var(--purple-glow); letter-spacing: 3px; margin-bottom: 12px; }
+  .t-agree-list { display: flex; flex-direction: column; gap: 7px; margin-bottom: 16px; }
+  .t-agree-item {
+    display: flex; align-items: flex-start; gap: 10px; padding: 8px 12px;
+    background: rgba(10,15,30,0.5); border: 1px solid var(--border);
+    font-family: 'Noto Sans JP', sans-serif; font-size: 12px; color: var(--text-dim);
+    cursor: pointer; transition: all 0.2s; line-height: 1.6;
+  }
+  .t-agree-item:hover { border-color: var(--purple); color: var(--text); }
+  .t-agree-item.checked { border-color: var(--green); color: var(--green); background: rgba(34,197,94,0.05); }
+  .t-agree-item input { margin-top: 3px; accent-color: var(--purple); cursor: pointer; flex-shrink: 0; }
+
+  .t-agree-btn {
+    width: 100%; background: linear-gradient(135deg, #4c1d95, #7c3aed);
+    color: white; border: 1px solid var(--purple-bright); padding: 13px;
+    font-family: 'Orbitron', monospace; font-size: 11px; font-weight: 700;
+    letter-spacing: 3px; cursor: pointer; transition: all 0.3s;
+  }
+  .t-agree-btn:hover { box-shadow: 0 0 30px rgba(124,58,237,0.6); }
+  .t-agree-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  .t-back-btn {
+    width: 100%; margin-top: 8px; padding: 11px;
+    background: transparent; color: var(--text-dim);
+    border: 1px solid var(--border-bright);
+    font-family: 'Share Tech Mono', monospace; font-size: 11px;
+    letter-spacing: 1px; cursor: pointer; transition: all 0.2s;
+  }
+  .t-back-btn:hover { color: var(--text); border-color: var(--text-dim); background: rgba(255,255,255,0.04); }
 </style>
 </head>
 <body>
@@ -1060,7 +1267,7 @@
               <input type="checkbox" onchange="updateChecklist()"> 送信後のメッセージ取り消しが不可能であることを理解した
             </label>
             <label class="checklist-item" id="cl5">
-              <input type="checkbox" onchange="updateChecklist()"> 当システムの利用規約（v9.4.1）に同意する
+              <input type="checkbox" onchange="updateChecklist()"> 当システムの<a onclick="showTerms()" style="color:var(--cyan); text-decoration:none; border-bottom:1px solid rgba(6,182,212,0.4); cursor:pointer; transition:all 0.2s;" onmouseover="this.style.color='var(--purple-glow)'" onmouseout="this.style.color='var(--cyan)'">利用規約（v9.4.1）</a>に同意する
             </label>
           </div>
 
@@ -1173,6 +1380,187 @@
 
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
+
+
+<!-- ===== TERMS OF SERVICE OVERLAY ===== -->
+<div class="terms-overlay" id="termsOverlay">
+  <div class="terms-topbar">
+    <div class="logo" style="font-size:18px;">CRYPT<span style="color:var(--red);animation:blink 1s infinite;">_</span>MAIL <span style="font-size:10px;color:var(--text-dim);font-family:'Share Tech Mono';font-weight:400;letter-spacing:2px;">// 利用規約 v9.4.1 // 同意必須</span></div>
+    <div style="display:flex;gap:16px;align-items:center;font-size:10px;color:var(--text-dim);">
+      <span>既読: <span style="color:var(--cyan);" id="tReadPct">0%</span></span>
+      
+    </div>
+    <div class="terms-read-bar" id="tReadBar"></div>
+  </div>
+  <div class="terms-body-wrap">
+    <div class="terms-toc">
+      <div class="terms-toc-hdr"><span>目次</span><span style="color:var(--cyan);">TOS-9.4.1</span></div>
+      <a onclick="tocScroll(event,'ts0')"><span style="color:var(--text-muted);margin-right:6px;font-size:9px;">00.</span>はじめに</a>
+      <a onclick="tocScroll(event,'ts1')"><span style="color:var(--text-muted);margin-right:6px;font-size:9px;">01.</span>定義</a>
+      <a onclick="tocScroll(event,'ts2')"><span style="color:var(--text-muted);margin-right:6px;font-size:9px;">02.</span>サービス概要・利用資格</a>
+      <a onclick="tocScroll(event,'ts3')"><span style="color:var(--text-muted);margin-right:6px;font-size:9px;">03.</span>禁止行為</a>
+      <a onclick="tocScroll(event,'ts4')"><span style="color:var(--text-muted);margin-right:6px;font-size:9px;">04.</span>暗号化とデータ処理</a>
+      <a onclick="tocScroll(event,'ts5')"><span style="color:var(--text-muted);margin-right:6px;font-size:9px;">05.</span>メッセージの自動消去</a>
+      <a onclick="tocScroll(event,'ts6')"><span style="color:var(--text-muted);margin-right:6px;font-size:9px;">06.</span>パスワードと認証</a>
+      <a onclick="tocScroll(event,'ts7')"><span style="color:var(--text-muted);margin-right:6px;font-size:9px;">07.</span>免責事項</a>
+      <a onclick="tocScroll(event,'ts8')"><span style="color:var(--text-muted);margin-right:6px;font-size:9px;">08.</span>違反と制裁</a>
+      <a onclick="tocScroll(event,'ts9')"><span style="color:var(--text-muted);margin-right:6px;font-size:9px;">09.</span>プライバシー</a>
+      <a onclick="tocScroll(event,'ts10')"><span style="color:var(--text-muted);margin-right:6px;font-size:9px;">10.</span>規約の改定</a>
+      <a onclick="tocScroll(event,'ts11')"><span style="color:var(--text-muted);margin-right:6px;font-size:9px;">11.</span>準拠法・管轄</a>
+      <a onclick="tocScroll(event,'tsAgree')" style="color:var(--purple-glow);"><span style="color:var(--purple);margin-right:6px;font-size:9px;">--.</span>同意する</a>
+      <div class="terms-toc-ftr">CRYPTMAIL TOS<br>バージョン: <span style="color:var(--cyan);">9.4.1</span><br>施行日: <span style="color:var(--cyan);">2025-01-01</span><br><br><span style="color:var(--red);">[LEGALLY BINDING]<br>法的拘束力あり</span></div>
+    </div>
+    <div class="terms-scroll" id="termsScroll">
+      <div style="background:repeating-linear-gradient(90deg,#1a0a00 0px,#1a0a00 20px,#0f0500 20px,#0f0500 40px);border-bottom:2px solid var(--red);padding:6px 16px;font-size:10px;color:var(--red);letter-spacing:1px;">
+    [MANDATORY] 本規約への同意はシステム使用の前提条件です。同意なしにシステムへのアクセスはできません。セッション開始のたびに同意が必要です。
+  </div>
+  <div class="t-hero" id="ts0">
+        <div class="t-doc-id">// DOCUMENT: TOS-9.4.1-JA // CLASSIFICATION: PUBLIC // BINDING: YES</div>
+        <div class="t-title">利用規約</div>
+        <div class="t-subtitle">TERMS OF SERVICE — CRYPTMAIL SECURE MESSAGING SYSTEM v9.4.1</div>
+        <div class="t-meta">
+          <div class="t-meta-cell"><div class="lbl">VERSION</div><div class="val">9.4.1</div></div>
+          <div class="t-meta-cell"><div class="lbl">施行日</div><div class="val">2025-01-01</div></div>
+          <div class="t-meta-cell"><div class="lbl">対象システム</div><div class="val">CRYPTMAIL</div></div>
+          <div class="t-meta-cell"><div class="lbl">STATUS</div><div class="val" style="color:var(--green);">有効 [ACTIVE]</div></div>
+        </div>
+      </div>
+      <div style="height:14px;"></div>
+      <div class="t-danger" style="margin:0 36px;">[CRITICAL] 本利用規約は、CRYPTMAIL極秘通信システムの利用に関して法的拘束力を持ちます。本システムにアクセスした時点で、ユーザーは本規約の全条項に同意したものとみなします。同意しない場合は、直ちに使用を中止してください。</div>
+      <div style="height:14px;"></div>
+      <div class="t-section" id="ts1">
+        <div class="t-sec-hdr"><div class="t-sec-num">第1条</div><div class="t-sec-title">定義</div></div>
+        <div class="t-body">本規約において使用する用語は、以下のとおり定義します。</div>
+        <ul class="t-list">
+          <li><strong>「本システム」</strong>：CRYPTMAILが提供する極秘通信・暗号化メッセージングプラットフォームを指します。</li>
+          <li><strong>「ユーザー」</strong>：本システムにアクセスし、使用する全ての個人または法人を指します。</li>
+          <li><strong>「メッセージ」</strong>：本システムを通じて送受信される、テキスト、データ、その他のコンテンツを指します。</li>
+          <li><strong>「暗号化」</strong>：本システムが採用するAES-256-GCM方式によるエンドツーエンド暗号化処理を指します。</li>
+          <li><strong>「自動消去」</strong>：設定されたタイマーの満了により、メッセージが全サーバーから完全に削除される処理を指します。</li>
+          <li><strong>「パスワード」</strong>：メッセージの暗号化・復号に使用する、ユーザーが設定した認証情報を指します。</li>
+        </ul>
+      </div>
+      <div class="t-section" id="ts2">
+        <div class="t-sec-hdr"><div class="t-sec-num cyan">第2条</div><div class="t-sec-title">サービス概要・利用資格</div></div>
+        <div class="t-body">本システムは、エンドツーエンド暗号化技術を用いた極秘通信サービスを提供します。ユーザーは、以下の条件を全て満たす場合にのみ利用できます。</div>
+        <ul class="t-list">
+          <li><span class="t-tag green">必須</span>本規約の全条項を読み、理解し、同意していること。</li>
+          <li><span class="t-tag green">必須</span>本システムの使用が、適用法令に違反しないこと。</li>
+          <li><span class="t-tag green">必須</span>法的に有効な契約を締結できる年齢（18歳以上）および能力を有すること。</li>
+          <li><span class="t-tag green">必須</span>過去に本規約違反によりアカウント停止処分を受けていないこと。</li>
+          <li><span class="t-tag yellow">推奨</span>セキュリティクリアランスレベル5以上の認証を取得していること。</li>
+        </ul>
+        <div class="t-info">[INFO] 政府機関・軍事機関による使用には別途ライセンス契約が必要です。</div>
+      </div>
+      <div class="t-section" id="ts3">
+        <div class="t-sec-hdr"><div class="t-sec-num red">第3条</div><div class="t-sec-title">禁止行為</div></div>
+        <div class="t-body">ユーザーは本システムを使用して以下の行為を行ってはなりません。これらの行為は即座のアカウント停止と法的措置の対象となります。</div>
+        <div class="t-grid">
+          <div class="t-grid-cell">違法なコンテンツ、違法薬物、武器、人身売買に関する情報の送受信</div>
+          <div class="t-grid-cell">テロリズム、過激主義、暴力の扇動に関する通信</div>
+          <div class="t-grid-cell">本システムへの不正アクセス、リバースエンジニアリング、改ざん</div>
+          <div class="t-grid-cell">他のユーザーへのハラスメント、なりすまし、詐欺行為</div>
+          <div class="t-grid-cell">マルウェア、ウイルス、スパイウェアの配布</div>
+          <div class="t-grid-cell">本システムのセキュリティ機構を意図的に迂回する試み</div>
+          <div class="t-grid-cell">受信したメッセージの無断複製、スクリーンショット、転送</div>
+          <div class="t-grid-cell">DoS攻撃、スパム送信など本システムへの過負荷行為</div>
+        </div>
+        <div class="t-warn">[WARN] 上記禁止行為に関する全てのアクセス試行はリアルタイムで監視・記録されており、当局への自動通報システムと連携しています。</div>
+      </div>
+      <div class="t-section" id="ts4">
+        <div class="t-sec-hdr"><div class="t-sec-num">第4条</div><div class="t-sec-title">暗号化とデータ処理</div></div>
+        <ul class="t-list">
+          <li><span class="t-tag green">実装済み</span><strong>AES-256-GCM暗号化</strong>：全メッセージ本文はAES-256-GCM方式でエンドツーエンド暗号化されます。</li>
+          <li><span class="t-tag green">実装済み</span><strong>PBKDF2-SHA512鍵導出</strong>：ユーザー設定のパスワードから100,000イテレーションにより暗号化鍵が導出されます。</li>
+          <li><span class="t-tag green">実装済み</span><strong>Ed25519デジタル署名</strong>：メッセージの完全性はEd25519署名によって保証されます。</li>
+          <li><span class="t-tag green">実装済み</span><strong>Zero-knowledge proof</strong>：パスワードの検証はゼロ知識証明により行われ、平文パスワードはサーバーに保存されません。</li>
+        </ul>
+      </div>
+      <div class="t-section" id="ts5">
+        <div class="t-sec-hdr"><div class="t-sec-num red">第5条</div><div class="t-sec-title">メッセージの自動消去</div></div>
+        <ul class="t-list">
+          <li><span class="t-tag">不可逆</span>設定されたタイマーが満了した時点で、メッセージは全サーバーから完全かつ不可逆的に削除されます。</li>
+          <li><span class="t-tag">不可逆</span>パスワード認証に3回連続で失敗した場合、対象メッセージは即座に消去されます。</li>
+          <li><span class="t-tag">不可逆</span>一度消去されたメッセージは、いかなる技術的手段によっても復元することができません。</li>
+          <li><span class="t-tag yellow">注意</span>消去によるデータ損失について、当システムは一切の責任を負いません。</li>
+        </ul>
+        <div class="t-danger">[DESTROY] 自動消去は取り消せません。</div>
+      </div>
+      <div class="t-section" id="ts6">
+        <div class="t-sec-hdr"><div class="t-sec-num yellow">第6条</div><div class="t-sec-title">パスワードと認証</div></div>
+        <ul class="t-list">
+          <li>ユーザーは安全なパスワード（8文字以上、英数字・記号の組み合わせを推奨）を設定する責任を負います。</li>
+          <li>送信者はパスワードを受信者に本システム以外の安全なチャンネルで伝達する責任を負います。</li>
+          <li>当システムはパスワードを保存せず、紛失したパスワードを回復する手段を提供しません。</li>
+          <li>パスワードの紛失によりメッセージが閲覧不能になった場合、当システムは一切の責任を負いません。</li>
+        </ul>
+      </div>
+      <div class="t-section" id="ts7">
+        <div class="t-sec-hdr"><div class="t-sec-num red">第7条</div><div class="t-sec-title">免責事項</div></div>
+        <div class="t-body">本システムは現状有姿（AS IS）で提供されます。以下の事項について当システムは一切の責任を負いません。</div>
+        <ul class="t-list">
+          <li>本システムの稼働の継続性、可用性、または特定目的への適合性に関する保証。</li>
+          <li>ユーザーの通信内容に関連して発生した直接的・間接的・結果的損害。</li>
+          <li>不可抗力（自然災害、戦争、サイバー攻撃、政府による遮断等）によるサービス停止。</li>
+          <li>ユーザー自身の操作ミス（誤ったタイマー設定、パスワード忘れ等）による損害。</li>
+        </ul>
+        <div class="t-warn">[WARN] 当システムの責任は、適用法令で認められる最大限の範囲で免除されます。</div>
+      </div>
+      <div class="t-section" id="ts8">
+        <div class="t-sec-hdr"><div class="t-sec-num red">第8条</div><div class="t-sec-title">違反と制裁</div></div>
+        <table class="t-table">
+          <thead><tr><th>違反レベル</th><th>違反例</th><th>制裁措置</th></tr></thead>
+          <tbody>
+            <tr><td><span class="t-lv low">LEVEL-1 軽微</span></td><td>ガイドラインの軽微な違反</td><td>警告通知の送付</td></tr>
+            <tr><td><span class="t-lv mid">LEVEL-2 中度</span></td><td>禁止コンテンツの送信</td><td>一時的なアクセス停止（24時間〜30日間）</td></tr>
+            <tr><td><span class="t-lv high">LEVEL-3 重大</span></td><td>不正アクセス試行、システム改ざん</td><td>永久アカウント停止・当局への通報</td></tr>
+            <tr><td><span class="t-lv crit">LEVEL-4 最重大</span></td><td>テロ関連、重大犯罪への使用</td><td>即時停止・法執行機関への全情報提供・法的訴追</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="t-section" id="ts9">
+        <div class="t-sec-hdr"><div class="t-sec-num cyan">第9条</div><div class="t-sec-title">プライバシーと監視</div></div>
+        <ul class="t-list">
+          <li><span class="t-tag green">収集する</span><strong>アクセスログ</strong>：IPアドレス（マスク済み）、アクセス日時、操作履歴は安全保障目的で記録されます。</li>
+          <li><span class="t-tag green">収集する</span><strong>セッション情報</strong>：セッションIDおよび接続情報は暗号化して一時的に保存されます。</li>
+          <li><span class="t-tag">収集しない</span><strong>メッセージ内容</strong>：エンドツーエンド暗号化により、当システムはメッセージ内容を技術的に閲覧できません。</li>
+          <li><span class="t-tag">収集しない</span><strong>パスワード</strong>：平文パスワードは一切保存されません。SHA-256ハッシュ値のみを使用します。</li>
+          <li><span class="t-tag yellow">条件付き</span><strong>法的要請</strong>：法的に有効な命令がある場合、収集したメタデータを当局に提供する場合があります。</li>
+        </ul>
+      </div>
+      <div class="t-section" id="ts10">
+        <div class="t-sec-hdr"><div class="t-sec-num green">第10条</div><div class="t-sec-title">規約の改定</div></div>
+        <ul class="t-list">
+          <li>重大な変更がある場合は、施行の少なくとも7日前に本システム上で告知します。</li>
+          <li>軽微な変更は予告なく実施される場合があります。</li>
+          <li>改定後も本システムを継続して使用した場合、改定規約に同意したものとみなします。</li>
+        </ul>
+      </div>
+      <div class="t-section" id="ts11">
+        <div class="t-sec-hdr"><div class="t-sec-num">第11条</div><div class="t-sec-title">準拠法・合意管轄</div></div>
+        <div class="t-body">本規約は日本法に準拠し、日本法に従って解釈されます。本規約の利用に関して紛争が生じた場合、東京地方裁判所を第一審の専属的合意管轄裁判所とします。本規約のいずれかの条項が無効または執行不能と判断された場合でも、残りの条項は引き続き有効に存続します。</div>
+        <div class="t-info">[INFO] 日本語版と他言語版に解釈の相違がある場合、日本語版が優先されます。</div>
+      </div>
+      <div class="t-sep"><div class="t-sep-line"></div><div class="t-sep-txt">// END OF TERMS // AGREEMENT REQUIRED //</div><div class="t-sep-line" style="background:linear-gradient(90deg,transparent,var(--purple));"></div></div>
+      <div style="height:14px;"></div>
+      <div class="t-agree-section" id="tsAgree">
+        <div class="t-agree-title">[AUTH] 利用規約への同意</div>
+        <div style="font-family:'Noto Sans JP',sans-serif;font-size:12px;color:var(--text-dim);margin-bottom:14px;line-height:1.8;">以下の全項目にチェックを入れ、「同意して続行する」ボタンをクリックしてください。</div>
+        <div class="t-agree-list" id="tAgreeList">
+          <label class="t-agree-item"><input type="checkbox" onchange="updateTAgree()"> 本利用規約（v9.4.1）の全条項を読み、内容を理解した。</label>
+          <label class="t-agree-item"><input type="checkbox" onchange="updateTAgree()"> 第3条の禁止行為を行わないことに同意する。</label>
+          <label class="t-agree-item"><input type="checkbox" onchange="updateTAgree()"> 第5条に基づき、タイマー満了後のメッセージ消去が不可逆であることを理解した。</label>
+          <label class="t-agree-item"><input type="checkbox" onchange="updateTAgree()"> 第6条に基づき、パスワード管理はユーザー自身の責任であることを理解した。</label>
+          <label class="t-agree-item"><input type="checkbox" onchange="updateTAgree()"> 第7条の免責事項を理解し、当システムへの一切の保証請求権を放棄することに同意する。</label>
+          <label class="t-agree-item"><input type="checkbox" onchange="updateTAgree()"> 第8条に基づき、規約違反時に制裁措置が適用されることを理解した。</label>
+        </div>
+        <button class="t-agree-btn" id="tAgreeBtn" disabled onclick="handleTAgree()">[LOCKED] 同意して続行する</button>
+        
+      </div>
+      <div style="height:24px;"></div>
+    </div>
+  </div>
+</div>
 
 <script>
 // ===== SUPABASE CONFIG =====
@@ -1289,6 +1677,9 @@ let sessionId = Math.random().toString(36).substr(2,9).toUpperCase();
 
 // ===== INIT =====
 window.addEventListener('DOMContentLoaded', () => {
+  // 起動時に利用規約を強制表示
+  showTerms();
+
   document.getElementById('sessionId').textContent = sessionId;
   setInterval(updateClock, 1000);
   updateClock();
@@ -1727,6 +2118,67 @@ function showToast(msg, type = '') {
   t.className = `toast ${type} show`;
   setTimeout(() => t.classList.remove('show'), 3000);
 }
+
+// ===== TERMS PAGE =====
+function showTerms() {
+  document.getElementById('termsOverlay').classList.add('active');
+  // reset scroll
+  const scroll = document.getElementById('termsScroll');
+  if (scroll) scroll.scrollTop = 0;
+  updateTProgress();
+  // attach scroll listener
+  if (scroll) scroll.addEventListener('scroll', updateTProgress);
+}
+
+function hideTerms() {
+  // 同意済みの場合のみ閉じられる
+  if (window._termsAgreed) {
+    document.getElementById('termsOverlay').classList.remove('active');
+  }
+}
+
+function tocScroll(e, id) {
+  e.preventDefault();
+  const el = document.getElementById(id);
+  const scroll = document.getElementById('termsScroll');
+  if (el && scroll) scroll.scrollTo({ top: el.offsetTop - 20, behavior: 'smooth' });
+}
+
+function updateTProgress() {
+  const scroll = document.getElementById('termsScroll');
+  const bar = document.getElementById('tReadBar');
+  const pct = document.getElementById('tReadPct');
+  if (!scroll || !bar) return;
+  const p = scroll.scrollHeight - scroll.clientHeight;
+  const pctVal = p > 0 ? Math.min(100, Math.round((scroll.scrollTop / p) * 100)) : 0;
+  bar.style.width = pctVal + '%';
+  if (pct) pct.textContent = pctVal + '%';
+}
+
+function updateTAgree() {
+  const items = document.querySelectorAll('#tAgreeList input[type=checkbox]');
+  const allChecked = Array.from(items).every(i => i.checked);
+  const btn = document.getElementById('tAgreeBtn');
+  if (btn) {
+    btn.disabled = !allChecked;
+    btn.textContent = allChecked ? '[UNLOCKED] 同意して続行する' : '[LOCKED] 同意して続行する';
+  }
+  items.forEach(inp => {
+    const label = inp.closest('.t-agree-item');
+    if (inp.checked) label.classList.add('checked');
+    else label.classList.remove('checked');
+  });
+}
+
+function handleTAgree() {
+  window._termsAgreed = true;
+  showToast('[OK] 利用規約への同意が記録されました。セッション認証完了。', 'success');
+  hideTerms();
+  // Auto-check the TOS checkbox in the main form if visible
+  const cl5 = document.querySelector('#cl5 input[type=checkbox]');
+  if (cl5 && !cl5.checked) { cl5.checked = true; updateChecklist(); }
+}
+
 </script>
 </body>
 </html>
