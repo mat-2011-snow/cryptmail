@@ -2516,12 +2516,13 @@ function clearTitleError() {
 // 利用規約同意後 → 第2関門
 function handleTAgree() {
   window._termsAgreed = true;
-  hideTerms();
-  // 第2関門を開く
+  // 第2関門を即座に表示（利用規約より前に重ねる）
   document.getElementById('pwGateInput').value = '';
   document.getElementById('pwGateError').textContent = '';
   document.getElementById('pwGateOverlay').classList.add('active');
-  setTimeout(() => document.getElementById('pwGateInput').focus(), 100);
+  document.getElementById('pwGateInput').focus();
+  // 利用規約はすぐ閉じる
+  hideTerms();
 }
 
 async function pwGateSubmit() {
@@ -2531,7 +2532,6 @@ async function pwGateSubmit() {
     document.getElementById('pwGateOverlay').classList.remove('active');
     window._pw2Passed = true;
     showToast('[OK] 認証完了。システムへのアクセスが許可されました。', 'success');
-    // チェックリストのTOS項目を自動チェック
     const cl5 = document.querySelector('#cl5 input[type=checkbox]');
     if (cl5 && !cl5.checked) { cl5.checked = true; updateChecklist(); }
   } else {
@@ -2605,14 +2605,8 @@ function updateTAgree() {
   });
 }
 
-function handleTAgree() {
-  window._termsAgreed = true;
-  showToast('[OK] 利用規約への同意が記録されました。セッション認証完了。', 'success');
-  hideTerms();
-  // Auto-check the TOS checkbox in the main form if visible
-  const cl5 = document.querySelector('#cl5 input[type=checkbox]');
-  if (cl5 && !cl5.checked) { cl5.checked = true; updateChecklist(); }
-}
+
+
 
 </script>
 </body>
