@@ -1172,7 +1172,7 @@ async function sbFetch(path, options = {}) {
 
 async function loadMessages() {
   const data = await sbFetch('messages?order=id.desc&select=*');
-  if (!data) return;
+  if (!data || !Array.isArray(data)) return;
   messages = data.map(m => ({
     id: m.id,
     from: m.from_addr,
@@ -1213,31 +1213,31 @@ async function updateRemaining(id, remaining, is_deleted) {
 
 // ===== STATE =====
 let messages = [];
-
 let currentMsgId = null;
 let sendStep = 0;
 let attempts = {};
-let timers = {};
 let sessionId = Math.random().toString(36).substr(2,9).toUpperCase();
 
 // ===== INIT =====
-document.getElementById('sessionId').textContent = sessionId;
-setInterval(updateClock, 1000);
-updateClock();
-loadMessages();
-setInterval(tickTimers, 1000);
-setInterval(() => loadMessages(), 5000);
-setInterval(updateLastScan, 5000);
-updateLastScan();
+window.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('sessionId').textContent = sessionId;
+  setInterval(updateClock, 1000);
+  updateClock();
+  loadMessages();
+  setInterval(tickTimers, 1000);
+  setInterval(() => loadMessages(), 5000);
+  setInterval(updateLastScan, 5000);
+  updateLastScan();
 
-document.getElementById('compose-body').addEventListener('input', function() {
-  const len = this.value.length;
-  document.getElementById('charCount').textContent = len;
-  document.getElementById('encSize').textContent = Math.ceil(len * 1.6 + 28);
-});
+  document.getElementById('compose-body').addEventListener('input', function() {
+    const len = this.value.length;
+    document.getElementById('charCount').textContent = len;
+    document.getElementById('encSize').textContent = Math.ceil(len * 1.6 + 28);
+  });
 
-document.getElementById('compose-pass').addEventListener('input', function() {
-  updatePasswordStrength(this.value);
+  document.getElementById('compose-pass').addEventListener('input', function() {
+    updatePasswordStrength(this.value);
+  });
 });
 
 function updateClock() {
@@ -1326,8 +1326,10 @@ function openMessage(id) {
 }
 
 function showMessagePreview(msg) {
-  document.getElementById('emptyState').style.display = 'none';
-  document.getElementById('composeForm').style.display = 'none';
+  const emptyState = document.getElementById('emptyState');
+  const composeForm = document.getElementById('composeForm');
+  if (emptyState) emptyState.style.display = 'none';
+  if (composeForm) composeForm.style.display = 'none';
   const view = document.getElementById('messageView');
   view.style.display = 'block';
 
@@ -1387,8 +1389,8 @@ function verifyPassword() {
   } else {
     attempts[id] = (attempts[id] || 0) + 1;
     document.getElementById('modalPassInput').value = '';
-    document.getElementById('modalPassInput').style.borderColor = 'var(--red)';
-    setTimeout(() => document.getElementById('modalPassInput').style.borderColor = '', 500);
+    const mpi = document.getElementById('modalPassInput'); if(mpi) mpi.style.borderColor = 'var(--red)';
+    setTimeout(() => { const mpi2 = document.getElementById('modalPassInput'); if(mpi2) mpi2.style.borderColor = ''; }, 500);
 
     if (attempts[id] >= 3) {
       msg.deleted = true;
@@ -1405,8 +1407,10 @@ function verifyPassword() {
 }
 
 function showMessageView(msg) {
-  document.getElementById('emptyState').style.display = 'none';
-  document.getElementById('composeForm').style.display = 'none';
+  const emptyState = document.getElementById('emptyState');
+  const composeForm = document.getElementById('composeForm');
+  if (emptyState) emptyState.style.display = 'none';
+  if (composeForm) composeForm.style.display = 'none';
   const view = document.getElementById('messageView');
   view.style.display = 'block';
 
@@ -1440,8 +1444,10 @@ function showMessageView(msg) {
 }
 
 function showDeletedView() {
-  document.getElementById('emptyState').style.display = 'none';
-  document.getElementById('composeForm').style.display = 'none';
+  const emptyState = document.getElementById('emptyState');
+  const composeForm = document.getElementById('composeForm');
+  if (emptyState) emptyState.style.display = 'none';
+  if (composeForm) composeForm.style.display = 'none';
   const view = document.getElementById('messageView');
   view.style.display = 'block';
   view.innerHTML = `
@@ -1458,9 +1464,12 @@ function showDeletedView() {
 function showCompose() {
   currentMsgId = null;
   renderInbox();
-  document.getElementById('emptyState').style.display = 'none';
-  document.getElementById('messageView').style.display = 'none';
-  document.getElementById('composeForm').style.display = 'block';
+  const emptyState = document.getElementById('emptyState');
+  const messageView = document.getElementById('messageView');
+  const composeForm = document.getElementById('composeForm');
+  if (emptyState) emptyState.style.display = 'none';
+  if (messageView) messageView.style.display = 'none';
+  if (composeForm) composeForm.style.display = 'block';
   document.getElementById('compose-subject').value = '';
   document.getElementById('compose-to').value = '';
   document.getElementById('compose-body').value = '';
@@ -1527,8 +1536,8 @@ function startSendProcess() {
 
   sendStep = 0;
   document.querySelectorAll('[id^=step]').forEach(el => el.className = 'confirm-step pending');
-  document.getElementById('encryptProgress').style.display = 'none';
-  document.getElementById('sendModalFooter').style.display = 'block';
+  const ep = document.getElementById('encryptProgress'); if(ep) ep.style.display = 'none';
+  const smf = document.getElementById('sendModalFooter'); if(smf) smf.style.display = 'block';
   document.getElementById('sendConfirmBtn').textContent = '>> はい、送信します';
   document.getElementById('sendConfirmBtn').disabled = false;
   document.getElementById('sendModal').classList.add('active');
@@ -1554,8 +1563,8 @@ function nextSendStep() {
     document.getElementById('sendConfirmBtn').textContent = '>> 暗号化を開始する';
   } else if (sendStep === 5) {
     updateSendStep();
-    document.getElementById('sendModalFooter').style.display = 'none';
-    document.getElementById('encryptProgress').style.display = 'block';
+    const smf2 = document.getElementById('sendModalFooter'); if(smf2) smf2.style.display = 'none';
+    const ep2 = document.getElementById('encryptProgress'); if(ep2) ep2.style.display = 'block';
     runEncryption();
   }
 }
@@ -1569,12 +1578,24 @@ function runEncryption() {
       setTimeout(finishSend, 500);
       return;
     }
-    document.getElementById(pds[idx]).textContent = '実行中...';
+    const currentIdx = idx;
+    const pdEl = document.getElementById(pds[currentIdx]);
+    const pbEl = document.getElementById(pbs[currentIdx]);
+    if (!pdEl || !pbEl) { idx++; next(); return; }
+    pdEl.textContent = '実行中...';
     let w = 0;
     const interval = setInterval(() => {
       w += Math.random() * 15 + 5;
-      if (w >= 100) { w = 100; clearInterval(interval); document.getElementById(pds[idx]).textContent = '完了 [OK]'; idx++; setTimeout(next, 200); }
-      document.getElementById(pbs[idx]).style.width = w + '%';
+      if (w >= 100) {
+        w = 100;
+        clearInterval(interval);
+        pbEl.style.width = '100%';
+        pdEl.textContent = '完了 [OK]';
+        idx++;
+        setTimeout(next, 200);
+      } else {
+        pbEl.style.width = w + '%';
+      }
     }, 60);
   }
   next();
