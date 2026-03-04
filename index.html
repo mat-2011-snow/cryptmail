@@ -884,6 +884,109 @@
   .deleted-msg p { font-size: 11px; line-height: 1.8; color: var(--red); }
 
 
+
+  /* ===== IMAGE UPLOAD ===== */
+  .img-upload-area {
+    border: 2px dashed var(--border-bright);
+    padding: 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: rgba(10,15,30,0.5);
+    position: relative;
+  }
+  .img-upload-area:hover, .img-upload-area.dragover {
+    border-color: var(--purple);
+    background: rgba(124,58,237,0.08);
+  }
+  .img-upload-area input[type=file] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+  }
+  .img-upload-label {
+    font-size: 11px; color: var(--text-dim); letter-spacing: 1px; pointer-events: none;
+  }
+  .img-upload-label span { color: var(--purple-glow); }
+
+  .img-preview-grid {
+    display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;
+  }
+  .img-preview-item {
+    position: relative; width: 72px; height: 72px;
+    border: 1px solid var(--border-bright);
+    overflow: hidden; flex-shrink: 0;
+  }
+  .img-preview-item img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+  }
+  .img-preview-remove {
+    position: absolute; top: 2px; right: 2px;
+    background: rgba(239,68,68,0.85); color: white;
+    border: none; width: 18px; height: 18px;
+    font-size: 11px; cursor: pointer; display: flex;
+    align-items: center; justify-content: center;
+    font-family: 'Share Tech Mono', monospace;
+  }
+  .img-preview-name {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: rgba(0,0,0,0.7); font-size: 8px;
+    color: var(--text-dim); padding: 2px 3px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  /* Message image display */
+  .msg-images {
+    margin: 0 24px 16px;
+    display: flex; flex-wrap: wrap; gap: 10px;
+  }
+  .msg-image-wrap {
+    position: relative; cursor: pointer;
+    border: 1px solid var(--border-bright);
+    overflow: hidden; transition: border-color 0.2s;
+    max-width: 200px;
+  }
+  .msg-image-wrap:hover { border-color: var(--purple-bright); }
+  .msg-image-wrap img {
+    display: block; max-width: 200px; max-height: 200px;
+    width: auto; height: auto;
+  }
+  .msg-image-badge {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    background: rgba(124,58,237,0.7);
+    font-size: 8px; color: white;
+    padding: 2px 6px; font-family: 'Share Tech Mono', monospace;
+    letter-spacing: 1px;
+  }
+
+  /* Lightbox */
+  .lightbox {
+    position: fixed; inset: 0;
+    background: rgba(3,7,18,0.96);
+    z-index: 9000; display: none;
+    align-items: center; justify-content: center;
+    flex-direction: column; gap: 14px;
+  }
+  .lightbox.active { display: flex; }
+  .lightbox img {
+    max-width: 90vw; max-height: 80vh;
+    border: 1px solid var(--purple);
+    box-shadow: 0 0 40px rgba(124,58,237,0.4);
+  }
+  .lightbox-close {
+    position: absolute; top: 20px; right: 24px;
+    background: transparent; color: var(--text-dim);
+    border: 1px solid var(--border-bright);
+    padding: 6px 14px; font-family: 'Share Tech Mono', monospace;
+    font-size: 11px; cursor: pointer; letter-spacing: 1px;
+    transition: all 0.2s;
+  }
+  .lightbox-close:hover { color: var(--text); border-color: var(--text-dim); }
+  .lightbox-info { font-size: 10px; color: var(--text-dim); letter-spacing: 1px; }
+
+  @media (max-width: 768px) {
+    .msg-images { margin: 0 12px 14px; }
+    .msg-image-wrap img { max-width: 140px; max-height: 140px; }
+  }
+
   /* ===== TITLE SCREEN ===== */
   .title-screen {
     position: fixed;
@@ -1565,6 +1668,28 @@
           </div>
         </div>
 
+
+        <div class="form-group">
+          <div class="form-label">
+            添付画像
+            <span class="security-badge">AES-256-GCM暗号化</span>
+            <span style="color:var(--text-muted);font-size:9px;margin-left:4px;">複数枚OK</span>
+          </div>
+          <div class="img-upload-area" id="imgUploadArea"
+            ondragover="event.preventDefault();this.classList.add('dragover')"
+            ondragleave="this.classList.remove('dragover')"
+            ondrop="handleImgDrop(event)">
+            <input type="file" id="imgFileInput" accept="image/*" multiple onchange="handleImgSelect(event)">
+            <div class="img-upload-label">
+              クリックまたはドラッグで画像を追加<br>
+              <span>// PNG / JPG / GIF / WEBP</span>
+            </div>
+          </div>
+          <div class="img-preview-grid" id="imgPreviewGrid"></div>
+          <div class="info-box" style="margin-top:8px;">
+            [INFO] 画像は送信前にAES-256-GCMで暗号化されます。受信者のみ復号可能です。
+          </div>
+        </div>
         <div class="form-group">
           <div class="form-label">
             閲覧パスワード
@@ -1781,6 +1906,13 @@
     </div>
     <div class="pw-gate-footer">このコードは当サーバーに保存されていません。</div>
   </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">[X] 閉じる</button>
+  <img id="lightboxImg" src="" alt="">
+  <div class="lightbox-info" id="lightboxInfo"></div>
 </div>
 
 <!-- TOAST -->
@@ -2059,7 +2191,13 @@ async function loadMessages() {
 }
 
 async function saveMessage(msg) {
-  const encBody = await encryptText(msg.body, msg.password);
+  // 画像も暗号化してbodyに含める
+  let encImages = [];
+  if (msg.images && msg.images.length > 0) {
+    encImages = await encryptImages(msg.images, msg.password);
+  }
+  const payload = JSON.stringify({ text: msg.body, images: encImages });
+  const encBody = await encryptText(payload, msg.password);
   const pwHash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(msg.password));
   const pwHashHex = Array.from(new Uint8Array(pwHash)).map(b => b.toString(16).padStart(2,'0')).join('');
   await sbFetch('messages', {
@@ -2150,7 +2288,7 @@ function renderInbox() {
         <span>${msg.from.split('@')[0]}</span>
         ${!msg.read ? '<div class="unread-dot"></div>' : ''}
       </div>
-      <div class="subject">${msg.deleted ? '[WARN] [消去済み]' : msg.subject}</div>
+      <div class="subject">${msg.deleted ? '[WARN] [消去済み]' : (msg.hasImages ? '📎 ' : '') + msg.subject}</div>
       <div class="meta">
         <span class="lock-badge">[LOCKED] PW保護</span>
         ${!msg.deleted ? `<span class="timer-badge">[TIMER] ${timeStr}</span>` : '<span style="color:var(--red);font-size:9px;">消去完了</span>'}
@@ -2272,12 +2410,25 @@ async function verifyPassword() {
   const pwHashHex = Array.from(new Uint8Array(pwHash)).map(b => b.toString(16).padStart(2,'0')).join('');
 
   if (pwHashHex === msg.password) {
-    const decryptedBody = await decryptText(msg.body, input);
-    if (decryptedBody === null) {
+    const decryptedRaw = await decryptText(msg.body, input);
+    if (decryptedRaw === null) {
       showToast('[ERROR] 復号に失敗しました', 'error');
       return;
     }
+    // JSON形式かレガシーテキストか判定
+    let decryptedBody = decryptedRaw;
+    let decryptedImages = [];
+    try {
+      const parsed = JSON.parse(decryptedRaw);
+      if (parsed.text !== undefined) {
+        decryptedBody = parsed.text;
+        if (parsed.images && parsed.images.length > 0) {
+          decryptedImages = await decryptImages(parsed.images, input);
+        }
+      }
+    } catch(e) { /* レガシー: プレーンテキスト */ }
     msg.decryptedBody = decryptedBody;
+    msg.decryptedImages = decryptedImages;
     document.getElementById('passwordModal').classList.remove('active');
     msg.read = true;
     renderInbox();
@@ -2334,6 +2485,18 @@ function showMessageView(msg) {
       </div>
     </div>
     <div class="message-body">${msg.decryptedBody || msg.body}</div>
+    ${msg.decryptedImages && msg.decryptedImages.length > 0 ? `
+    <div style="padding:0 24px 4px;">
+      <div style="font-size:9px;color:var(--text-muted);letter-spacing:2px;margin-bottom:8px;">[DECRYPTED IMAGES] ${msg.decryptedImages.length}枚</div>
+      <div class="msg-images" style="margin:0;">
+        ${msg.decryptedImages.map((img,i) => `
+          <div class="msg-image-wrap" onclick="openLightbox('${img.dataUrl}','${img.name}',${i},${msg.decryptedImages.length})">
+            <img src="${img.dataUrl}" alt="${img.name}">
+            <div class="msg-image-badge">[ENC] ${img.name}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>` : ''}
     <div style="padding:0 24px 24px;">
       <div class="danger-box">
         [PROHIBITED] 注意: このメッセージのスクリーンショット、コピー、転送は禁止されています。違反は記録されます。
@@ -2379,6 +2542,8 @@ function showCompose() {
   document.querySelectorAll('.checklist-item').forEach(c => c.classList.remove('checked'));
   document.getElementById('sendBtn').disabled = true;
   updatePasswordStrength('');
+  selectedImages = [];
+  renderImgPreviews();
 }
 
 function updateChecklist() {
@@ -2523,6 +2688,7 @@ async function finishSend() {
     from: 'me@cryptmail.gov',
     subject,
     body,
+    images: [...selectedImages],
     password: pw,
     timer: timerVal,
     remaining: timerVal,
@@ -2535,6 +2701,90 @@ async function finishSend() {
   showCompose();
 }
 
+
+
+// ===== IMAGE HANDLING =====
+let selectedImages = []; // [{name, dataUrl}]
+
+function handleImgSelect(e) {
+  addImageFiles(Array.from(e.target.files));
+  e.target.value = '';
+}
+
+function handleImgDrop(e) {
+  e.preventDefault();
+  document.getElementById('imgUploadArea').classList.remove('dragover');
+  addImageFiles(Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/')));
+}
+
+function addImageFiles(files) {
+  files.forEach(file => {
+    if (selectedImages.length >= 10) { showToast('[WARN] 画像は最大10枚まで', 'error'); return; }
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      selectedImages.push({ name: file.name, dataUrl: ev.target.result });
+      renderImgPreviews();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderImgPreviews() {
+  const grid = document.getElementById('imgPreviewGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  selectedImages.forEach((img, i) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'img-preview-item';
+    wrap.innerHTML = `
+      <img src="${img.dataUrl}" alt="${img.name}">
+      <button class="img-preview-remove" onclick="removeImg(${i})">×</button>
+      <div class="img-preview-name">${img.name}</div>
+    `;
+    grid.appendChild(wrap);
+  });
+}
+
+function removeImg(i) {
+  selectedImages.splice(i, 1);
+  renderImgPreviews();
+}
+
+async function encryptImages(images, password) {
+  const results = [];
+  for (const img of images) {
+    const enc = await encryptText(img.dataUrl, password);
+    results.push({ name: img.name, data: enc });
+  }
+  return results;
+}
+
+async function decryptImages(encImages, password) {
+  const results = [];
+  for (const img of encImages) {
+    const dec = await decryptText(img.data, password);
+    if (dec) results.push({ name: img.name, dataUrl: dec });
+  }
+  return results;
+}
+
+function openLightbox(src, name, index, total) {
+  const lb = document.getElementById('lightbox');
+  const img = document.getElementById('lightboxImg');
+  const info = document.getElementById('lightboxInfo');
+  img.src = src;
+  info.textContent = `[DECRYPTED] ${name} — ${index + 1} / ${total}`;
+  lb.classList.add('active');
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('active');
+  document.getElementById('lightboxImg').src = '';
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeLightbox();
+});
 
 // ===== TITLE SCREEN & AUTH =====
 const PW1_HASH = '7ac25d5d84cae3dcc037c52a93dfe320fe83b2a6abe787451b4fc15aeba2c9e7';
