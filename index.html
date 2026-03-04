@@ -1162,6 +1162,85 @@
     line-height: 1.6;
   }
 
+  /* ===== MOBILE ===== */
+  @media (max-width: 768px) {
+    /* Header */
+    .header { padding: 10px 14px; flex-wrap: wrap; gap: 8px; }
+    .logo { font-size: 16px; letter-spacing: 2px; }
+    .status-bar { font-size: 9px; gap: 10px; flex-wrap: wrap; }
+
+    /* Clearance banner */
+    .clearance-banner { margin: 8px 12px; padding: 8px 12px; flex-wrap: wrap; gap: 8px; }
+
+    /* Main layout: stack vertically on mobile */
+    .main {
+      grid-template-columns: 1fr;
+      height: auto;
+      min-height: calc(100vh - 140px);
+      overflow: visible;
+    }
+
+    /* Sidebar becomes top bar */
+    .sidebar {
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+      max-height: none;
+      overflow: visible;
+    }
+
+    .inbox-list {
+      max-height: 260px;
+      overflow-y: auto;
+    }
+
+    /* Content area */
+    .content { overflow: visible; }
+    .panel { overflow: visible; height: auto; }
+
+    /* Form */
+    .form-group { padding: 12px 16px; }
+    .submit-area { padding: 14px 16px; }
+
+    /* Message view */
+    .message-body { margin: 0 12px 16px; }
+    .self-destruct-warning { margin: 10px 12px; }
+    .message-header { padding: 12px 14px; }
+    .panel-title { padding: 12px 14px; font-size: 11px; letter-spacing: 1px; flex-wrap: wrap; gap: 4px; }
+
+    /* Footer */
+    .footer-stats { padding: 5px 12px; font-size: 8px; flex-wrap: wrap; gap: 2px; justify-content: center; }
+
+    /* Modal */
+    .modal { width: calc(100vw - 32px); }
+    .pw-gate-modal { width: calc(100vw - 32px); }
+
+    /* Terms overlay */
+    .terms-body-wrap { grid-template-columns: 1fr; }
+    .terms-toc { display: none; }
+    .terms-scroll { padding-bottom: 80px; }
+    .t-hero { padding: 18px 18px 14px; }
+    .t-title { font-size: 18px; letter-spacing: 2px; }
+    .t-section { padding: 16px 18px; }
+    .t-grid { grid-template-columns: 1fr; }
+    .t-agree-section { margin: 12px 18px 40px; padding: 16px; }
+    .t-meta { grid-template-columns: repeat(2,1fr); }
+    .t-table { font-size: 10px; }
+    .t-table th, .t-table td { padding: 5px 7px; }
+
+    /* Title screen */
+    .title-logo { font-size: 36px; letter-spacing: 4px; }
+    .title-start-btn, .title-pw-wrap { width: calc(100vw - 60px); }
+
+    /* Ticker */
+    .ticker-inner { font-size: 10px; }
+
+    /* Danger/info boxes inside message view */
+    .danger-box, .warning-box, .info-box { font-size: 10px; }
+
+    /* Compose form mobile */
+    #composeForm .danger-box { margin: 10px 14px 0; }
+  }
+
   /* Scrollbar */
   ::-webkit-scrollbar { width: 4px; }
   ::-webkit-scrollbar-track { background: transparent; }
@@ -1951,6 +2030,7 @@ async function sbFetch(path, options = {}) {
 async function loadMessages() {
   const data = await sbFetch('messages?order=id.desc&select=*');
   if (!data || !Array.isArray(data)) return;
+  const prevIds = new Set(messages.map(m => m.id));
   messages = data.map(m => ({
     id: m.id,
     from: m.from_addr,
@@ -1965,6 +2045,16 @@ async function loadMessages() {
     decryptedBody: null,
     decryptedSubject: null
   }));
+  // 新着通知
+  messages.forEach(m => {
+    if (!prevIds.has(m.id) && !m.deleted) {
+      sendNotif(
+        '[CRYPTMAIL] 新着極秘メッセージ',
+        `件名: ${m.subject} — パスワードで復号してください`,
+        false
+      );
+    }
+  });
   renderInbox();
 }
 
@@ -2005,6 +2095,8 @@ let sessionId = Math.random().toString(36).substr(2,9).toUpperCase();
 window.addEventListener('DOMContentLoaded', () => {
   // 起動時にタイトル画面を表示
   showTitleScreen();
+  // 通知許可をリクエスト
+  requestNotifPermission();
 
   document.getElementById('sessionId').textContent = sessionId;
   setInterval(updateClock, 1000);
@@ -2081,6 +2173,11 @@ function tickTimers() {
           showDeletedView();
         }
         showToast(`[WARN] メッセージ「${msg.subject}」が自動消去されました`, 'error');
+        sendNotif(
+          '[CRYPTMAIL] ⚠ メッセージが自動消去されました',
+          `「${msg.subject}」はタイマー満了により完全削除されました`,
+          true
+        );
       }
     }
   });
@@ -2548,6 +2645,33 @@ async function pwGateSubmit() {
       err.textContent = `[DENIED] コードが無効です。残り試行: ${3 - pwGateAttempts} 回`;
     }
   }
+}
+
+// ===== NOTIFICATIONS =====
+let _notifPermission = false;
+
+async function requestNotifPermission() {
+  if (!('Notification' in window)) return;
+  if (Notification.permission === 'granted') { _notifPermission = true; return; }
+  if (Notification.permission !== 'denied') {
+    const perm = await Notification.requestPermission();
+    _notifPermission = perm === 'granted';
+  }
+}
+
+function sendNotif(title, body, urgent = false) {
+  if (!_notifPermission || Notification.permission !== 'granted') return;
+  const icon = 'https://www.google.com/s2/favicons?domain=classroom.google.com';
+  const n = new Notification(title, {
+    body,
+    icon,
+    badge: icon,
+    tag: 'cryptmail-' + Date.now(),
+    requireInteraction: urgent,
+    silent: false,
+  });
+  n.onclick = () => { window.focus(); n.close(); };
+  if (!urgent) setTimeout(() => n.close(), 6000);
 }
 
 function showToast(msg, type = '') {
