@@ -37,7 +37,6 @@
     cursor: crosshair;
   }
 
-  /* Scanlines overlay */
   body::before {
     content: '';
     position: fixed;
@@ -53,7 +52,6 @@
     z-index: 9999;
   }
 
-  /* Noise texture */
   body::after {
     content: '';
     position: fixed;
@@ -725,6 +723,26 @@
 
   .modal-btn:hover { background: var(--purple-bright); box-shadow: 0 0 20px rgba(168,85,247,0.4); }
 
+  /* ★ 戻るボタン共通スタイル */
+  .modal-btn-cancel {
+    width: 100%;
+    background: transparent;
+    color: var(--text-dim);
+    border: 1px solid var(--border-bright);
+    padding: 10px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 6px;
+  }
+  .modal-btn-cancel:hover {
+    color: var(--text);
+    border-color: var(--text-dim);
+    background: rgba(255,255,255,0.04);
+  }
+
   .modal-footer {
     padding: 12px 20px;
     border-top: 1px solid var(--border);
@@ -876,7 +894,7 @@
 <!-- TICKER -->
 <div class="ticker">
   <div class="ticker-inner">
-    ██ この通信システムは完全監視下にあります ██ 全メッセージは軍用256bit AES-GCM暗号化 ██ 不正アクセスは自動的に記録され当局に通報されます ██ このシステムの無断使用は厳重に禁止されています ██ メッセージは設定時刻に完全消去されます ██ 受信したメッセージの複製・スクリーンショットは禁止 ██ この接続はエンドツーエンド暗号化されています ██ セッションは非活動状態が続く場合自動終了します ██
+    ██ この通信システムは完全監視下にあります ██ 全メッセージは軍用256bit AES-GCM暗号化 ██ 不正アクセスは自動的に記録され当局に通報されます ██ このシステムの無断使用は厳重に禁止されています ██ メッセージは設定時刻に完全消去されます ██ 受信したメッセージの複製・スクリーンショットは厳禁 ██ この接続はエンドツーエンド暗号化されています ██ セッションは非活動状態が続く場合自動終了します ██
   </div>
 </div>
 
@@ -886,7 +904,7 @@
   <div class="status-bar">
     <span><span class="status-dot"></span> E2E暗号化: アクティブ</span>
     <span><span class="status-dot red"></span> 監視: オン</span>
-    <span>セキュリティレベル: <span style="color:var(--red); font-weight:bold;">最高</span></span>
+    <span>セキュリティレベル: <span style="color:var(--red); font-weight:bold;">厳重</span></span>
     <span id="clock">--:--:--</span>
   </div>
 </div>
@@ -1088,6 +1106,8 @@
       </div>
       <div class="attempt-counter" id="attemptCounter"></div>
       <button class="modal-btn" onclick="verifyPassword()">>> 復号して閲覧</button>
+      <!-- ★ パスワードモーダルの戻るボタン -->
+      <button class="modal-btn-cancel" onclick="closePasswordModal()">&lt;&lt; キャンセルして戻る</button>
     </div>
     <div class="modal-footer">
       このパスワードは当サーバーに保存されていません。<br>
@@ -1139,9 +1159,13 @@
         </div>
       </div>
     </div>
-    <div class="modal-footer" id="sendModalFooter">
+    <!-- ★ 送信確認モーダルのフッター：「はい」と「キャンセル」を並べる -->
+    <div class="modal-footer" id="sendModalFooter" style="display:flex; flex-direction:column; gap:6px; padding:12px 20px;">
       <button class="modal-btn" id="sendConfirmBtn" onclick="nextSendStep()" style="margin-top:0; padding:10px;">
         >> はい、送信します
+      </button>
+      <button class="modal-btn-cancel" id="sendCancelBtn" onclick="closeSendModal()">
+        &lt;&lt; キャンセルして戻る
       </button>
     </div>
   </div>
@@ -1366,7 +1390,6 @@ function openMessage(id) {
     return;
   }
 
-  // Show subject/sender preview first, body locked behind password
   showMessagePreview(msg);
 }
 
@@ -1418,6 +1441,12 @@ function openPasswordModal() {
     attempts[id] > 0 ? `残り試行回数: ${3 - attempts[id]} 回` : '';
   document.getElementById('passwordModal').classList.add('active');
   setTimeout(() => document.getElementById('modalPassInput').focus(), 100);
+}
+
+// ★ パスワードモーダルを閉じる
+function closePasswordModal() {
+  document.getElementById('passwordModal').classList.remove('active');
+  document.getElementById('modalPassInput').value = '';
 }
 
 async function verifyPassword() {
@@ -1593,11 +1622,18 @@ function startSendProcess() {
   sendStep = 0;
   document.querySelectorAll('[id^=step]').forEach(el => el.className = 'confirm-step pending');
   const ep = document.getElementById('encryptProgress'); if(ep) ep.style.display = 'none';
-  const smf = document.getElementById('sendModalFooter'); if(smf) smf.style.display = 'block';
+  const smf = document.getElementById('sendModalFooter'); if(smf) smf.style.display = 'flex';
+  const scb = document.getElementById('sendCancelBtn'); if(scb) scb.style.display = 'block';
   document.getElementById('sendConfirmBtn').textContent = '>> はい、送信します';
   document.getElementById('sendConfirmBtn').disabled = false;
   document.getElementById('sendModal').classList.add('active');
   updateSendStep();
+}
+
+// ★ 送信確認モーダルを閉じる（キャンセル）
+function closeSendModal() {
+  document.getElementById('sendModal').classList.remove('active');
+  showToast('[ABORTED] 送信をキャンセルしました', '');
 }
 
 function updateSendStep() {
@@ -1619,7 +1655,11 @@ function nextSendStep() {
     document.getElementById('sendConfirmBtn').textContent = '>> 暗号化を開始する';
   } else if (sendStep === 5) {
     updateSendStep();
-    const smf2 = document.getElementById('sendModalFooter'); if(smf2) smf2.style.display = 'none';
+    // 暗号化開始後はキャンセル不可
+    const scb = document.getElementById('sendCancelBtn');
+    if (scb) scb.style.display = 'none';
+    const smf = document.getElementById('sendModalFooter');
+    if (smf) smf.style.display = 'none';
     const ep2 = document.getElementById('encryptProgress'); if(ep2) ep2.style.display = 'block';
     runEncryption();
   }
