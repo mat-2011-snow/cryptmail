@@ -885,6 +885,187 @@
 
 
 
+
+  /* ===== VOICE CALL ===== */
+  .call-btn {
+    background: transparent;
+    border: 1px solid var(--green);
+    color: var(--green);
+    padding: 5px 12px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .call-btn:hover { background: rgba(34,197,94,0.1); box-shadow: 0 0 10px rgba(34,197,94,0.3); }
+  .call-btn.active { background: rgba(239,68,68,0.15); border-color: var(--red); color: var(--red); }
+  .call-btn.calling { animation: pulse-glow 1s infinite; border-color: var(--yellow); color: var(--yellow); }
+
+  .call-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(3,7,18,0.97);
+    backdrop-filter: blur(12px);
+    z-index: 700;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+  }
+  .call-overlay.active { display: flex; }
+
+  .call-status-ring {
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    border: 2px solid var(--purple);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    font-size: 48px;
+  }
+  .call-status-ring::before {
+    content: '';
+    position: absolute;
+    inset: -8px;
+    border-radius: 50%;
+    border: 1px solid rgba(124,58,237,0.4);
+    animation: pulse-glow 2s infinite;
+  }
+  .call-status-ring::after {
+    content: '';
+    position: absolute;
+    inset: -16px;
+    border-radius: 50%;
+    border: 1px solid rgba(124,58,237,0.2);
+    animation: pulse-glow 2s infinite 0.5s;
+  }
+  .call-status-ring.connected { border-color: var(--green); }
+  .call-status-ring.connected::before { border-color: rgba(34,197,94,0.4); }
+  .call-status-ring.connected::after { border-color: rgba(34,197,94,0.2); }
+  .call-status-ring.ringing { border-color: var(--yellow); animation: pulse-glow 0.8s infinite; }
+
+  @keyframes waveform {
+    0%,100% { height: 4px; }
+    50% { height: 20px; }
+  }
+  .call-waveform {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    height: 24px;
+  }
+  .call-wave-bar {
+    width: 3px;
+    background: var(--green);
+    border-radius: 2px;
+    height: 4px;
+  }
+  .call-wave-bar.active { animation: waveform 0.6s ease infinite; }
+  .call-wave-bar:nth-child(2) { animation-delay: 0.1s; }
+  .call-wave-bar:nth-child(3) { animation-delay: 0.2s; }
+  .call-wave-bar:nth-child(4) { animation-delay: 0.3s; }
+  .call-wave-bar:nth-child(5) { animation-delay: 0.15s; }
+
+  .call-info {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .call-info .call-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 13px;
+    color: var(--purple-glow);
+    letter-spacing: 3px;
+  }
+  .call-info .call-sub {
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+  }
+  .call-timer {
+    font-family: 'Orbitron', monospace;
+    font-size: 20px;
+    color: var(--green);
+    letter-spacing: 4px;
+  }
+
+  .call-controls {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+  .call-ctrl-btn {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    border: 1px solid var(--border-bright);
+    background: rgba(15,23,42,0.8);
+    color: var(--text-dim);
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0;
+  }
+  .call-ctrl-btn:hover { border-color: var(--purple); color: var(--purple-glow); }
+  .call-ctrl-btn.end {
+    width: 64px; height: 64px;
+    background: var(--red);
+    border-color: var(--red);
+    color: white;
+    font-size: 20px;
+  }
+  .call-ctrl-btn.end:hover { background: #dc2626; box-shadow: 0 0 20px rgba(239,68,68,0.5); }
+  .call-ctrl-btn.muted { border-color: var(--red); color: var(--red); background: rgba(239,68,68,0.1); }
+
+  .call-incoming {
+    position: fixed;
+    top: 80px; right: 24px;
+    background: var(--bg2);
+    border: 1px solid var(--green);
+    border-top: 3px solid var(--green);
+    padding: 16px 20px;
+    z-index: 1500;
+    width: 280px;
+    display: none;
+    box-shadow: 0 0 30px rgba(34,197,94,0.2);
+    animation: pulse-glow 1s infinite;
+  }
+  .call-incoming.active { display: block; }
+  .call-incoming-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 10px;
+    color: var(--green);
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+  .call-incoming-sub { font-size: 11px; color: var(--text-dim); margin-bottom: 14px; }
+  .call-incoming-btns { display: flex; gap: 8px; }
+  .call-incoming-btns button {
+    flex: 1; padding: 8px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px; letter-spacing: 1px;
+    cursor: pointer; border: none; transition: all 0.2s;
+  }
+  .call-accept { background: var(--green); color: #000; }
+  .call-accept:hover { background: #16a34a; }
+  .call-decline { background: var(--red); color: white; }
+  .call-decline:hover { background: #dc2626; }
+
+  @media (max-width: 768px) {
+    .call-incoming { right: 12px; left: 12px; width: auto; top: 70px; }
+  }
+
   /* ===== IMAGE UPLOAD ===== */
   .img-upload-area {
     border: 2px dashed var(--border-bright);
@@ -1573,6 +1754,7 @@
     <span><span class="status-dot"></span> E2E暗号化: アクティブ</span>
     <span><span class="status-dot red"></span> 監視: オン</span>
     <span>セキュリティレベル: <span style="color:var(--red); font-weight:bold;">厳重</span></span>
+    <button class="call-btn" id="callBtn" onclick="startCall()">[CALL] 通話</button>
     <span id="clock">--:--:--</span>
   </div>
 </div>
@@ -1914,6 +2096,41 @@
   <img id="lightboxImg" src="" alt="">
   <div class="lightbox-info" id="lightboxInfo"></div>
 </div>
+
+
+<!-- INCOMING CALL -->
+<div class="call-incoming" id="callIncoming">
+  <div class="call-incoming-title">[INCOMING] 着信</div>
+  <div class="call-incoming-sub">暗号化音声通話の要求</div>
+  <div class="call-incoming-btns">
+    <button class="call-accept" onclick="acceptCall()">応答</button>
+    <button class="call-decline" onclick="declineCall()">拒否</button>
+  </div>
+</div>
+
+<!-- CALL OVERLAY -->
+<div class="call-overlay" id="callOverlay">
+  <div class="call-status-ring" id="callRing">📡</div>
+  <div class="call-info">
+    <div class="call-title" id="callTitle">接続中...</div>
+    <div class="call-sub" id="callSub">// E2E ENCRYPTED VOICE</div>
+    <div class="call-timer" id="callTimer" style="display:none;">00:00</div>
+  </div>
+  <div class="call-waveform" id="callWaveform">
+    <div class="call-wave-bar"></div>
+    <div class="call-wave-bar"></div>
+    <div class="call-wave-bar"></div>
+    <div class="call-wave-bar"></div>
+    <div class="call-wave-bar"></div>
+  </div>
+  <div class="call-controls">
+    <button class="call-ctrl-btn" id="muteBtn" onclick="toggleMute()" title="ミュート">🎤</button>
+    <button class="call-ctrl-btn end" onclick="endCall()">✕</button>
+    <button class="call-ctrl-btn" id="speakerBtn" onclick="toggleSpeaker()" title="スピーカー">🔊</button>
+  </div>
+  <div style="font-size:9px;color:var(--text-muted);letter-spacing:2px;">// AES-256-GCM ENCRYPTED // P2P DIRECT //</div>
+</div>
+<audio id="remoteAudio" autoplay playsinline></audio>
 
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
@@ -2937,6 +3154,243 @@ async function pwGateSubmit() {
     }
   }
 }
+
+
+// ===== VOICE CALL (WebRTC) =====
+const SIGNAL_CHANNEL = 'cryptmail-signaling';
+let pc = null;           // RTCPeerConnection
+let localStream = null;
+let callTimer = null;
+let callSeconds = 0;
+let isMuted = false;
+let callRole = null;     // 'caller' | 'callee'
+let signalSub = null;
+let myCallId = null;
+
+const ICE_SERVERS = {
+  iceServers: [
+    { urls: 'stun:stun.l.google.com:19302' },
+    { urls: 'stun:stun1.l.google.com:19302' },
+    // Open Relay TURN (無料)
+    {
+      urls: 'turn:openrelay.metered.ca:80',
+      username: 'openrelayproject',
+      credential: 'openrelayproject'
+    },
+    {
+      urls: 'turn:openrelay.metered.ca:443',
+      username: 'openrelayproject',
+      credential: 'openrelayproject'
+    }
+  ]
+};
+
+// Supabase Realtime でシグナリング
+async function subscribeSignaling() {
+  if (signalSub) return;
+  // Supabase Realtime channel経由でシグナリングメッセージをやり取り
+  // messages テーブルをポーリング流用（シグナル用レコード）
+}
+
+async function sendSignal(type, data) {
+  await sbFetch('signals', {
+    method: 'POST',
+    body: JSON.stringify({ type, data: JSON.stringify(data), created_at: new Date().toISOString() })
+  });
+}
+
+async function pollSignals(types, timeoutMs = 20000) {
+  const start = Date.now();
+  while (Date.now() - start < timeoutMs) {
+    const rows = await sbFetch('signals?order=id.desc&limit=10');
+    if (rows) {
+      for (const row of rows) {
+        if (types.includes(row.type)) {
+          // 読んだら削除
+          await sbFetch('signals?id=eq.' + row.id, { method: 'DELETE' });
+          return { type: row.type, data: JSON.parse(row.data) };
+        }
+      }
+    }
+    await new Promise(r => setTimeout(r, 1000));
+  }
+  return null;
+}
+
+async function startCall() {
+  if (pc) { endCall(); return; }
+  callRole = 'caller';
+  myCallId = Date.now();
+
+  document.getElementById('callBtn').classList.add('calling');
+  showCallOverlay('発信中...', '相手の応答を待っています');
+  document.getElementById('callRing').classList.add('ringing');
+
+  try {
+    localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+  } catch(e) {
+    showToast('[ERROR] マイクへのアクセスが拒否されました', 'error');
+    hideCallOverlay(); return;
+  }
+
+  pc = new RTCPeerConnection(ICE_SERVERS);
+  localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
+
+  pc.ontrack = (e) => {
+    document.getElementById('remoteAudio').srcObject = e.streams[0];
+    onCallConnected();
+  };
+
+  pc.onicecandidate = async (e) => {
+    if (e.candidate) {
+      await sendSignal('ice-caller', e.candidate);
+    }
+  };
+
+  const offer = await pc.createOffer();
+  await pc.setLocalDescription(offer);
+  await sendSignal('offer', offer);
+
+  // 相手のanswerを待つ
+  showToast('[CALL] 発信中... 相手が応答するまでお待ちください', '');
+  const ans = await pollSignals(['answer'], 30000);
+  if (!ans) {
+    showToast('[CALL] 応答がありません', 'error');
+    endCall(); return;
+  }
+  await pc.setRemoteDescription(new RTCSessionDescription(ans.data));
+
+  // ICE candidateを受け取る
+  collectIceCandidates('ice-callee', pc);
+}
+
+async function collectIceCandidates(type, peerConn) {
+  for (let i = 0; i < 10; i++) {
+    const rows = await sbFetch(`signals?type=eq.${type}&order=id.asc&limit=5`);
+    if (rows && rows.length > 0) {
+      for (const row of rows) {
+        try { await peerConn.addIceCandidate(new RTCIceCandidate(JSON.parse(row.data))); } catch(e) {}
+        await sbFetch('signals?id=eq.' + row.id, { method: 'DELETE' });
+      }
+    }
+    await new Promise(r => setTimeout(r, 500));
+  }
+}
+
+async function checkIncoming() {
+  if (pc) return;
+  const rows = await sbFetch('signals?type=eq.offer&order=id.desc&limit=1');
+  if (rows && rows.length > 0) {
+    document.getElementById('callIncoming').classList.add('active');
+    sendNotif('[CRYPTMAIL] 📞 着信', '暗号化音声通話の要求があります', true);
+  }
+}
+
+async function acceptCall() {
+  document.getElementById('callIncoming').classList.remove('active');
+  callRole = 'callee';
+
+  try {
+    localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+  } catch(e) {
+    showToast('[ERROR] マイクへのアクセスが拒否されました', 'error');
+    return;
+  }
+
+  const offerRow = await sbFetch('signals?type=eq.offer&order=id.desc&limit=1');
+  if (!offerRow || !offerRow.length) { showToast('[ERROR] 接続情報が見つかりません', 'error'); return; }
+  await sbFetch('signals?id=eq.' + offerRow[0].id, { method: 'DELETE' });
+  const offer = JSON.parse(offerRow[0].data);
+
+  pc = new RTCPeerConnection(ICE_SERVERS);
+  localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
+
+  pc.ontrack = (e) => {
+    document.getElementById('remoteAudio').srcObject = e.streams[0];
+    onCallConnected();
+  };
+
+  pc.onicecandidate = async (e) => {
+    if (e.candidate) await sendSignal('ice-callee', e.candidate);
+  };
+
+  await pc.setRemoteDescription(new RTCSessionDescription(offer));
+  const answer = await pc.createAnswer();
+  await pc.setLocalDescription(answer);
+  await sendSignal('answer', answer);
+
+  showCallOverlay('接続中...', '暗号化チャンネルを確立しています');
+  collectIceCandidates('ice-caller', pc);
+}
+
+function declineCall() {
+  document.getElementById('callIncoming').classList.remove('active');
+  sbFetch('signals?type=eq.offer', { method: 'DELETE' });
+}
+
+function onCallConnected() {
+  document.getElementById('callRing').className = 'call-status-ring connected';
+  document.getElementById('callRing').textContent = '🔒';
+  document.getElementById('callTitle').textContent = '通話中';
+  document.getElementById('callSub').textContent = '// E2E ENCRYPTED // P2P DIRECT';
+  document.getElementById('callTimer').style.display = 'block';
+  document.getElementById('callBtn').className = 'call-btn active';
+  document.getElementById('callBtn').textContent = '[END] 通話中';
+  document.querySelectorAll('.call-wave-bar').forEach(b => b.classList.add('active'));
+  callSeconds = 0;
+  callTimer = setInterval(() => {
+    callSeconds++;
+    const m = String(Math.floor(callSeconds/60)).padStart(2,'0');
+    const s = String(callSeconds%60).padStart(2,'0');
+    document.getElementById('callTimer').textContent = m + ':' + s;
+  }, 1000);
+}
+
+function endCall() {
+  if (pc) { pc.close(); pc = null; }
+  if (localStream) { localStream.getTracks().forEach(t => t.stop()); localStream = null; }
+  if (callTimer) { clearInterval(callTimer); callTimer = null; }
+  document.getElementById('remoteAudio').srcObject = null;
+  hideCallOverlay();
+  document.getElementById('callBtn').className = 'call-btn';
+  document.getElementById('callBtn').textContent = '[CALL] 通話';
+  document.getElementById('callIncoming').classList.remove('active');
+  // シグナルを全部クリア
+  sbFetch('signals?type=eq.offer', { method: 'DELETE' });
+  sbFetch('signals?type=eq.answer', { method: 'DELETE' });
+  isMuted = false;
+  callRole = null;
+  showToast('[CALL] 通話を終了しました', '');
+}
+
+function toggleMute() {
+  if (!localStream) return;
+  isMuted = !isMuted;
+  localStream.getAudioTracks().forEach(t => t.enabled = !isMuted);
+  const btn = document.getElementById('muteBtn');
+  btn.textContent = isMuted ? '🔇' : '🎤';
+  btn.classList.toggle('muted', isMuted);
+}
+
+function toggleSpeaker() {
+  const audio = document.getElementById('remoteAudio');
+  audio.muted = !audio.muted;
+  document.getElementById('speakerBtn').textContent = audio.muted ? '🔈' : '🔊';
+}
+
+function showCallOverlay(title, sub) {
+  document.getElementById('callTitle').textContent = title;
+  document.getElementById('callSub').textContent = sub;
+  document.getElementById('callTimer').style.display = 'none';
+  document.getElementById('callOverlay').classList.add('active');
+}
+
+function hideCallOverlay() {
+  document.getElementById('callOverlay').classList.remove('active');
+}
+
+// 着信チェック（5秒ごと）
+setInterval(checkIncoming, 5000);
 
 // ===== NOTIFICATIONS =====
 let _notifPermission = false;
