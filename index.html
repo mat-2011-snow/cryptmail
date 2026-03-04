@@ -2182,6 +2182,24 @@
           </div>
         </div>
 
+        <div class="form-group">
+          <div class="form-label">送信オプション</div>
+          <label class="form-toggle" id="onetimeToggle" onclick="toggleOnetime()">
+            <input type="checkbox" id="compose-onetime" onclick="event.stopPropagation()">
+            <span>ワンタイムメッセージ — 1回読んだら即消去</span>
+            <span class="onetime-badge" style="margin-left:auto;">[ONETIME]</span>
+          </label>
+          <label class="form-toggle" style="margin-top:6px;" id="scheduleToggle" onclick="toggleSchedule()">
+            <input type="checkbox" id="compose-schedule-enabled" onclick="event.stopPropagation()">
+            <span>予約送信 — 指定日時に自動送信</span>
+            <span class="scheduled-badge" style="margin-left:auto;">[SCHEDULED]</span>
+          </label>
+          <div class="schedule-input-wrap" id="scheduleInputWrap">
+            <input type="datetime-local" class="schedule-datetime" id="compose-schedule-at">
+            <div class="info-box" style="margin-top:6px;">[INFO] 指定時刻まではメッセージは保留されます。相手には届きません。</div>
+          </div>
+        </div>
+
         <div class="submit-area">
           <div style="font-family:'Orbitron',monospace; font-size:10px; color:var(--text-dim); letter-spacing:2px; margin-bottom:4px;">
             送信前確認チェックリスト
@@ -2754,9 +2772,17 @@ async function loadMessages() {
     sent: m.sent_at,
     read: false,
     deleted: m.is_deleted,
+    isRead: m.is_read || false,
+    isOnetime: m.is_onetime || false,
+    scheduledAt: m.scheduled_at || null,
     decryptedBody: null,
     decryptedSubject: null
   }));
+  // 予約送信: scheduledAtを過ぎたものを表示
+  messages = messages.filter(m => {
+    if (m.scheduledAt && new Date(m.scheduledAt) > new Date()) return false; // まだ非表示
+    return true;
+  });
   // 新着通知
   messages.forEach(m => {
     if (!prevIds.has(m.id) && !m.deleted) {
@@ -2796,7 +2822,10 @@ async function saveMessage(msg) {
       timer: msg.timer,
       remaining: msg.remaining,
       sent_at: msg.sent,
-      is_deleted: false
+      is_deleted: false,
+      is_read: false,
+      is_onetime: msg.isOnetime || false,
+      scheduled_at: msg.scheduledAt || null
     })
   });
 }
@@ -2877,6 +2906,9 @@ function renderInbox() {
       <div class="subject">${msg.deleted ? '[WARN] [消去済み]' : (msg.hasImages ? '📎 ' : '') + msg.subject}</div>
       <div class="meta">
         <span class="lock-badge">[LOCKED] PW保護</span>
+        ${msg.isOnetime ? '<span class="onetime-badge">[1×]</span>' : ''}
+        ${msg.scheduledAt && new Date(msg.scheduledAt) > new Date() ? '<span class="scheduled-badge">[予約]</span>' : ''}
+        ${msg.isRead ? '<span class="read-badge">[READ]</span>' : ''}
         ${!msg.deleted ? `<span class="timer-badge">[TIMER] ${timeStr}</span>` : '<span style="color:var(--red);font-size:9px;">消去完了</span>'}
       </div>
     `;
@@ -3015,6 +3047,17 @@ async function verifyPassword() {
     } catch(e) { /* レガシー: プレーンテキスト */ }
     msg.decryptedBody = decryptedBody;
     msg.decryptedImages = decryptedImages;
+    // 既読マーク
+    if (!msg.isRead) {
+      msg.isRead = true;
+      await sbFetch('messages?id=eq.' + msg.id, { method: 'PATCH', body: JSON.stringify({ is_read: true }) });
+    }
+    // ワンタイム: 読んだら即消去
+    if (msg.isOnetime) {
+      msg.deleted = true;
+      await sbFetch('messages?id=eq.' + msg.id, { method: 'PATCH', body: JSON.stringify({ is_deleted: true, remaining: 0 }) });
+      showToast('[ONETIME] このメッセージは読まれたため即時消去されました', 'error');
+    }
     document.getElementById('passwordModal').classList.remove('active');
     msg.read = true;
     renderInbox();
@@ -3070,6 +3113,8 @@ function showMessageView(msg) {
         暗号化: <span>AES-256-GCM</span>
       </div>
     </div>
+    ${msg.isRead ? '<div style="padding:4px 24px;"><span class="read-badge">[READ] 既読済み</span></div>' : ''}
+    ${msg.isOnetime ? '<div style="padding:4px 24px;"><span class="onetime-badge">[ONETIME] 読後即消去</span></div>' : ''}
     <div class="message-body">${msg.decryptedBody || msg.body}</div>
     ${msg.decryptedImages && msg.decryptedImages.length > 0 ? `
     <div style="padding:0 24px 4px;">
@@ -3130,6 +3175,16 @@ function showCompose() {
   updatePasswordStrength('');
   selectedImages = [];
   renderImgPreviews();
+  const ot = document.getElementById('compose-onetime');
+  const sc = document.getElementById('compose-schedule-enabled');
+  const sw = document.getElementById('scheduleInputWrap');
+  const otToggle = document.getElementById('onetimeToggle');
+  const scToggle = document.getElementById('scheduleToggle');
+  if (ot) { ot.checked = false; }
+  if (sc) { sc.checked = false; }
+  if (sw) sw.classList.remove('visible');
+  if (otToggle) otToggle.classList.remove('on');
+  if (scToggle) scToggle.classList.remove('on');
 }
 
 function updateChecklist() {
@@ -3270,6 +3325,16 @@ async function finishSend() {
   const pw = document.getElementById('compose-pass').value;
   const timerVal = parseInt(document.getElementById('compose-timer').value);
 
+  const isOnetime = document.getElementById('compose-onetime').checked;
+  const schedEnabled = document.getElementById('compose-schedule-enabled').checked;
+  const schedAt = schedEnabled ? document.getElementById('compose-schedule-at').value : null;
+
+  // 予約送信の場合、scheduledAtまでは表示しない
+  if (schedAt && new Date(schedAt) <= new Date()) {
+    showToast('[WARN] 予約時刻は未来に設定してください', 'error');
+    return;
+  }
+
   const newMsg = {
     from: 'me@cryptmail.gov',
     subject,
@@ -3279,7 +3344,9 @@ async function finishSend() {
     timer: timerVal,
     remaining: timerVal,
     sent: new Date().toLocaleString('ja-JP').replace(/\//g,'-').slice(0,16),
-    deleted: false
+    deleted: false,
+    isOnetime,
+    scheduledAt: schedAt ? new Date(schedAt).toISOString() : null
   };
   try {
     await saveMessage(newMsg);
@@ -4006,6 +4073,30 @@ async function pollCanvas() {
     const img = new Image();
     img.onload = () => { if (canvasCtx) canvasCtx.drawImage(img, 0, 0); };
     img.src = rows[0].canvas_data;
+  }
+}
+
+
+// ===== オプショントグル =====
+function toggleOnetime() {
+  const cb = document.getElementById('compose-onetime');
+  const toggle = document.getElementById('onetimeToggle');
+  cb.checked = !cb.checked;
+  toggle.classList.toggle('on', cb.checked);
+}
+
+function toggleSchedule() {
+  const cb = document.getElementById('compose-schedule-enabled');
+  const toggle = document.getElementById('scheduleToggle');
+  const wrap = document.getElementById('scheduleInputWrap');
+  cb.checked = !cb.checked;
+  toggle.classList.toggle('on', cb.checked);
+  wrap.classList.toggle('visible', cb.checked);
+  if (cb.checked) {
+    // デフォルトを1時間後に設定
+    const dt = new Date(Date.now() + 3600000);
+    const local = new Date(dt.getTime() - dt.getTimezoneOffset()*60000).toISOString().slice(0,16);
+    document.getElementById('compose-schedule-at').value = local;
   }
 }
 
