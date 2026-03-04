@@ -1222,7 +1222,9 @@ async function loadMessages() {
     remaining: m.remaining,
     sent: m.sent_at,
     read: false,
-    deleted: m.is_deleted
+    deleted: m.is_deleted,
+    decryptedBody: null,
+    decryptedSubject: null
   }));
   renderInbox();
 }
@@ -1449,8 +1451,10 @@ async function verifyPassword() {
     if (attempts[id] >= 3) {
       msg.deleted = true;
       msg.body = null;
+      await updateRemaining(id, 0, true);
       document.getElementById('passwordModal').classList.remove('active');
       showDeletedView();
+      renderInbox();
       showToast('[DENIED] 認証失敗3回。メッセージを即時消去しました', 'error');
     } else {
       document.getElementById('attemptCounter').textContent =
