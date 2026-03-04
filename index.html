@@ -1231,14 +1231,13 @@ async function loadMessages() {
 
 async function saveMessage(msg) {
   const encBody = await encryptText(msg.body, msg.password);
-  const encSubject = await encryptText(msg.subject, msg.password);
   const pwHash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(msg.password));
   const pwHashHex = Array.from(new Uint8Array(pwHash)).map(b => b.toString(16).padStart(2,'0')).join('');
   await sbFetch('messages', {
     method: 'POST',
     body: JSON.stringify({
       from_addr: msg.from,
-      subject: encSubject,
+      subject: msg.subject,
       body: encBody,
       password: pwHashHex,
       timer: msg.timer,
@@ -1430,13 +1429,11 @@ async function verifyPassword() {
 
   if (pwHashHex === msg.password) {
     const decryptedBody = await decryptText(msg.body, input);
-    const decryptedSubject = await decryptText(msg.subject, input);
     if (decryptedBody === null) {
       showToast('[ERROR] 復号に失敗しました', 'error');
       return;
     }
     msg.decryptedBody = decryptedBody;
-    msg.decryptedSubject = decryptedSubject || msg.subject;
     document.getElementById('passwordModal').classList.remove('active');
     msg.read = true;
     renderInbox();
