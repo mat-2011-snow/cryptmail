@@ -2501,7 +2501,7 @@
       background: transparent;
       border: 1px solid rgba(239,68,68,0.5);
       color: var(--red);
-      margin-top: 8px;
+      margin-top: 24px;
       font-size: 11px;
       letter-spacing: 3px;
       padding: 6px 14px;
@@ -2551,7 +2551,7 @@
 
 
 <!-- ===== ADMIN CONSOLE OVERLAY ===== -->
-<div class="admin-console-overlay" id="adminConsoleOverlay">
+<div class="admin-console-overlay" id="adminConsoleOverlay" style="position:fixed;inset:0;background:var(--bg);z-index:850;display:none;flex-direction:column;overflow-y:auto;">
   <div class="admin-console-header">
     <div>
       <div class="admin-console-title">[ADMIN] 管理コンソール</div>
@@ -4334,11 +4334,13 @@ function clearSecurityLog() {}
 function deleteAllMessages() {}
 
 function showAdminConsole() {
-  document.getElementById('adminConsoleOverlay').classList.add('active');
+  const el = document.getElementById('adminConsoleOverlay');
+  el.style.display = 'flex';
   loadAdminConsoleData();
 }
 function hideAdminConsole() {
-  document.getElementById('adminConsoleOverlay').classList.remove('active');
+  const el = document.getElementById('adminConsoleOverlay');
+  el.style.display = 'none';
   showTitleScreen();
 }
 
