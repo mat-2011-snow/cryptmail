@@ -2273,18 +2273,21 @@
 
   <div class="game-setup">
     <label>盤面サイズ:</label>
-    <select id="boardSizeSelect" onchange="startGame()">
+    <select id="boardSizeSelect">
       <option value="3">3×3 (3目並べ)</option>
       <option value="4">4×4 (4目並べ)</option>
       <option value="5" selected>5×5 (5目並べ)</option>
     </select>
     <label style="margin-left:8px;">勝利条件:</label>
-    <select id="winCondSelect" onchange="startGame()">
+    <select id="winCondSelect">
       <option value="3">3つ揃い</option>
       <option value="4">4つ揃い</option>
       <option value="5" selected>5つ揃い</option>
     </select>
-    <button class="game-start-btn" onclick="startGame()">>> リセット</button>
+    <label style="margin-left:8px;">ルームID:</label>
+    <input type="text" id="gameRoomInput" placeholder="例: room01" style="width:90px;">
+    <button class="game-start-btn" onclick="joinGame()">>> 開始/参加</button>
+    <button class="game-start-btn" onclick="resetGame()" style="background:transparent;border:1px solid var(--border-bright);color:var(--text-dim);">リセット</button>
   </div>
 
   <div class="game-status-bar">
@@ -3817,64 +3820,95 @@ function switchTab(tab) {
   if (tab === 'game') { if (!gActive) startGame(); }
 }
 
-// ===== N目並べ (ローカル2人用) =====
+// ===== N目並べ (Supabase同期) =====
 let gBoard = [];
 let gSize = 5;
 let gWin = 5;
-let gTurn = 'O'; // ○から開始
 let gActive = false;
+let gRoomId = null;
 let gScoreO = 0, gScoreX = 0;
+let gPollInterval = null;
+let gLastMove = 0;
 
-function startGame() {
+async function joinGame() {
+  const room = document.getElementById('gameRoomInput').value.trim();
+  if (!room) { showToast('[WARN] ルームIDを入力してください', 'error'); return; }
   gSize = parseInt(document.getElementById('boardSizeSelect').value);
   gWin = Math.min(parseInt(document.getElementById('winCondSelect').value), gSize);
-  gBoard = Array(gSize * gSize).fill(null);
-  gTurn = 'O';
-  gActive = true;
-  renderBoard();
-  setStatus('○ の番', 'normal');
+  gRoomId = 'game_' + room;
+
+  const existing = await sbFetch(`game_rooms?room_id=eq.${gRoomId}&limit=1`);
+  if (existing && existing.length > 0 && !existing[0].is_finished) {
+    const g = existing[0];
+    gSize = g.board_size; gWin = g.win_cond;
+    gBoard = JSON.parse(g.board_state);
+    gLastMove = g.move_count || 0;
+  } else {
+    gBoard = Array(gSize * gSize).fill(null);
+    const res = await fetch(SUPABASE_URL + '/rest/v1/game_rooms', {
+      method: 'POST',
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ room_id: gRoomId, board_state: JSON.stringify(gBoard), board_size: gSize, win_cond: gWin, current_turn: 'O', is_finished: false, move_count: 0 })
+    });
+    if (!res.ok) { showToast('[ERROR] ルーム作成失敗: ' + res.status, 'error'); return; }
+    gLastMove = 0;
+  }
+  gActive = true; gScoreO = 0; gScoreX = 0;
+  renderBoard(); updateStatus();
+  if (gPollInterval) clearInterval(gPollInterval);
+  gPollInterval = setInterval(pollGame, 1500);
+  showToast(`[GAME] ルーム「${room}」に参加`, 'success');
 }
 
-function renderBoard() {
-  const el = document.getElementById('gameBoard');
-  el.style.gridTemplateColumns = `repeat(${gSize}, 1fr)`;
-  const winCells = gActive ? getWinCells() : new Set();
-  el.innerHTML = '';
-  gBoard.forEach((cell, i) => {
-    const div = document.createElement('div');
-    div.className = 'game-cell' + (cell ? ' taken ' + (cell === 'O' ? 'O' : 'X') : '') + (winCells.has(i) ? ' win-cell' : '');
-    div.textContent = cell || '';
-    if (!cell && gActive) div.onclick = () => placeMove(i);
-    el.appendChild(div);
+async function pollGame() {
+  if (!gRoomId) return;
+  const rows = await sbFetch(`game_rooms?room_id=eq.${gRoomId}&limit=1`);
+  if (!rows || !rows.length) return;
+  const g = rows[0];
+  if ((g.move_count || 0) > gLastMove) {
+    gLastMove = g.move_count;
+    gBoard = JSON.parse(g.board_state);
+    gActive = !g.is_finished;
+    renderBoard();
+    updateStatus();
+  }
+}
+
+async function placeMove(idx) {
+  if (!gActive || !gRoomId || gBoard[idx]) return;
+
+  // 現在の盤面をDBから取得してターン確認
+  const rows = await sbFetch(`game_rooms?room_id=eq.${gRoomId}&limit=1`);
+  if (!rows || !rows.length) return;
+  const g = rows[0];
+  const currentTurn = g.current_turn || 'O';
+
+  gBoard = JSON.parse(g.board_state);
+  if (gBoard[idx]) return; // すでに置かれてた
+  gBoard[idx] = currentTurn;
+
+  const winner = checkWinner(gBoard);
+  const isDraw = !winner && gBoard.every(c => c);
+  const nextTurn = currentTurn === 'O' ? 'X' : 'O';
+
+  await fetch(SUPABASE_URL + '/rest/v1/game_rooms?id=eq.' + g.id, {
+    method: 'PATCH',
+    headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+    body: JSON.stringify({ board_state: JSON.stringify(gBoard), current_turn: nextTurn, is_finished: !!(winner || isDraw), move_count: (g.move_count || 0) + 1 })
   });
-  document.getElementById('gameScoreO').textContent = `○: ${gScoreO}勝`;
-  document.getElementById('gameScoreX').textContent = `✕: ${gScoreX}勝`;
-}
+  gLastMove = (g.move_count || 0) + 1;
 
-function placeMove(idx) {
-  if (!gActive || gBoard[idx]) return;
-  gBoard[idx] = gTurn;
-  const winner = checkWinner();
   if (winner) {
-    renderBoard();
-    if (winner === 'O') { gScoreO++; setStatus('○ の勝ち！', 'win'); }
-    else { gScoreX++; setStatus('✕ の勝ち！', 'win'); }
+    if (winner === 'O') gScoreO++; else gScoreX++;
     gActive = false;
-    renderBoard();
-    return;
-  }
-  if (gBoard.every(c => c)) {
+  } else if (isDraw) {
     gActive = false;
-    renderBoard();
-    setStatus('引き分け！', 'draw');
-    return;
   }
-  gTurn = gTurn === 'O' ? 'X' : 'O';
-  setStatus((gTurn === 'O' ? '○' : '✕') + ' の番', 'normal');
   renderBoard();
+  updateStatus(winner, isDraw);
 }
 
-function checkWinner() {
+function checkWinner(board) {
   const check = (cells) => {
     for (let i = 0; i <= cells.length - gWin; i++) {
       const s = cells.slice(i, i + gWin);
@@ -3882,49 +3916,88 @@ function checkWinner() {
     }
     return null;
   };
-  for (let r = 0; r < gSize; r++) {
-    const w = check(gBoard.slice(r * gSize, r * gSize + gSize));
-    if (w) return w;
-  }
-  for (let c = 0; c < gSize; c++) {
-    const w = check(Array.from({length: gSize}, (_, r) => gBoard[r * gSize + c]));
-    if (w) return w;
-  }
-  for (let r = 0; r <= gSize - gWin; r++) {
-    for (let c = 0; c <= gSize - gWin; c++) {
-      const d1 = Array.from({length: gWin}, (_, i) => gBoard[(r+i)*gSize+(c+i)]);
-      if (d1[0] && d1.every(x => x === d1[0])) return d1[0];
-      const d2 = Array.from({length: gWin}, (_, i) => gBoard[(r+i)*gSize+(c+gWin-1-i)]);
-      if (d2[0] && d2.every(x => x === d2[0])) return d2[0];
-    }
+  for (let r = 0; r < gSize; r++) { const w = check(board.slice(r*gSize, r*gSize+gSize)); if (w) return w; }
+  for (let c = 0; c < gSize; c++) { const w = check(Array.from({length:gSize},(_,r)=>board[r*gSize+c])); if (w) return w; }
+  for (let r = 0; r <= gSize-gWin; r++) for (let c = 0; c <= gSize-gWin; c++) {
+    const d1 = Array.from({length:gWin},(_,i)=>board[(r+i)*gSize+(c+i)]);
+    if (d1[0] && d1.every(x=>x===d1[0])) return d1[0];
+    const d2 = Array.from({length:gWin},(_,i)=>board[(r+i)*gSize+(c+gWin-1-i)]);
+    if (d2[0] && d2.every(x=>x===d2[0])) return d2[0];
   }
   return null;
 }
 
-function getWinCells() {
+function getWinCells(board) {
   const cells = new Set();
   const mark = (indices) => {
     for (let i = 0; i <= indices.length - gWin; i++) {
       const s = indices.slice(i, i + gWin);
-      if (gBoard[s[0]] && s.every(j => gBoard[j] === gBoard[s[0]])) s.forEach(j => cells.add(j));
+      if (board[s[0]] && s.every(j => board[j] === board[s[0]])) s.forEach(j => cells.add(j));
     }
   };
   for (let r = 0; r < gSize; r++) mark(Array.from({length:gSize},(_,c)=>r*gSize+c));
   for (let c = 0; c < gSize; c++) mark(Array.from({length:gSize},(_,r)=>r*gSize+c));
-  for (let r = 0; r <= gSize-gWin; r++) for (let c = 0; c <= gSize-gWin; c++) {
+  for (let r=0;r<=gSize-gWin;r++) for(let c=0;c<=gSize-gWin;c++){
     mark(Array.from({length:gWin},(_,i)=>(r+i)*gSize+(c+i)));
     mark(Array.from({length:gWin},(_,i)=>(r+i)*gSize+(c+gWin-1-i)));
   }
   return cells;
 }
 
-function setStatus(text, type) {
-  const el = document.getElementById('gameTurnIndicator');
-  el.textContent = text;
-  el.className = 'game-turn-indicator' + (type === 'win' ? ' win' : type === 'draw' ? ' draw' : '');
+function renderBoard() {
+  const el = document.getElementById('gameBoard');
+  el.style.gridTemplateColumns = `repeat(${gSize}, 1fr)`;
+  const winCells = getWinCells(gBoard);
+  el.innerHTML = '';
+  gBoard.forEach((cell, i) => {
+    const div = document.createElement('div');
+    div.className = 'game-cell' + (cell ? ' taken ' + cell : '') + (winCells.has(i) ? ' win-cell' : '');
+    div.textContent = cell || '';
+    if (!cell && gActive) div.onclick = () => placeMove(i);
+    el.appendChild(div);
+  });
+  document.getElementById('gameScoreO').textContent = gRoomId ? `○: ${gScoreO}勝` : '';
+  document.getElementById('gameScoreX').textContent = gRoomId ? `✕: ${gScoreX}勝` : '';
 }
 
-// タブ切り替え時にゲーム初期化
+function updateStatus(winner, isDraw) {
+  const el = document.getElementById('gameTurnIndicator');
+  if (!gRoomId) { el.textContent = 'ルームに参加してください'; el.className = 'game-turn-indicator opponent'; return; }
+  if (winner) {
+    el.textContent = (winner === 'O' ? '○' : '✕') + ' の勝ち！';
+    el.className = 'game-turn-indicator win';
+  } else if (isDraw) {
+    el.textContent = '引き分け！';
+    el.className = 'game-turn-indicator draw';
+  } else {
+    // DBから現在のターンを反映
+    sbFetch(`game_rooms?room_id=eq.${gRoomId}&limit=1`).then(rows => {
+      if (rows && rows.length) {
+        const turn = rows[0].current_turn || 'O';
+        el.textContent = (turn === 'O' ? '○' : '✕') + ' の番';
+        el.className = 'game-turn-indicator';
+      }
+    });
+  }
+}
+
+async function resetGame() {
+  if (!gRoomId) return;
+  gBoard = Array(gSize * gSize).fill(null);
+  gActive = true;
+  const rows = await sbFetch(`game_rooms?room_id=eq.${gRoomId}&limit=1`);
+  if (rows && rows.length) {
+    gLastMove++;
+    await fetch(SUPABASE_URL + '/rest/v1/game_rooms?id=eq.' + rows[0].id, {
+      method: 'PATCH',
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ board_state: JSON.stringify(gBoard), current_turn: 'O', is_finished: false, move_count: gLastMove })
+    });
+  }
+  renderBoard(); updateStatus();
+  showToast('[GAME] リセットしました', 'success');
+}
+
 // ===== CANVAS =====
 let canvasTool = 'pen';
 let canvasColor = '#c084fc';
@@ -4024,8 +4097,8 @@ function canvasEnd() {
   if (!isDrawing) return;
   isDrawing = false;
   canvasSnapshot = null;
-  // 共有モードなら自動同期
-  if (canvasRoomId) autoSyncCanvas();
+  // 共有モードなら自動同期（少し遅延させてdraw完了を待つ）
+  if (canvasRoomId) setTimeout(autoSyncCanvas, 100);
 }
 
 function hexToRgba(hex, alpha) {
@@ -4111,28 +4184,33 @@ function handleCanvasImport(e) {
 async function joinCanvasRoom() {
   const room = document.getElementById('canvasRoomInput').value.trim();
   if (!room) { showToast('[WARN] ルームIDを入力してください', 'error'); return; }
+  if (!canvasEl) initCanvas();
   canvasRoomId = 'canvas_' + room;
   document.getElementById('canvasRoomLabel').textContent = `// ROOM: ${room} // LIVE`;
   document.getElementById('canvasUsers').innerHTML = '<div class="canvas-user-dot"></div>';
   if (canvasPollInterval) clearInterval(canvasPollInterval);
-  // 既存のキャンバスデータをロード
+
   const rows = await sbFetch(`canvas_rooms?room_id=eq.${canvasRoomId}&limit=1`);
   if (rows && rows.length && rows[0].canvas_data) {
-    const img = new Image();
-    img.onload = () => {
-      if (!canvasCtx) initCanvas();
-      canvasCtx.drawImage(img, 0, 0);
-    };
-    img.src = rows[0].canvas_data;
+    // 既存ルーム: データをロード
     lastCanvasVersion = rows[0].version || 0;
+    const img = new Image();
+    img.onload = () => { if (canvasCtx) canvasCtx.drawImage(img, 0, 0); };
+    img.src = rows[0].canvas_data;
   } else {
-    // 新規作成
-    await sbFetch('canvas_rooms', {
+    // 新規ルーム: 作成
+    const dataUrl = canvasEl.toDataURL('image/jpeg', 0.6);
+    const res = await fetch(SUPABASE_URL + '/rest/v1/canvas_rooms', {
       method: 'POST',
-      body: JSON.stringify({ room_id: canvasRoomId, canvas_data: canvasEl.toDataURL('image/jpeg', 0.5), version: 0 })
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ room_id: canvasRoomId, canvas_data: dataUrl, version: 0 })
     });
+    if (!res.ok) { showToast('[ERROR] ルーム作成失敗: ' + res.status, 'error'); return; }
+    lastCanvasVersion = 0;
   }
-  canvasPollInterval = setInterval(pollCanvas, 3000);
+
+  // 2秒ごとにポーリング
+  canvasPollInterval = setInterval(pollCanvas, 2000);
   showToast(`[CANVAS] ルーム「${room}」に参加`, 'success');
 }
 
@@ -4144,27 +4222,33 @@ async function syncCanvas() {
 
 async function autoSyncCanvas() {
   if (!canvasRoomId || !canvasEl) return;
-  const rows = await sbFetch(`canvas_rooms?room_id=eq.${canvasRoomId}&limit=1`);
-  if (!rows || !rows.length) return;
-  const newVersion = (rows[0].version || 0) + 1;
-  await sbFetch(`canvas_rooms?id=eq.${rows[0].id}`, {
-    method: 'PATCH',
-    body: JSON.stringify({ canvas_data: canvasEl.toDataURL('image/jpeg', 0.5), version: newVersion })
-  });
-  lastCanvasVersion = newVersion;
+  try {
+    const rows = await sbFetch(`canvas_rooms?room_id=eq.${canvasRoomId}&limit=1`);
+    if (!rows || !rows.length) return;
+    const newVersion = (rows[0].version || 0) + 1;
+    const dataUrl = canvasEl.toDataURL('image/jpeg', 0.6);
+    await fetch(SUPABASE_URL + '/rest/v1/canvas_rooms?id=eq.' + rows[0].id, {
+      method: 'PATCH',
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ canvas_data: dataUrl, version: newVersion })
+    });
+    lastCanvasVersion = newVersion;
+  } catch(e) {}
 }
 
 async function pollCanvas() {
   if (!canvasRoomId) return;
-  const rows = await sbFetch(`canvas_rooms?room_id=eq.${canvasRoomId}&limit=1`);
-  if (!rows || !rows.length) return;
-  const v = rows[0].version || 0;
-  if (v > lastCanvasVersion) {
-    lastCanvasVersion = v;
-    const img = new Image();
-    img.onload = () => { if (canvasCtx) canvasCtx.drawImage(img, 0, 0); };
-    img.src = rows[0].canvas_data;
-  }
+  try {
+    const rows = await sbFetch(`canvas_rooms?room_id=eq.${canvasRoomId}&limit=1`);
+    if (!rows || !rows.length) return;
+    const v = rows[0].version || 0;
+    if (v > lastCanvasVersion) {
+      lastCanvasVersion = v;
+      const img = new Image();
+      img.onload = () => { if (canvasCtx) canvasCtx.drawImage(img, 0, 0); };
+      img.src = rows[0].canvas_data;
+    }
+  } catch(e) {}
 }
 
 
