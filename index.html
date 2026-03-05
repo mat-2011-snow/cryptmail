@@ -3206,6 +3206,17 @@ function closePasswordModal() {
 async function verifyPassword() {
   const id = currentMsgId;
   const msg = messages.find(m => m.id === id);
+  // タイマー切れ or 消去済みなら復号不可
+  if (!msg || msg.deleted || msg.remaining <= 0) {
+    document.getElementById('passwordModal').classList.remove('active');
+    msg.deleted = true;
+    msg.body = null;
+    await updateRemaining(id, 0, true);
+    renderInbox();
+    showDeletedView();
+    showToast('[WARN] このメッセージはタイマー満了により消去されました', 'error');
+    return;
+  }
   const input = document.getElementById('modalPassInput').value;
 
   const pwHash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(input));
