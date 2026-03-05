@@ -2500,6 +2500,7 @@
   </div>
   <div class="title-footer">
     <span id="idleMsg">// アイドル状態でこの画面に戻ります</span>
+    <button onclick="showAdminLogin()" style="background:transparent;border:none;color:#1e293b;font-family:'Share Tech Mono',monospace;font-size:9px;cursor:pointer;letter-spacing:2px;margin-top:4px;">// ADMIN</button>
     <div class="idle-bar-wrap"><div class="idle-bar-fill" id="idleBar"></div></div>
     <span>CRYPTMAIL v9.4.1 // TOP SECRET</span>
   </div>
@@ -2521,6 +2522,25 @@
   </div>
 </div>
 
+
+<!-- ADMIN LOGIN -->
+<div id="adminLoginModal" style="
+  position:fixed;inset:0;background:rgba(3,7,18,0.96);backdrop-filter:blur(10px);
+  z-index:950;display:none;align-items:center;justify-content:center;
+">
+  <div style="background:var(--bg2);border:1px solid var(--red);border-top:3px solid var(--red);width:360px;max-width:calc(100vw - 32px);">
+    <div style="padding:12px 18px;border-bottom:1px solid var(--border);font-family:'Orbitron',monospace;font-size:10px;color:var(--red);letter-spacing:3px;">[ADMIN] 管理者認証</div>
+    <div style="padding:20px 18px;">
+      <div style="font-size:10px;color:var(--text-dim);margin-bottom:12px;">管理者パスワードを入力してください</div>
+      <input class="admin-pw-input" id="adminPwInput" type="password" placeholder="••••"
+        onkeydown="if(event.key==='Enter')adminLoginSubmit()">
+      <div style="font-size:10px;color:var(--red);min-height:16px;text-align:center;margin-bottom:10px;" id="adminPwError"></div>
+      <button onclick="adminLoginSubmit()" style="width:100%;background:var(--red);color:white;border:none;padding:11px;font-family:'Orbitron',monospace;font-size:11px;letter-spacing:2px;cursor:pointer;">認証する</button>
+      <button onclick="document.getElementById('adminLoginModal').style.display='none'" style="width:100%;margin-top:6px;background:transparent;color:var(--text-dim);border:1px solid var(--border-bright);padding:9px;font-family:'Share Tech Mono',monospace;font-size:11px;cursor:pointer;">キャンセル</button>
+    </div>
+  </div>
+</div>
+
 <!-- LIGHTBOX -->
 <div class="lightbox" id="lightbox" onclick="closeLightbox()">
   <button class="lightbox-close" onclick="closeLightbox()">[X] 閉じる</button>
@@ -2528,6 +2548,89 @@
   <div class="lightbox-info" id="lightboxInfo"></div>
 </div>
 
+
+
+<!-- ===== ADMIN PAGE ===== -->
+<div class="admin-overlay" id="adminOverlay">
+  <div class="admin-header">
+    <div>
+      <div class="admin-title">[ADMIN] 管理コンソール</div>
+      <div style="font-size:9px;color:var(--text-muted);letter-spacing:2px;margin-top:4px;">CRYPTMAIL SYSTEM CONTROL // CLASSIFIED</div>
+    </div>
+    <button class="admin-btn secondary" onclick="hideAdmin()">&lt;&lt; 戻る</button>
+  </div>
+
+  <div class="admin-body">
+
+    <!-- システムステータス -->
+    <div class="admin-card">
+      <div class="admin-card-header red">[SYS] システムステータス</div>
+      <div class="admin-card-body">
+        <div class="admin-status-big online" id="adminStatusText">● ONLINE</div>
+        <div style="font-size:10px;color:var(--text-dim);margin-bottom:16px;" id="adminStatusSub">システムは正常稼働中です</div>
+        <div style="margin-bottom:10px;">
+          <input class="admin-lock-reason" id="adminLockReason" type="text" placeholder="閉鎖理由を入力（例: 緊急メンテナンス）">
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="admin-btn lock" onclick="lockSystem()">⚠ システムを閉鎖する</button>
+          <button class="admin-btn unlock" onclick="unlockSystem()">✓ 閉鎖を解除する</button>
+          <button class="admin-btn secondary" onclick="loadAdminData()">↻ 更新</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 統計 -->
+    <div class="admin-card">
+      <div class="admin-card-header green">[STATS] 統計</div>
+      <div class="admin-card-body">
+        <div class="admin-stat-grid">
+          <div class="admin-stat-cell"><div class="lbl">総メッセージ数</div><div class="val" id="statMsgCount">--</div></div>
+          <div class="admin-stat-cell"><div class="lbl">認証失敗 (総計)</div><div class="val" id="statFailCount" style="color:var(--red);">--</div></div>
+          <div class="admin-stat-cell"><div class="lbl">最終アクセス</div><div class="val" style="font-size:11px;" id="statLastAccess">--</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- セキュリティログ -->
+    <div class="admin-card">
+      <div class="admin-card-header yellow">[LOG] セキュリティログ <span id="adminLogCount" style="font-size:9px;color:var(--text-muted);"></span></div>
+      <div class="admin-card-body" style="padding:0;">
+        <table class="admin-log-table">
+          <thead><tr><th>日時</th><th>イベント</th><th>詳細</th></tr></thead>
+          <tbody id="adminLogBody"><tr><td colspan="3" style="text-align:center;color:var(--text-muted);">読み込み中...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ログ消去 -->
+    <div class="admin-card">
+      <div class="admin-card-header red">[DANGER] 危険な操作</div>
+      <div class="admin-card-body" style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="admin-btn lock" onclick="clearSecurityLog()">🗑 セキュリティログを消去</button>
+        <button class="admin-btn lock" onclick="deleteAllMessages()">☠ 全メッセージを即時消去</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- LOCKED SCREEN -->
+<div id="lockedScreen" style="
+  position:fixed;inset:0;background:var(--bg);z-index:1000;
+  display:none;flex-direction:column;align-items:center;justify-content:center;gap:20px;
+">
+  <div style="font-family:'Orbitron',monospace;font-size:40px;font-weight:900;color:var(--red);
+    text-shadow:0 0 40px rgba(239,68,68,0.7);letter-spacing:6px;animation:pulse-glow 1s infinite;">
+    ⚠ LOCKED
+  </div>
+  <div style="font-family:'Orbitron',monospace;font-size:12px;color:var(--red);letter-spacing:4px;">
+    システムは閉鎖されています
+  </div>
+  <div style="font-size:11px;color:var(--text-dim);letter-spacing:2px;" id="lockReasonDisplay"></div>
+  <div style="font-size:9px;color:var(--text-muted);letter-spacing:1px;margin-top:10px;">
+    管理者のみがこの状態を解除できます
+  </div>
+</div>
 
 <!-- INCOMING CALL -->
 <div class="call-incoming" id="callIncoming">
@@ -2902,8 +3005,8 @@ let sessionId = Math.random().toString(36).substr(2,9).toUpperCase();
 
 // ===== INIT =====
 window.addEventListener('DOMContentLoaded', () => {
-  // 起動時にタイトル画面を表示
-  showTitleScreen();
+  // 起動時にシステムロック確認 → タイトル画面
+  checkSystemLock().then(locked => { if (!locked) showTitleScreen(); });
   // 通知許可をリクエスト
   requestNotifPermission();
 
@@ -3591,6 +3694,9 @@ async function titlePwSubmit() {
     err.textContent = '[DENIED] アクセスコードが無効です';
     input.value = '';
     setTimeout(() => input.classList.remove('error'), 600);
+    // セキュリティログ
+    logSecurityEvent('pw_fail', '第1関門: パスワード失敗');
+    sendNotif('[CRYPTMAIL] ⚠ 不正アクセス検知', '第1関門でパスワードの入力ミスがありました', true);
   }
 }
 
@@ -3626,8 +3732,12 @@ async function pwGateSubmit() {
     input.classList.add('error');
     input.value = '';
     setTimeout(() => input.classList.remove('error'), 600);
+    logSecurityEvent('pw_fail', `第2関門: パスワード失敗 (${pwGateAttempts}回目)`);
+    sendNotif('[CRYPTMAIL] ⚠ 不正アクセス検知', `第2関門でパスワードの入力ミス (${pwGateAttempts}回目)`, true);
     if (pwGateAttempts >= 3) {
       err.textContent = '[CRITICAL] 認証失敗3回。セッションをリセットします...';
+      logSecurityEvent('pw_fail_critical', '第2関門: 3回失敗 → セッションリセット');
+      sendNotif('[CRYPTMAIL] 🚨 CRITICAL: 認証3回失敗', '第2関門で3回連続失敗。セッションをリセットしました。', true);
       setTimeout(() => showTitleScreen(), 1500);
     } else {
       err.textContent = `[DENIED] コードが無効です。残り試行: ${3 - pwGateAttempts} 回`;
@@ -4181,6 +4291,164 @@ function toggleSchedule() {
     const local = new Date(dt.getTime() - dt.getTimezoneOffset()*60000).toISOString().slice(0,16);
     document.getElementById('compose-schedule-at').value = local;
   }
+}
+
+
+// ===== SECURITY & ADMIN =====
+const ADMIN_HASH = '7ac25d5d84cae3dcc037c52a93dfe320fe83b2a6abe787451b4fc15aeba2c9e7'; // 1203と同じ
+
+async function logSecurityEvent(type, detail) {
+  try {
+    await sbFetch('security_log', {
+      method: 'POST',
+      body: JSON.stringify({
+        event_type: type,
+        detail,
+        ip_hint: 'masked',
+        created_at: new Date().toISOString()
+      })
+    });
+  } catch(e) {}
+}
+
+async function checkSystemLock() {
+  try {
+    const rows = await sbFetch('system_status?limit=1');
+    if (rows && rows.length && rows[0].is_locked) {
+      const reason = rows[0].lock_reason || '管理者による閉鎖';
+      document.getElementById('lockReasonDisplay').textContent = '理由: ' + reason;
+      document.getElementById('lockedScreen').style.display = 'flex';
+      // タイトル画面・管理画面以外を全部隠す
+      ['titleScreen','termsOverlay','pwGateOverlay','adminOverlay'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.classList.remove('active'); el.classList.add('hidden'); }
+      });
+      return true;
+    }
+    document.getElementById('lockedScreen').style.display = 'none';
+    return false;
+  } catch(e) { return false; }
+}
+
+// 5秒ごとにロック状態をポーリング
+setInterval(checkSystemLock, 5000);
+
+// === 管理者ログイン ===
+function showAdminLogin() {
+  document.getElementById('adminLoginModal').style.display = 'flex';
+  document.getElementById('adminPwInput').value = '';
+  document.getElementById('adminPwError').textContent = '';
+  setTimeout(() => document.getElementById('adminPwInput').focus(), 100);
+}
+
+async function adminLoginSubmit() {
+  const val = document.getElementById('adminPwInput').value;
+  const hash = await sha256(val);
+  if (hash === ADMIN_HASH) {
+    document.getElementById('adminLoginModal').style.display = 'none';
+    showAdmin();
+  } else {
+    document.getElementById('adminPwError').textContent = '[DENIED] パスワードが違います';
+    document.getElementById('adminPwInput').value = '';
+    await logSecurityEvent('admin_fail', '管理者ログイン失敗');
+  }
+}
+
+async function showAdmin() {
+  document.getElementById('adminOverlay').classList.add('active');
+  await loadAdminData();
+}
+
+function hideAdmin() {
+  document.getElementById('adminOverlay').classList.remove('active');
+}
+
+async function loadAdminData() {
+  // システムステータス
+  const status = await sbFetch('system_status?limit=1');
+  if (status && status.length) {
+    const isLocked = status[0].is_locked;
+    const statusText = document.getElementById('adminStatusText');
+    const statusSub = document.getElementById('adminStatusSub');
+    if (isLocked) {
+      statusText.textContent = '⚠ LOCKED';
+      statusText.className = 'admin-status-big locked';
+      statusSub.textContent = '閉鎖理由: ' + (status[0].lock_reason || '不明');
+    } else {
+      statusText.textContent = '● ONLINE';
+      statusText.className = 'admin-status-big online';
+      statusSub.textContent = 'システムは正常稼働中です';
+    }
+  }
+
+  // メッセージ数
+  const msgs = await sbFetch('messages?select=id');
+  document.getElementById('statMsgCount').textContent = msgs ? msgs.length : '--';
+
+  // セキュリティログ
+  const logs = await sbFetch('security_log?order=id.desc&limit=50');
+  const failCount = logs ? logs.filter(l => l.event_type.includes('fail')).length : 0;
+  document.getElementById('statFailCount').textContent = failCount;
+
+  if (logs && logs.length) {
+    document.getElementById('statLastAccess').textContent =
+      new Date(logs[0].created_at).toLocaleString('ja-JP').slice(0,16);
+    document.getElementById('adminLogCount').textContent = `(${logs.length}件)`;
+    const tbody = document.getElementById('adminLogBody');
+    tbody.innerHTML = logs.map(l => `
+      <tr>
+        <td>${new Date(l.created_at).toLocaleString('ja-JP').slice(0,16)}</td>
+        <td><span class="log-type ${l.event_type}">${l.event_type}</span></td>
+        <td>${l.detail || '-'}</td>
+      </tr>
+    `).join('');
+  } else {
+    document.getElementById('adminLogBody').innerHTML =
+      '<tr><td colspan="3" style="text-align:center;color:var(--text-muted);">ログなし</td></tr>';
+  }
+}
+
+async function lockSystem() {
+  const reason = document.getElementById('adminLockReason').value || '管理者による緊急閉鎖';
+  const status = await sbFetch('system_status?limit=1');
+  if (!status || !status.length) return;
+  await sbFetch('system_status?id=eq.' + status[0].id, {
+    method: 'PATCH',
+    body: JSON.stringify({ is_locked: true, lock_reason: reason, locked_at: new Date().toISOString() })
+  });
+  await logSecurityEvent('lock', '閉鎖: ' + reason);
+  showToast('[LOCKED] システムを閉鎖しました', 'error');
+  loadAdminData();
+  sendNotif('[CRYPTMAIL ADMIN] ⚠ システム閉鎖', '理由: ' + reason, true);
+}
+
+async function unlockSystem() {
+  const status = await sbFetch('system_status?limit=1');
+  if (!status || !status.length) return;
+  await sbFetch('system_status?id=eq.' + status[0].id, {
+    method: 'PATCH',
+    body: JSON.stringify({ is_locked: false, lock_reason: null, locked_at: null })
+  });
+  await logSecurityEvent('unlock', 'システム閉鎖を解除');
+  document.getElementById('lockedScreen').style.display = 'none';
+  showToast('[OK] 閉鎖を解除しました', 'success');
+  loadAdminData();
+}
+
+async function clearSecurityLog() {
+  if (!confirm('セキュリティログを全て消去しますか？')) return;
+  await sbFetch('security_log?id=gt.0', { method: 'DELETE' });
+  showToast('[OK] ログを消去しました', 'success');
+  loadAdminData();
+}
+
+async function deleteAllMessages() {
+  if (!confirm('全メッセージを即時消去しますか？この操作は取り消せません。')) return;
+  await sbFetch('messages?id=gt.0', { method: 'DELETE' });
+  await logSecurityEvent('purge', '全メッセージを強制消去');
+  await loadMessages();
+  showToast('[PURGE] 全メッセージを消去しました', 'error');
+  loadAdminData();
 }
 
 // ===== VOICE CALL (WebRTC) =====
