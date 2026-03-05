@@ -2497,6 +2497,23 @@
     <button class="title-start-btn" onclick="titlePwSubmit()">
       &gt;&gt; 開始する
     </button>
+    <button onclick="titleAdminSubmit()" style="
+      background: transparent;
+      border: 1px solid rgba(239,68,68,0.5);
+      color: var(--red);
+      margin-top: 8px;
+      font-size: 11px;
+      letter-spacing: 3px;
+      padding: 6px 14px;
+      font-family: 'Orbitron', monospace;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-block;
+      width: auto;
+    " onmouseover="this.style.boxShadow='0 0 16px rgba(239,68,68,0.4)';this.style.borderColor='var(--red)'"
+       onmouseout="this.style.boxShadow='none';this.style.borderColor='rgba(239,68,68,0.5)'">
+      [ADMIN] 管理コンソール
+    </button>
   </div>
   <div class="title-footer">
     <span id="idleMsg">// アイドル状態でこの画面に戻ります</span>
@@ -2531,6 +2548,72 @@
 </div>
 
 
+
+
+<!-- ===== ADMIN CONSOLE OVERLAY ===== -->
+<div class="admin-console-overlay" id="adminConsoleOverlay">
+  <div class="admin-console-header">
+    <div>
+      <div class="admin-console-title">[ADMIN] 管理コンソール</div>
+      <div style="font-size:9px;color:#4b1a1a;letter-spacing:3px;margin-top:3px;">CRYPTMAIL SYSTEM CONTROL // CLASSIFIED</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span style="font-family:'Orbitron',monospace;font-size:12px;color:var(--red);letter-spacing:2px;" id="adminConsoleClock">--:--:--</span>
+      <button onclick="hideAdminConsole()" style="background:transparent;border:1px solid #3a1010;color:#664444;padding:5px 14px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;cursor:pointer;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='#3a1010';this.style.color='#664444'">[EXIT] タイトルに戻る</button>
+    </div>
+  </div>
+  <div class="admin-console-body">
+
+    <!-- ステータス -->
+    <div class="ac-card">
+      <div class="ac-card-hd red">[SYS] システムステータス <button onclick="loadAdminConsoleData()" class="ac-refresh-btn">↻ 更新</button></div>
+      <div class="ac-card-bd">
+        <div class="ac-status-big online" id="acStatusBig">● ONLINE</div>
+        <div style="font-size:11px;color:var(--text-dim);margin-bottom:14px;" id="acStatusSub">正常稼働中</div>
+        <input type="text" id="acLockReason" placeholder="閉鎖理由（例: 緊急メンテナンス）" style="width:100%;background:rgba(3,7,18,0.8);border:1px solid #2a0a0a;border-bottom:2px solid var(--red);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:12px;padding:7px 12px;outline:none;margin-bottom:10px;">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button onclick="acLock()" style="background:var(--red);color:white;border:none;padding:9px 18px;font-family:'Orbitron',monospace;font-size:10px;letter-spacing:2px;cursor:pointer;">⚠ 閉鎖する</button>
+          <button onclick="acUnlock()" style="background:var(--green);color:#000;border:none;padding:9px 18px;font-family:'Orbitron',monospace;font-size:10px;letter-spacing:2px;cursor:pointer;">✓ 解除する</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 統計 -->
+    <div class="ac-card">
+      <div class="ac-card-hd green">[STATS] 統計</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);">
+        <div style="background:var(--bg2);padding:12px 14px;"><div style="font-size:9px;color:var(--text-muted);letter-spacing:2px;margin-bottom:4px;">総MSG数</div><div style="font-family:'Orbitron',monospace;font-size:20px;color:var(--purple-glow);" id="acStatMsg">--</div></div>
+        <div style="background:var(--bg2);padding:12px 14px;"><div style="font-size:9px;color:var(--text-muted);letter-spacing:2px;margin-bottom:4px;">認証失敗</div><div style="font-family:'Orbitron',monospace;font-size:20px;color:var(--red);" id="acStatFail">--</div></div>
+        <div style="background:var(--bg2);padding:12px 14px;"><div style="font-size:9px;color:var(--text-muted);letter-spacing:2px;margin-bottom:4px;">最終イベント</div><div style="font-family:'Orbitron',monospace;font-size:11px;color:var(--green);" id="acStatLast">--</div></div>
+      </div>
+    </div>
+
+    <!-- セキュリティログ -->
+    <div class="ac-card">
+      <div class="ac-card-hd yellow">[LOG] セキュリティログ <span id="acLogCount" style="font-size:9px;color:var(--text-muted);"></span></div>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:11px;">
+          <thead><tr>
+            <th style="background:rgba(30,41,59,0.6);border:1px solid var(--border);padding:7px 12px;text-align:left;font-family:'Orbitron',monospace;font-size:8px;color:var(--text-dim);letter-spacing:2px;">日時</th>
+            <th style="background:rgba(30,41,59,0.6);border:1px solid var(--border);padding:7px 12px;text-align:left;font-family:'Orbitron',monospace;font-size:8px;color:var(--text-dim);letter-spacing:2px;">イベント</th>
+            <th style="background:rgba(30,41,59,0.6);border:1px solid var(--border);padding:7px 12px;text-align:left;font-family:'Orbitron',monospace;font-size:8px;color:var(--text-dim);letter-spacing:2px;">詳細</th>
+          </tr></thead>
+          <tbody id="acLogBody"><tr><td colspan="3" style="text-align:center;color:var(--text-muted);padding:20px;border:1px solid var(--border);">読み込み中...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 危険な操作 -->
+    <div class="ac-card">
+      <div class="ac-card-hd red">[DANGER] 危険な操作</div>
+      <div class="ac-card-bd" style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button onclick="acClearLog()" style="background:var(--red);color:white;border:none;padding:9px 16px;font-family:'Orbitron',monospace;font-size:10px;letter-spacing:1px;cursor:pointer;">🗑 ログ消去</button>
+        <button onclick="acPurgeMessages()" style="background:var(--red);color:white;border:none;padding:9px 16px;font-family:'Orbitron',monospace;font-size:10px;letter-spacing:1px;cursor:pointer;">☠ 全MSG消去</button>
+      </div>
+    </div>
+
+  </div>
+</div>
 
 <!-- LOCKED SCREEN -->
 <div id="lockedScreen" style="
@@ -3596,6 +3679,34 @@ function resetIdleTimer() {
   document.addEventListener(ev, resetIdleTimer, true);
 });
 
+async function titleAdminSubmit() {
+  const val = document.getElementById('titlePwInput').value;
+  if (!val) {
+    // 入力欄に値がなければエラー
+    const input = document.getElementById('titlePwInput');
+    const err = document.getElementById('titlePwError');
+    input.classList.add('error');
+    err.textContent = '[ADMIN] 上の欄にパスワードを入力してください';
+    setTimeout(() => { input.classList.remove('error'); err.textContent = ''; }, 2000);
+    return;
+  }
+  const hash = await sha256(val);
+  const ADMIN_H = '7ac25d5d84cae3dcc037c52a93dfe320fe83b2a6abe787451b4fc15aeba2c9e7';
+  if (hash === ADMIN_H) {
+    // 管理コンソールページを開く
+    document.getElementById('titleScreen').classList.add('hidden');
+    showAdminConsole();
+  } else {
+    const input = document.getElementById('titlePwInput');
+    const err = document.getElementById('titlePwError');
+    input.classList.add('error');
+    err.textContent = '[DENIED] 管理者パスワードが違います';
+    input.value = '';
+    setTimeout(() => input.classList.remove('error'), 600);
+    logSecurityEvent('admin_fail', 'タイトル画面から管理者ログイン失敗');
+  }
+}
+
 async function titlePwSubmit() {
   const val = document.getElementById('titlePwInput').value;
   const hash = await sha256(val);
@@ -4221,6 +4332,103 @@ function hideAdmin() {}
 function loadAdminData() {}
 function clearSecurityLog() {}
 function deleteAllMessages() {}
+
+function showAdminConsole() {
+  document.getElementById('adminConsoleOverlay').classList.add('active');
+  loadAdminConsoleData();
+}
+function hideAdminConsole() {
+  document.getElementById('adminConsoleOverlay').classList.remove('active');
+  showTitleScreen();
+}
+
+
+// ===== ADMIN CONSOLE (インライン) =====
+async function loadAdminConsoleData() {
+  // ステータス
+  const status = await sbFetch('system_status?limit=1');
+  if (status && status.length) {
+    const r = status[0];
+    const big = document.getElementById('acStatusBig');
+    const sub = document.getElementById('acStatusSub');
+    if (r.is_locked) {
+      big.textContent = '⚠ LOCKED'; big.className = 'ac-status-big locked';
+      sub.textContent = '閉鎖中 // 理由: ' + (r.lock_reason || '不明');
+    } else {
+      big.textContent = '● ONLINE'; big.className = 'ac-status-big online';
+      sub.textContent = 'システムは正常稼働中です';
+    }
+  }
+  // 統計
+  const [msgs, logs] = await Promise.all([
+    sbFetch('messages?select=id'),
+    sbFetch('security_log?order=id.desc&limit=100')
+  ]);
+  document.getElementById('acStatMsg').textContent = msgs ? msgs.length : '--';
+  if (logs) {
+    const fails = logs.filter(l => l.event_type && l.event_type.includes('fail'));
+    document.getElementById('acStatFail').textContent = fails.length;
+    document.getElementById('acStatLast').textContent = logs.length
+      ? new Date(logs[0].created_at).toLocaleString('ja-JP').slice(5,16) : '--';
+    document.getElementById('acLogCount').textContent = `(${logs.length}件)`;
+    const tbody = document.getElementById('acLogBody');
+    tbody.innerHTML = logs.map(l => `
+      <tr>
+        <td style="border:1px solid var(--border);padding:6px 10px;white-space:nowrap;color:var(--text-dim);">${new Date(l.created_at).toLocaleString('ja-JP').slice(0,16)}</td>
+        <td style="border:1px solid var(--border);padding:6px 10px;"><span class="ac-badge ${l.event_type}">${l.event_type}</span></td>
+        <td style="border:1px solid var(--border);padding:6px 10px;color:var(--text-dim);">${l.detail || '-'}</td>
+      </tr>
+    `).join('');
+  }
+}
+
+async function acLock() {
+  const reason = document.getElementById('acLockReason').value.trim() || '管理者による緊急閉鎖';
+  if (!confirm('システムを閉鎖します。\n理由: ' + reason)) return;
+  const rows = await sbFetch('system_status?limit=1');
+  if (!rows || !rows.length) return;
+  await sbFetch('system_status?id=eq.' + rows[0].id, {
+    method: 'PATCH',
+    body: JSON.stringify({ is_locked: true, lock_reason: reason, locked_at: new Date().toISOString() })
+  });
+  await logSecurityEvent('lock', '閉鎖: ' + reason);
+  showToast('[LOCKED] システムを閉鎖しました', 'error');
+  loadAdminConsoleData();
+}
+
+async function acUnlock() {
+  if (!confirm('閉鎖を解除しますか？')) return;
+  const rows = await sbFetch('system_status?limit=1');
+  if (!rows || !rows.length) return;
+  await sbFetch('system_status?id=eq.' + rows[0].id, {
+    method: 'PATCH',
+    body: JSON.stringify({ is_locked: false, lock_reason: null, locked_at: null })
+  });
+  await logSecurityEvent('unlock', 'システム閉鎖を解除');
+  showToast('[OK] 閉鎖を解除しました', 'success');
+  loadAdminConsoleData();
+}
+
+async function acClearLog() {
+  if (!confirm('セキュリティログを全て消去しますか？')) return;
+  await sbFetch('security_log?id=gt.0', { method: 'DELETE' });
+  showToast('[OK] ログを消去しました', 'success');
+  loadAdminConsoleData();
+}
+
+async function acPurgeMessages() {
+  if (!confirm('全メッセージを即時消去しますか？\nこの操作は取り消せません！')) return;
+  await sbFetch('messages?id=gt.0', { method: 'DELETE' });
+  await logSecurityEvent('purge', '全メッセージを強制消去');
+  showToast('[PURGE] 全メッセージを消去しました', 'error');
+  loadAdminConsoleData();
+}
+
+// Admin console clock
+setInterval(() => {
+  const el = document.getElementById('adminConsoleClock');
+  if (el) el.textContent = new Date().toLocaleTimeString('ja-JP');
+}, 1000);
 
 // ===== VOICE CALL (WebRTC) =====
 const SIGNAL_CHANNEL = 'cryptmail-signaling';
