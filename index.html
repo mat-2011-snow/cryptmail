@@ -866,6 +866,8 @@
   }
 
   /* FOOTER STATS */
+  .game-screen.active ~ .footer-stats,
+  .canvas-screen.active ~ .footer-stats { display: none !important; }
   .footer-stats {
     position: fixed;
     bottom: 0;
@@ -1067,7 +1069,7 @@
   .canvas-screen {
     display: none;
     flex-direction: column;
-    height: calc(100vh - 200px);
+    height: calc(100vh - 170px);
     overflow: hidden;
   }
   .canvas-screen.active { display: flex; }
@@ -2329,21 +2331,20 @@
     <button class="canvas-tool-btn" onclick="importImageToCanvas()">📷 画像</button>
     <button class="canvas-tool-btn" onclick="downloadCanvas()">💾 保存</button>
     <button class="canvas-tool-btn danger" onclick="clearCanvas()">🗑 全消去</button>
+    <div style="width:1px;height:20px;background:var(--border);margin:0 4px;"></div>
+    <span style="font-size:9px;color:var(--purple-glow);letter-spacing:1px;">[SHARE]</span>
+    <input type="text" id="canvasRoomInput" placeholder="ルームID" style="width:80px;background:rgba(3,7,18,0.8);border:1px solid var(--border-bright);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:11px;padding:4px 8px;outline:none;">
+    <button class="canvas-tool-btn" onclick="joinCanvasRoom()">参加</button>
+    <button class="canvas-tool-btn" onclick="syncCanvas()">↑ 同期</button>
+    <span id="canvasRoomLabel" style="color:var(--green);font-size:9px;"></span>
+    <div class="canvas-users" id="canvasUsers"></div>
   </div>
 
   <div class="canvas-wrap" id="canvasWrap">
     <canvas id="mainCanvas"></canvas>
   </div>
 
-  <div class="canvas-share-bar">
-    <span style="color:var(--purple-glow);font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;">[SHARE]</span>
-    <span>ルームID:</span>
-    <input type="text" id="canvasRoomInput" placeholder="例: canvas01">
-    <button class="canvas-tool-btn" onclick="joinCanvasRoom()">参加/作成</button>
-    <button class="canvas-tool-btn" onclick="syncCanvas()">↑ 同期</button>
-    <span id="canvasRoomLabel" style="color:var(--text-muted);font-size:9px;"></span>
-    <div class="canvas-users" id="canvasUsers"></div>
-  </div>
+
   <input type="file" id="imgImportInput" accept="image/*" style="display:none;" onchange="handleCanvasImport(event)">
 </div>
 
