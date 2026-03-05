@@ -2286,9 +2286,6 @@
       <option value="4">4つ揃い</option>
       <option value="5" selected>5つ揃い</option>
     </select>
-    <label style="margin-left:8px;">ルームID:</label>
-    <input type="text" id="gameRoomInput" placeholder="例: room01" style="width:90px;">
-    <button class="game-start-btn" onclick="joinGame()">>> 開始/参加</button>
     <button class="game-start-btn" onclick="resetGame()" style="background:transparent;border:1px solid var(--border-bright);color:var(--text-dim);">リセット</button>
   </div>
 
@@ -3818,7 +3815,7 @@ function switchTab(tab) {
   if (gameScreen) gameScreen.classList.toggle('active', tab === 'game');
   if (canvasScreen) canvasScreen.classList.toggle('active', tab === 'canvas');
   if (tab === 'canvas') initCanvas();
-  if (tab === 'game') { if (!gActive) startGame(); }
+  if (tab === 'game') { joinGame(); }
 }
 
 // ===== N目並べ (Supabase同期) =====
@@ -3832,11 +3829,9 @@ let gPollInterval = null;
 let gLastMove = 0;
 
 async function joinGame() {
-  const room = document.getElementById('gameRoomInput').value.trim();
-  if (!room) { showToast('[WARN] ルームIDを入力してください', 'error'); return; }
   gSize = parseInt(document.getElementById('boardSizeSelect').value);
   gWin = Math.min(parseInt(document.getElementById('winCondSelect').value), gSize);
-  gRoomId = 'game_' + room;
+  gRoomId = 'game_global';
 
   const existing = await sbFetch(`game_rooms?room_id=eq.${gRoomId}&limit=1`);
   if (existing && existing.length > 0 && !existing[0].is_finished) {
@@ -3957,8 +3952,8 @@ function renderBoard() {
     if (!cell && gActive) div.onclick = () => placeMove(i);
     el.appendChild(div);
   });
-  document.getElementById('gameScoreO').textContent = gRoomId ? `○: ${gScoreO}勝` : '';
-  document.getElementById('gameScoreX').textContent = gRoomId ? `✕: ${gScoreX}勝` : '';
+  document.getElementById('gameScoreO').textContent = `○: ${gScoreO}勝`;
+  document.getElementById('gameScoreX').textContent = `✕: ${gScoreX}勝`;
 }
 
 function updateStatus(winner, isDraw) {
