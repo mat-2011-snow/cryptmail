@@ -4497,6 +4497,10 @@ setInterval(() => {
 
 async function checkSystemLock() {
   try {
+    // 管理コンソールが開いてるときはロック画面を出さない
+    const adminOpen = document.getElementById('adminConsoleOverlay') &&
+                      document.getElementById('adminConsoleOverlay').style.display === 'flex';
+    if (adminOpen) return false;
     const rows = await sbFetch('system_status?limit=1');
     if (rows && rows.length && rows[0].is_locked) {
       const reason = rows[0].lock_reason || '管理者による閉鎖';
