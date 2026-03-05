@@ -3722,7 +3722,7 @@ function titleAdminSubmit() {
 async function adminPwScreenSubmit() {
   const val = document.getElementById('adminPwScreenInput').value;
   const hash = await sha256(val);
-  const ADMIN_CONSOLE_HASH = 'f3105e40a6d2542db4fa0eb54c8e2a6d0f39b23e4d21e5b7a77049a209ea0cb9';
+  const ADMIN_CONSOLE_HASH = 'c268a2b4464bf8ec6118bc134534a7114f764c183fa3978366240a250621b794';
   if (hash === ADMIN_CONSOLE_HASH) {
     // 先にLOCKED画面とPW画面を隠してからコンソール表示
     document.getElementById('lockedScreen').style.display = 'none';
