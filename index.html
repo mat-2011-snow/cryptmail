@@ -2522,6 +2522,31 @@
   </div>
 </div>
 
+
+<!-- ADMIN PASSWORD SCREEN -->
+<div id="adminPwScreen" style="
+  position:fixed;inset:0;background:var(--bg);z-index:810;
+  display:none;flex-direction:column;align-items:center;justify-content:center;gap:24px;
+">
+  <div style="position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(239,68,68,0.03) 2px,rgba(239,68,68,0.03) 4px);pointer-events:none;"></div>
+  <div style="font-family:'Orbitron',monospace;font-size:10px;color:#4b1a1a;letter-spacing:6px;">// RESTRICTED ACCESS //</div>
+  <div style="font-family:'Orbitron',monospace;font-size:26px;font-weight:900;color:var(--red);letter-spacing:4px;text-shadow:0 0 30px rgba(239,68,68,0.4);">ADMIN CONSOLE</div>
+  <div style="background:var(--bg2);border:1px solid #3a1010;border-top:3px solid var(--red);padding:28px;width:360px;max-width:calc(100vw - 32px);box-shadow:0 0 60px rgba(239,68,68,0.1);position:relative;z-index:1;">
+    <div style="font-size:9px;color:#4b1a1a;letter-spacing:3px;margin-bottom:12px;">// 管理者専用パスワードを入力</div>
+    <div style="position:relative;">
+      <input id="adminPwScreenInput" type="password" placeholder="••••"
+        onkeydown="if(event.key==='Enter')adminPwScreenSubmit()"
+        oninput="document.getElementById('adminPwScreenError').textContent=''"
+        style="width:100%;background:rgba(3,7,18,0.9);border:1px solid #2a0a0a;border-bottom:2px solid var(--red);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:22px;padding:10px 44px 10px 14px;outline:none;letter-spacing:8px;text-align:center;caret-color:var(--red);">
+      <button onclick="togglePass('adminPwScreenInput',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-dim);cursor:pointer;font-family:'Share Tech Mono',monospace;font-size:11px;">[表示]</button>
+    </div>
+    <div id="adminPwScreenError" style="font-size:10px;color:var(--red);text-align:center;min-height:18px;margin:6px 0;"></div>
+    <button onclick="adminPwScreenSubmit()" style="width:100%;background:var(--red);color:white;border:none;padding:13px;font-family:'Orbitron',monospace;font-size:12px;letter-spacing:3px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='#dc2626'" onmouseout="this.style.background='var(--red)'">>> 認証する</button>
+    <button onclick="document.getElementById('adminPwScreen').style.display='none';document.getElementById('titleScreen').classList.remove('hidden');" style="width:100%;margin-top:8px;background:transparent;color:#4b1a1a;border:1px solid #2a0a0a;padding:10px;font-family:'Share Tech Mono',monospace;font-size:11px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.color='var(--text-dim)'" onmouseout="this.style.color='#4b1a1a'">&lt;&lt; タイトルに戻る</button>
+  </div>
+  <div style="font-size:9px;color:#2a0a0a;letter-spacing:2px;position:relative;z-index:1;">CRYPTMAIL v9.4.1 // AUTHORIZED PERSONNEL ONLY</div>
+</div>
+
 <!-- ===== PASSWORD GATE 第2関門 ===== -->
 <div class="pw-gate-overlay" id="pwGateOverlay">
   <div class="pw-gate-modal">
@@ -3679,31 +3704,32 @@ function resetIdleTimer() {
   document.addEventListener(ev, resetIdleTimer, true);
 });
 
-async function titleAdminSubmit() {
-  const val = document.getElementById('titlePwInput').value;
-  if (!val) {
-    // 入力欄に値がなければエラー
-    const input = document.getElementById('titlePwInput');
-    const err = document.getElementById('titlePwError');
-    input.classList.add('error');
-    err.textContent = '[ADMIN] 上の欄にパスワードを入力してください';
-    setTimeout(() => { input.classList.remove('error'); err.textContent = ''; }, 2000);
-    return;
-  }
+function titleAdminSubmit() {
+  // ADMIN専用パスワード入力画面を表示
+  document.getElementById('titleScreen').classList.add('hidden');
+  document.getElementById('adminPwScreen').style.display = 'flex';
+  document.getElementById('adminPwScreenInput').value = '';
+  document.getElementById('adminPwScreenError').textContent = '';
+  setTimeout(() => document.getElementById('adminPwScreenInput').focus(), 100);
+}
+
+async function adminPwScreenSubmit() {
+  const val = document.getElementById('adminPwScreenInput').value;
   const hash = await sha256(val);
-  const ADMIN_H = '7ac25d5d84cae3dcc037c52a93dfe320fe83b2a6abe787451b4fc15aeba2c9e7';
-  if (hash === ADMIN_H) {
-    // 管理コンソールページを開く
-    document.getElementById('titleScreen').classList.add('hidden');
+  const ADMIN_CONSOLE_HASH = 'f3105e40a6d2542db4fa0eb54c8e2a6d0f39b23e4d21e5b7a77049a209ea0cb9';
+  if (hash === ADMIN_CONSOLE_HASH) {
+    document.getElementById('adminPwScreen').style.display = 'none';
     showAdminConsole();
+    logSecurityEvent('access', '管理コンソールログイン成功');
   } else {
-    const input = document.getElementById('titlePwInput');
-    const err = document.getElementById('titlePwError');
+    const input = document.getElementById('adminPwScreenInput');
+    const err = document.getElementById('adminPwScreenError');
     input.classList.add('error');
     err.textContent = '[DENIED] 管理者パスワードが違います';
     input.value = '';
     setTimeout(() => input.classList.remove('error'), 600);
-    logSecurityEvent('admin_fail', 'タイトル画面から管理者ログイン失敗');
+    logSecurityEvent('admin_fail', '管理コンソールログイン失敗');
+    sendNotif('[CRYPTMAIL] ⚠ 管理コンソールへの不正アクセス', 'パスワード入力ミス', true);
   }
 }
 
