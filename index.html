@@ -4517,12 +4517,12 @@ function showLockedAdminLogin() {
 
 async function checkSystemLock() {
   try {
-    // 管理コンソールが開いてるときはロック画面を出さない
-    const adminOpen = document.getElementById('adminConsoleOverlay') &&
-                      document.getElementById('adminConsoleOverlay').style.display === 'flex';
-    if (adminOpen) return false;
     const rows = await sbFetch('system_status?limit=1');
     if (rows && rows.length && rows[0].is_locked) {
+      // 管理コンソールまたはADMINパスワード画面が開いてたら出さない
+      const adminOpen = document.getElementById('adminConsoleOverlay').style.display === 'flex';
+      const adminPwOpen = document.getElementById('adminPwScreen').style.display === 'flex';
+      if (adminOpen || adminPwOpen) return false;
       const reason = rows[0].lock_reason || '管理者による閉鎖';
       document.getElementById('lockReasonDisplay').textContent = '理由: ' + reason;
       document.getElementById('lockedScreen').style.display = 'flex';
