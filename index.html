@@ -2327,28 +2327,30 @@
 
 
 <!-- THEME PICKER -->
-<div class="theme-picker" id="themePicker">
-  <button class="theme-toggle-btn" onclick="toggleThemePanel()">[THEME] 外観</button>
-  <div class="theme-panel" id="themePanel">
-    <div class="theme-label">// カラーテーマ</div>
-    <div class="theme-option active" data-theme="" onclick="applyTheme('')">
-      <span class="dot" style="background:#7c3aed;box-shadow:0 0 6px #7c3aed;"></span>PHANTOM // 紫 (default)
-    </div>
-    <div class="theme-option" data-theme="matrix" onclick="applyTheme('matrix')">
-      <span class="dot" style="background:#22c55e;box-shadow:0 0 6px #22c55e;"></span>MATRIX // 緑
-    </div>
-    <div class="theme-option" data-theme="bloodred" onclick="applyTheme('bloodred')">
-      <span class="dot" style="background:#ef4444;box-shadow:0 0 6px #ef4444;"></span>BLOOD // 赤
-    </div>
-    <div class="theme-option" data-theme="iceberg" onclick="applyTheme('iceberg')">
-      <span class="dot" style="background:#0ea5e9;box-shadow:0 0 6px #0ea5e9;"></span>ICEBERG // 青
-    </div>
-    <div class="theme-option" data-theme="gold" onclick="applyTheme('gold')">
-      <span class="dot" style="background:#f59e0b;box-shadow:0 0 6px #f59e0b;"></span>GOLD // 金
-    </div>
-    <div class="theme-option" data-theme="voidpink" onclick="applyTheme('voidpink')">
-      <span class="dot" style="background:#ec4899;box-shadow:0 0 6px #ec4899;"></span>VOIDPINK // 桃
-    </div>
+<div id="themePicker" style="
+  position:fixed; bottom:32px; right:12px; z-index:400;
+  display:flex; flex-direction:column; align-items:flex-end; gap:4px;
+">
+  <div style="font-size:8px;color:#374151;letter-spacing:2px;margin-bottom:2px;">// THEME</div>
+  <div style="display:flex; gap:5px; flex-wrap:wrap; justify-content:flex-end;">
+    <button onclick="applyTheme('')" data-theme="" title="PHANTOM"
+      style="width:22px;height:22px;border-radius:50%;background:#7c3aed;border:2px solid transparent;cursor:pointer;transition:all 0.15s;padding:0;"
+      onmouseover="this.style.transform='scale(1.3)'" onmouseout="this.style.transform='scale(1)'"></button>
+    <button onclick="applyTheme('matrix')" data-theme="matrix" title="MATRIX"
+      style="width:22px;height:22px;border-radius:50%;background:#22c55e;border:2px solid transparent;cursor:pointer;transition:all 0.15s;padding:0;"
+      onmouseover="this.style.transform='scale(1.3)'" onmouseout="this.style.transform='scale(1)'"></button>
+    <button onclick="applyTheme('bloodred')" data-theme="bloodred" title="BLOOD"
+      style="width:22px;height:22px;border-radius:50%;background:#ef4444;border:2px solid transparent;cursor:pointer;transition:all 0.15s;padding:0;"
+      onmouseover="this.style.transform='scale(1.3)'" onmouseout="this.style.transform='scale(1)'"></button>
+    <button onclick="applyTheme('iceberg')" data-theme="iceberg" title="ICEBERG"
+      style="width:22px;height:22px;border-radius:50%;background:#0ea5e9;border:2px solid transparent;cursor:pointer;transition:all 0.15s;padding:0;"
+      onmouseover="this.style.transform='scale(1.3)'" onmouseout="this.style.transform='scale(1)'"></button>
+    <button onclick="applyTheme('gold')" data-theme="gold" title="GOLD"
+      style="width:22px;height:22px;border-radius:50%;background:#f59e0b;border:2px solid transparent;cursor:pointer;transition:all 0.15s;padding:0;"
+      onmouseover="this.style.transform='scale(1.3)'" onmouseout="this.style.transform='scale(1)'"></button>
+    <button onclick="applyTheme('voidpink')" data-theme="voidpink" title="VOIDPINK"
+      style="width:22px;height:22px;border-radius:50%;background:#ec4899;border:2px solid transparent;cursor:pointer;transition:all 0.15s;padding:0;"
+      onmouseover="this.style.transform='scale(1.3)'" onmouseout="this.style.transform='scale(1)'"></button>
   </div>
 </div>
 
@@ -4108,36 +4110,28 @@ async function pollCanvas() {
 // ===== THEME =====
 function applyTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
-  localStorage.setItem('cryptmail-theme', theme);
-  document.querySelectorAll('.theme-option').forEach(el => {
-    el.classList.toggle('active', el.dataset.theme === theme);
+  try { localStorage.setItem('cryptmail-theme', theme); } catch(e) {}
+  // アクティブボタンに白枠
+  document.querySelectorAll('#themePicker button[data-theme]').forEach(btn => {
+    btn.style.border = btn.dataset.theme === theme ? '2px solid white' : '2px solid transparent';
+    btn.style.boxShadow = btn.dataset.theme === theme ? '0 0 8px rgba(255,255,255,0.5)' : 'none';
   });
-  document.getElementById('themePanel').classList.remove('open');
-  showToast(`[THEME] テーマを変更しました`, 'success');
-}
-
-function toggleThemePanel() {
-  document.getElementById('themePanel').classList.toggle('open');
+  showToast('[THEME] テーマを変更しました', 'success');
 }
 
 // 保存されたテーマを復元
 (function() {
-  const saved = localStorage.getItem('cryptmail-theme');
-  if (saved) {
+  try {
+    const saved = localStorage.getItem('cryptmail-theme') || '';
     document.documentElement.setAttribute('data-theme', saved);
-    document.querySelectorAll('.theme-option').forEach(el => {
-      el.classList.toggle('active', el.dataset.theme === saved);
-    });
-  }
+    setTimeout(() => {
+      document.querySelectorAll('#themePicker button[data-theme]').forEach(btn => {
+        btn.style.border = btn.dataset.theme === saved ? '2px solid white' : '2px solid transparent';
+        btn.style.boxShadow = btn.dataset.theme === saved ? '0 0 8px rgba(255,255,255,0.5)' : 'none';
+      });
+    }, 100);
+  } catch(e) {}
 })();
-
-// テーマパネル外クリックで閉じる
-document.addEventListener('click', (e) => {
-  const picker = document.getElementById('themePicker');
-  if (picker && !picker.contains(e.target)) {
-    document.getElementById('themePanel').classList.remove('open');
-  }
-});
 
 // ===== オプショントグル =====
 function toggleOnetime() {
