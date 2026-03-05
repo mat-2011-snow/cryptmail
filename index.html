@@ -4495,6 +4495,23 @@ setInterval(() => {
   if (el) el.textContent = new Date().toLocaleTimeString('ja-JP');
 }, 1000);
 
+async function checkSystemLock() {
+  try {
+    const rows = await sbFetch('system_status?limit=1');
+    if (rows && rows.length && rows[0].is_locked) {
+      const reason = rows[0].lock_reason || '管理者による閉鎖';
+      document.getElementById('lockReasonDisplay').textContent = '理由: ' + reason;
+      document.getElementById('lockedScreen').style.display = 'flex';
+      return true;
+    }
+    document.getElementById('lockedScreen').style.display = 'none';
+    return false;
+  } catch(e) { return false; }
+}
+
+// 5秒ごとにロック状態をポーリング
+setInterval(checkSystemLock, 5000);
+
 async function logSecurityEvent(type, detail) {
   try {
     await fetch(SUPABASE_URL + '/rest/v1/security_log', {
