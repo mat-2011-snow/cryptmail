@@ -4418,28 +4418,60 @@ async function loadAdminConsoleData() {
 async function acLock() {
   const reason = document.getElementById('acLockReason').value.trim() || '管理者による緊急閉鎖';
   if (!confirm('システムを閉鎖します。\n理由: ' + reason)) return;
-  const rows = await sbFetch('system_status?limit=1');
-  if (!rows || !rows.length) return;
-  await sbFetch('system_status?id=eq.' + rows[0].id, {
-    method: 'PATCH',
-    body: JSON.stringify({ is_locked: true, lock_reason: reason, locked_at: new Date().toISOString() })
-  });
-  await logSecurityEvent('lock', '閉鎖: ' + reason);
-  showToast('[LOCKED] システムを閉鎖しました', 'error');
-  loadAdminConsoleData();
+  showToast('[...] 処理中...', '');
+  try {
+    const rows = await sbFetch('system_status?limit=1');
+    if (!rows || !rows.length) { showToast('[ERROR] system_statusテーブルが見つかりません', 'error'); return; }
+    const res = await fetch(SUPABASE_URL + '/rest/v1/system_status?id=eq.' + rows[0].id, {
+      method: 'PATCH',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({ is_locked: true, lock_reason: reason, locked_at: new Date().toISOString() })
+    });
+    if (!res.ok) {
+      const txt = await res.text();
+      showToast('[ERROR] ' + res.status + ': ' + txt.slice(0,80), 'error');
+      return;
+    }
+    await logSecurityEvent('lock', '閉鎖: ' + reason);
+    showToast('[LOCKED] システムを閉鎖しました', 'error');
+    loadAdminConsoleData();
+  } catch(e) {
+    showToast('[ERROR] ' + e.message, 'error');
+  }
 }
 
 async function acUnlock() {
   if (!confirm('閉鎖を解除しますか？')) return;
-  const rows = await sbFetch('system_status?limit=1');
-  if (!rows || !rows.length) return;
-  await sbFetch('system_status?id=eq.' + rows[0].id, {
-    method: 'PATCH',
-    body: JSON.stringify({ is_locked: false, lock_reason: null, locked_at: null })
-  });
-  await logSecurityEvent('unlock', 'システム閉鎖を解除');
-  showToast('[OK] 閉鎖を解除しました', 'success');
-  loadAdminConsoleData();
+  showToast('[...] 処理中...', '');
+  try {
+    const rows = await sbFetch('system_status?limit=1');
+    if (!rows || !rows.length) { showToast('[ERROR] system_statusテーブルが見つかりません', 'error'); return; }
+    const res = await fetch(SUPABASE_URL + '/rest/v1/system_status?id=eq.' + rows[0].id, {
+      method: 'PATCH',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({ is_locked: false, lock_reason: null, locked_at: null })
+    });
+    if (!res.ok) {
+      const txt = await res.text();
+      showToast('[ERROR] ' + res.status + ': ' + txt.slice(0,80), 'error');
+      return;
+    }
+    await logSecurityEvent('unlock', 'システム閉鎖を解除');
+    showToast('[OK] 閉鎖を解除しました', 'success');
+    loadAdminConsoleData();
+  } catch(e) {
+    showToast('[ERROR] ' + e.message, 'error');
+  }
 }
 
 async function acClearLog() {
