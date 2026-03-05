@@ -2267,42 +2267,34 @@
 <!-- ===== GAME SCREEN ===== -->
 <div class="game-screen" id="gameScreen">
   <div class="game-header">
-    <span>[GAME] N目並べ // 極秘対戦モード</span>
+    <span>[GAME] N目並べ</span>
     <span style="font-size:9px;color:var(--text-muted);">// TACTICAL BOARD GAME</span>
   </div>
 
   <div class="game-setup">
     <label>盤面サイズ:</label>
-    <select id="boardSizeSelect">
+    <select id="boardSizeSelect" onchange="startGame()">
       <option value="3">3×3 (3目並べ)</option>
       <option value="4">4×4 (4目並べ)</option>
       <option value="5" selected>5×5 (5目並べ)</option>
     </select>
     <label style="margin-left:8px;">勝利条件:</label>
-    <select id="winCondSelect">
+    <select id="winCondSelect" onchange="startGame()">
       <option value="3">3つ揃い</option>
       <option value="4">4つ揃い</option>
-      <option value="5">5つ揃い</option>
+      <option value="5" selected>5つ揃い</option>
     </select>
-    <label style="margin-left:8px;">ルームID:</label>
-    <input type="text" id="gameRoomInput" placeholder="例: room01" style="width:90px;">
-    <button class="game-start-btn" onclick="joinGame()">>> 参加/作成</button>
-    <button class="game-start-btn" onclick="resetGame()" style="background:transparent;border:1px solid var(--border-bright);color:var(--text-dim);">リセット</button>
+    <button class="game-start-btn" onclick="startGame()">>> リセット</button>
   </div>
 
   <div class="game-status-bar">
-    <div class="game-turn-indicator" id="gameTurnIndicator">ルームに参加してください</div>
+    <div class="game-turn-indicator" id="gameTurnIndicator">○ の番</div>
     <span id="gameScoreX" style="color:var(--purple-glow);font-size:10px;"></span>
     <span id="gameScoreO" style="color:var(--cyan);font-size:10px;"></span>
-    <span id="gameRoomLabel" style="color:var(--text-muted);font-size:9px;"></span>
   </div>
 
   <div class="game-board-wrap">
     <div class="game-board" id="gameBoard"></div>
-  </div>
-
-  <div style="font-size:9px;color:var(--text-muted);letter-spacing:1px;text-align:center;">
-    // 同じルームIDで入ればオンライン対戦可能 // Supabase経由でリアルタイム同期
   </div>
 </div>
 
@@ -3822,258 +3814,117 @@ function switchTab(tab) {
   if (gameScreen) gameScreen.classList.toggle('active', tab === 'game');
   if (canvasScreen) canvasScreen.classList.toggle('active', tab === 'canvas');
   if (tab === 'canvas') initCanvas();
+  if (tab === 'game') { if (!gActive) startGame(); }
 }
 
-// ===== N目並べ =====
-let gameBoard = [];
-let boardSize = 5;
-let winCond = 5;
-let myMark = null;    // 'X' or 'O'
-let gameRoomId = null;
-let gameActive = false;
-let myTurn = false;
-let scoreX = 0, scoreO = 0;
-let gamePollInterval = null;
-let lastGameMoveId = 0;
+// ===== N目並べ (ローカル2人用) =====
+let gBoard = [];
+let gSize = 5;
+let gWin = 5;
+let gTurn = 'O'; // ○から開始
+let gActive = false;
+let gScoreO = 0, gScoreX = 0;
 
-async function joinGame() {
-  const room = document.getElementById('gameRoomInput').value.trim();
-  if (!room) { showToast('[WARN] ルームIDを入力してください', 'error'); return; }
-  boardSize = parseInt(document.getElementById('boardSizeSelect').value);
-  winCond = Math.min(parseInt(document.getElementById('winCondSelect').value), boardSize);
-  gameRoomId = 'game_' + room;
-
-  // 既存のゲーム状態を確認
-  const existing = await sbFetch(`game_rooms?room_id=eq.${gameRoomId}&limit=1`);
-  if (existing && existing.length > 0 && !existing[0].is_finished) {
-    const g = existing[0];
-    boardSize = g.board_size;
-    winCond = g.win_cond;
-    // 参加者として入る
-    if (!g.player_o) {
-      await sbFetch(`game_rooms?id=eq.${g.id}`, { method: 'PATCH', body: JSON.stringify({ player_o: 'player2' }) });
-      myMark = 'O';
-    } else {
-      myMark = g.player_x ? 'X' : 'O';
-    }
-    gameBoard = JSON.parse(g.board_state);
-    lastGameMoveId = g.move_count || 0;
-  } else {
-    // 新規作成
-    myMark = 'X';
-    gameBoard = Array(boardSize * boardSize).fill(null);
-    const postRes = await fetch(SUPABASE_URL + '/rest/v1/game_rooms', {
-      method: 'POST',
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': 'Bearer ' + SUPABASE_KEY,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=minimal'
-      },
-      body: JSON.stringify({
-        room_id: gameRoomId,
-        board_state: JSON.stringify(gameBoard),
-        board_size: boardSize,
-        win_cond: winCond,
-        current_turn: 'X',
-        player_x: 'player1',
-        player_o: null,
-        is_finished: false,
-        move_count: 0
-      })
-    });
-    if (!postRes.ok) {
-      const err = await postRes.text();
-      showToast('[ERROR] ' + postRes.status + ': ' + err.slice(0,80), 'error');
-      return;
-    }
-  }
-
-  gameActive = true;
-  myTurn = myMark === 'X';
-  scoreX = 0; scoreO = 0;
-  document.getElementById('gameRoomLabel').textContent = `// ROOM: ${room} // あなた: ${myMark}`;
-  renderGameBoard();
-  updateGameStatus();
-  if (gamePollInterval) clearInterval(gamePollInterval);
-  gamePollInterval = setInterval(pollGame, 1500);
-  showToast(`[GAME] ルーム「${room}」に参加。あなたは ${myMark}`, 'success');
+function startGame() {
+  gSize = parseInt(document.getElementById('boardSizeSelect').value);
+  gWin = Math.min(parseInt(document.getElementById('winCondSelect').value), gSize);
+  gBoard = Array(gSize * gSize).fill(null);
+  gTurn = 'O';
+  gActive = true;
+  renderBoard();
+  setStatus('○ の番', 'normal');
 }
 
-async function pollGame() {
-  if (!gameRoomId || !gameActive) return;
-  const rows = await sbFetch(`game_rooms?room_id=eq.${gameRoomId}&limit=1`);
-  if (!rows || !rows.length) return;
-  const g = rows[0];
-  if ((g.move_count || 0) > lastGameMoveId) {
-    lastGameMoveId = g.move_count;
-    gameBoard = JSON.parse(g.board_state);
-    myTurn = g.current_turn === myMark;
-    renderGameBoard();
-    const winner = checkWinner(gameBoard, boardSize, winCond);
-    if (winner) {
-      endGameUI(winner);
-      return;
-    }
-    if (gameBoard.every(c => c !== null)) { endGameUI('draw'); return; }
-    updateGameStatus();
-  }
-}
-
-async function makeMove(idx) {
-  if (!gameActive || !myTurn || gameBoard[idx] !== null) return;
-  gameBoard[idx] = myMark;
-  myTurn = false;
-
-  const winner = checkWinner(gameBoard, boardSize, winCond);
-  const isDraw = !winner && gameBoard.every(c => c !== null);
-  const nextTurn = myMark === 'X' ? 'O' : 'X';
-
-  const rows = await sbFetch(`game_rooms?room_id=eq.${gameRoomId}&limit=1`);
-  if (!rows || !rows.length) return;
-  await sbFetch(`game_rooms?id=eq.${rows[0].id}`, {
-    method: 'PATCH',
-    body: JSON.stringify({
-      board_state: JSON.stringify(gameBoard),
-      current_turn: nextTurn,
-      is_finished: !!(winner || isDraw),
-      move_count: (rows[0].move_count || 0) + 1
-    })
+function renderBoard() {
+  const el = document.getElementById('gameBoard');
+  el.style.gridTemplateColumns = `repeat(${gSize}, 1fr)`;
+  const winCells = gActive ? getWinCells() : new Set();
+  el.innerHTML = '';
+  gBoard.forEach((cell, i) => {
+    const div = document.createElement('div');
+    div.className = 'game-cell' + (cell ? ' taken ' + (cell === 'O' ? 'O' : 'X') : '') + (winCells.has(i) ? ' win-cell' : '');
+    div.textContent = cell || '';
+    if (!cell && gActive) div.onclick = () => placeMove(i);
+    el.appendChild(div);
   });
-
-  lastGameMoveId = (rows[0].move_count || 0) + 1;
-  renderGameBoard();
-  if (winner) { endGameUI(winner); return; }
-  if (isDraw) { endGameUI('draw'); return; }
-  updateGameStatus();
+  document.getElementById('gameScoreO').textContent = `○: ${gScoreO}勝`;
+  document.getElementById('gameScoreX').textContent = `✕: ${gScoreX}勝`;
 }
 
-function checkWinner(board, size, win) {
+function placeMove(idx) {
+  if (!gActive || gBoard[idx]) return;
+  gBoard[idx] = gTurn;
+  const winner = checkWinner();
+  if (winner) {
+    renderBoard();
+    if (winner === 'O') { gScoreO++; setStatus('○ の勝ち！', 'win'); }
+    else { gScoreX++; setStatus('✕ の勝ち！', 'win'); }
+    gActive = false;
+    renderBoard();
+    return;
+  }
+  if (gBoard.every(c => c)) {
+    gActive = false;
+    renderBoard();
+    setStatus('引き分け！', 'draw');
+    return;
+  }
+  gTurn = gTurn === 'O' ? 'X' : 'O';
+  setStatus((gTurn === 'O' ? '○' : '✕') + ' の番', 'normal');
+  renderBoard();
+}
+
+function checkWinner() {
   const check = (cells) => {
-    for (let i = 0; i <= cells.length - win; i++) {
-      const slice = cells.slice(i, i + win);
-      if (slice[0] && slice.every(c => c === slice[0])) return slice[0];
+    for (let i = 0; i <= cells.length - gWin; i++) {
+      const s = cells.slice(i, i + gWin);
+      if (s[0] && s.every(c => c === s[0])) return s[0];
     }
     return null;
   };
-  // 行
-  for (let r = 0; r < size; r++) {
-    const row = board.slice(r * size, r * size + size);
-    const w = check(row); if (w) return w;
+  for (let r = 0; r < gSize; r++) {
+    const w = check(gBoard.slice(r * gSize, r * gSize + gSize));
+    if (w) return w;
   }
-  // 列
-  for (let c = 0; c < size; c++) {
-    const col = Array.from({length: size}, (_, r) => board[r * size + c]);
-    const w = check(col); if (w) return w;
+  for (let c = 0; c < gSize; c++) {
+    const w = check(Array.from({length: gSize}, (_, r) => gBoard[r * gSize + c]));
+    if (w) return w;
   }
-  // 斜め
-  for (let r = 0; r <= size - win; r++) {
-    for (let c = 0; c <= size - win; c++) {
-      const d1 = Array.from({length: win}, (_, i) => board[(r+i)*size+(c+i)]);
+  for (let r = 0; r <= gSize - gWin; r++) {
+    for (let c = 0; c <= gSize - gWin; c++) {
+      const d1 = Array.from({length: gWin}, (_, i) => gBoard[(r+i)*gSize+(c+i)]);
       if (d1[0] && d1.every(x => x === d1[0])) return d1[0];
-      const d2 = Array.from({length: win}, (_, i) => board[(r+i)*size+(c+win-1-i)]);
+      const d2 = Array.from({length: gWin}, (_, i) => gBoard[(r+i)*gSize+(c+gWin-1-i)]);
       if (d2[0] && d2.every(x => x === d2[0])) return d2[0];
     }
   }
   return null;
 }
 
-function getWinCells(board, size, win) {
+function getWinCells() {
   const cells = new Set();
-  const checkLine = (indices) => {
-    for (let i = 0; i <= indices.length - win; i++) {
-      const slice = indices.slice(i, i + win);
-      if (slice[0] !== undefined && board[slice[0]] && slice.every(j => board[j] === board[slice[0]])) {
-        slice.forEach(j => cells.add(j));
-      }
+  const mark = (indices) => {
+    for (let i = 0; i <= indices.length - gWin; i++) {
+      const s = indices.slice(i, i + gWin);
+      if (gBoard[s[0]] && s.every(j => gBoard[j] === gBoard[s[0]])) s.forEach(j => cells.add(j));
     }
   };
-  for (let r = 0; r < size; r++) checkLine(Array.from({length:size},(_,c)=>r*size+c));
-  for (let c = 0; c < size; c++) checkLine(Array.from({length:size},(_,r)=>r*size+c));
-  for (let r=0;r<=size-win;r++) for(let c=0;c<=size-win;c++) {
-    checkLine(Array.from({length:win},(_,i)=>(r+i)*size+(c+i)));
-    checkLine(Array.from({length:win},(_,i)=>(r+i)*size+(c+win-1-i)));
+  for (let r = 0; r < gSize; r++) mark(Array.from({length:gSize},(_,c)=>r*gSize+c));
+  for (let c = 0; c < gSize; c++) mark(Array.from({length:gSize},(_,r)=>r*gSize+c));
+  for (let r = 0; r <= gSize-gWin; r++) for (let c = 0; c <= gSize-gWin; c++) {
+    mark(Array.from({length:gWin},(_,i)=>(r+i)*gSize+(c+i)));
+    mark(Array.from({length:gWin},(_,i)=>(r+i)*gSize+(c+gWin-1-i)));
   }
   return cells;
 }
 
-function renderGameBoard() {
-  const el = document.getElementById('gameBoard');
-  if (!el) return;
-  el.style.gridTemplateColumns = `repeat(${boardSize}, 1fr)`;
-  const winCells = gameActive ? getWinCells(gameBoard, boardSize, winCond) : new Set();
-  el.innerHTML = '';
-  gameBoard.forEach((cell, i) => {
-    const div = document.createElement('div');
-    div.className = 'game-cell' + (cell ? ' taken ' + cell : '') + (winCells.has(i) ? ' win-cell' : '');
-    div.textContent = cell || '';
-    if (!cell && gameActive && myTurn) div.onclick = () => makeMove(i);
-    el.appendChild(div);
-  });
+function setStatus(text, type) {
+  const el = document.getElementById('gameTurnIndicator');
+  el.textContent = text;
+  el.className = 'game-turn-indicator' + (type === 'win' ? ' win' : type === 'draw' ? ' draw' : '');
 }
 
-function updateGameStatus() {
-  const ind = document.getElementById('gameTurnIndicator');
-  if (!ind) return;
-  if (!gameActive) return;
-  if (myTurn) {
-    ind.textContent = `あなたの番 [${myMark}]`;
-    ind.className = 'game-turn-indicator';
-  } else {
-    ind.textContent = `相手の番を待機中...`;
-    ind.className = 'game-turn-indicator opponent';
-  }
-}
-
-function endGameUI(result) {
-  gameActive = false;
-  if (gamePollInterval) { clearInterval(gamePollInterval); gamePollInterval = null; }
-  const ind = document.getElementById('gameTurnIndicator');
-  if (result === 'draw') {
-    ind.textContent = '引き分け！';
-    ind.className = 'game-turn-indicator draw';
-    showToast('[GAME] 引き分けです', '');
-  } else if (result === myMark) {
-    ind.textContent = `あなたの勝利！ [${myMark}]`;
-    ind.className = 'game-turn-indicator win';
-    scoreX += result === 'X' ? 1 : 0;
-    scoreO += result === 'O' ? 1 : 0;
-    showToast('[GAME] 🎉 勝利！', 'success');
-  } else {
-    ind.textContent = `相手の勝利 [${result}]`;
-    ind.className = 'game-turn-indicator lose';
-    scoreX += result === 'X' ? 1 : 0;
-    scoreO += result === 'O' ? 1 : 0;
-    showToast('[GAME] 敗北...', 'error');
-  }
-  document.getElementById('gameScoreX').textContent = `X: ${scoreX}勝`;
-  document.getElementById('gameScoreO').textContent = `O: ${scoreO}勝`;
-  renderGameBoard();
-}
-
-async function resetGame() {
-  if (!gameRoomId) return;
-  gameBoard = Array(boardSize * boardSize).fill(null);
-  gameActive = true;
-  myTurn = myMark === 'X';
-  lastGameMoveId++;
-  const rows = await sbFetch(`game_rooms?room_id=eq.${gameRoomId}&limit=1`);
-  if (rows && rows.length) {
-    await sbFetch(`game_rooms?id=eq.${rows[0].id}`, {
-      method: 'PATCH',
-      body: JSON.stringify({
-        board_state: JSON.stringify(gameBoard),
-        current_turn: 'X',
-        is_finished: false,
-        move_count: lastGameMoveId
-      })
-    });
-  }
-  renderGameBoard();
-  updateGameStatus();
-  showToast('[GAME] ゲームをリセットしました', '');
-}
-
+// タブ切り替え時にゲーム初期化
 // ===== CANVAS =====
 let canvasTool = 'pen';
 let canvasColor = '#c084fc';
