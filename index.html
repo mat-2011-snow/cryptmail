@@ -2656,6 +2656,7 @@
   <div style="font-size:9px;color:var(--text-muted);letter-spacing:1px;margin-top:10px;">
     管理者のみがこの状態を解除できます
   </div>
+  <button onclick="showLockedAdminLogin()" style="margin-top:16px;background:transparent;border:1px solid rgba(239,68,68,0.4);color:#664444;padding:7px 18px;font-family:'Orbitron',monospace;font-size:10px;letter-spacing:2px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='rgba(239,68,68,0.4)';this.style.color='#664444'">[ADMIN] 管理コンソール</button>
 </div>
 
 <!-- INCOMING CALL -->
@@ -4494,6 +4495,25 @@ setInterval(() => {
   const el = document.getElementById('adminConsoleClock');
   if (el) el.textContent = new Date().toLocaleTimeString('ja-JP');
 }, 1000);
+
+
+function showLockedAdminLogin() {
+  // LOCKED画面を一時的に隠してADMINパスワード画面へ
+  document.getElementById('lockedScreen').style.zIndex = '990';
+  document.getElementById('adminPwScreen').style.display = 'flex';
+  document.getElementById('adminPwScreen').style.zIndex = '1010';
+  document.getElementById('adminPwScreenInput').value = '';
+  document.getElementById('adminPwScreenError').textContent = '';
+  // 戻るボタンをLOCKED画面に戻すよう上書き
+  const backBtn = document.querySelector('#adminPwScreen button:last-of-type');
+  if (backBtn) {
+    backBtn.onclick = () => {
+      document.getElementById('adminPwScreen').style.display = 'none';
+      document.getElementById('lockedScreen').style.zIndex = '1000';
+    };
+  }
+  setTimeout(() => document.getElementById('adminPwScreenInput').focus(), 100);
+}
 
 async function checkSystemLock() {
   try {
