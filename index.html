@@ -3872,8 +3872,10 @@ async function pollGame() {
   const rows = await sbFetch(`game_rooms?room_id=eq.${gRoomId}&limit=1`);
   if (!rows || !rows.length) return;
   const g = rows[0];
-  if ((g.move_count || 0) > gLastMove) {
-    gLastMove = g.move_count;
+  const serverCount = g.move_count || 0;
+  // move_countが増えた場合 OR リセット(0)でこちらが0より大きい場合に更新
+  if (serverCount > gLastMove || (serverCount === 0 && gLastMove > 0)) {
+    gLastMove = serverCount;
     gBoard = JSON.parse(g.board_state);
     gActive = !g.is_finished;
     renderBoard();
@@ -3990,19 +3992,22 @@ function updateStatus(winner, isDraw) {
 
 async function resetGame() {
   if (!gRoomId) return;
+  // セレクトボックスの最新の設定を読み込む
+  gSize = parseInt(document.getElementById('boardSizeSelect').value);
+  gWin = Math.min(parseInt(document.getElementById('winCondSelect').value), gSize);
   gBoard = Array(gSize * gSize).fill(null);
   gActive = true;
+  gLastMove = -1;
   const rows = await sbFetch(`game_rooms?room_id=eq.${gRoomId}&limit=1`);
   if (rows && rows.length) {
-    gLastMove++;
     await fetch(SUPABASE_URL + '/rest/v1/game_rooms?id=eq.' + rows[0].id, {
       method: 'PATCH',
       headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
-      body: JSON.stringify({ board_state: JSON.stringify(gBoard), current_turn: 'O', is_finished: false, move_count: gLastMove })
+      body: JSON.stringify({ board_state: JSON.stringify(gBoard), board_size: gSize, win_cond: gWin, current_turn: 'O', is_finished: false, move_count: 0 })
     });
   }
   renderBoard(); updateStatus();
-  showToast('[GAME] リセットしました', 'success');
+  showToast(`[GAME] リセット: ${gSize}×${gSize} / ${gWin}目並べ`, 'success');
 }
 
 // ===== CANVAS =====
