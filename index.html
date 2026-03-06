@@ -4512,135 +4512,161 @@ async function logSecurityEvent(type, detail) {
 }
 
 // ===== VOICE CALL (WebRTC) =====
-const SIGNAL_CHANNEL = 'cryptmail-signaling';
-let pc = null;           // RTCPeerConnection
+let pc = null;
 let localStream = null;
 let callTimer = null;
 let callSeconds = 0;
 let isMuted = false;
-let callRole = null;     // 'caller' | 'callee'
-let signalSub = null;
-let myCallId = null;
+let callRole = null;
+let sigPollInterval = null;
+let mySessionId = Math.random().toString(36).slice(2, 10);
 
-const ICE_SERVERS = {
-  iceServers: [
-    { urls: 'stun:stun.l.google.com:19302' },
-    { urls: 'stun:stun1.l.google.com:19302' },
-    // Open Relay TURN (無料)
-    {
-      urls: 'turn:openrelay.metered.ca:80',
-      username: 'openrelayproject',
-      credential: 'openrelayproject'
-    },
-    {
-      urls: 'turn:openrelay.metered.ca:443',
-      username: 'openrelayproject',
-      credential: 'openrelayproject'
-    }
-  ]
-};
+const ICE_SERVERS = { iceServers: [
+  { urls: 'stun:stun.l.google.com:19302' },
+  { urls: 'stun:stun2.l.google.com:19302' },
+  { urls: 'stun:stun.cloudflare.com:3478' },
+  {
+    urls: ['turn:openrelay.metered.ca:80','turn:openrelay.metered.ca:443','turns:openrelay.metered.ca:443'],
+    username: 'openrelayproject',
+    credential: 'openrelayproject'
+  }
+]};
 
-// Supabase Realtime でシグナリング
-async function subscribeSignaling() {
-  if (signalSub) return;
-  // Supabase Realtime channel経由でシグナリングメッセージをやり取り
-  // messages テーブルをポーリング流用（シグナル用レコード）
-}
-
+// シグナル送信
 async function sendSignal(type, data) {
-  await sbFetch('signals', {
+  await fetch(SUPABASE_URL + '/rest/v1/signals', {
     method: 'POST',
-    body: JSON.stringify({ type, data: JSON.stringify(data), created_at: new Date().toISOString() })
+    headers: {
+      'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY,
+      'Content-Type': 'application/json', 'Prefer': 'return=minimal'
+    },
+    body: JSON.stringify({ type, data: JSON.stringify(data), session_id: mySessionId, created_at: new Date().toISOString() })
   });
 }
 
-async function pollSignals(types, timeoutMs = 20000) {
+// シグナル受信（ポーリング）
+async function waitForSignal(type, timeoutMs = 30000) {
   const start = Date.now();
   while (Date.now() - start < timeoutMs) {
-    const rows = await sbFetch('signals?order=id.desc&limit=10');
-    if (rows) {
-      for (const row of rows) {
-        if (types.includes(row.type)) {
-          // 読んだら削除
-          await sbFetch('signals?id=eq.' + row.id, { method: 'DELETE' });
-          return { type: row.type, data: JSON.parse(row.data) };
-        }
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/signals?type=eq.${type}&order=id.desc&limit=1`, {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+    });
+    const rows = await res.json();
+    if (rows && rows.length > 0) {
+      // 自分が送ったものは無視
+      if (rows[0].session_id !== mySessionId) {
+        await fetch(`${SUPABASE_URL}/rest/v1/signals?id=eq.${rows[0].id}`, {
+          method: 'DELETE',
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+        });
+        return JSON.parse(rows[0].data);
       }
     }
-    await new Promise(r => setTimeout(r, 1000));
+    await new Promise(r => setTimeout(r, 800));
   }
   return null;
 }
 
+// ICE candidateを継続的に収集して相手に送る
+function setupIceSending(peerConn, iceType) {
+  peerConn.onicecandidate = async (e) => {
+    if (e.candidate) {
+      await sendSignal(iceType, e.candidate.toJSON());
+    }
+  };
+}
+
+// ICE candidateを受信して追加する（バックグラウンド）
+async function startIceReceiving(peerConn, iceType) {
+  for (let i = 0; i < 20; i++) {
+    await new Promise(r => setTimeout(r, 500));
+    if (!peerConn || peerConn.signalingState === 'closed') break;
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/signals?type=eq.${iceType}&order=id.asc&limit=10`, {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+    });
+    const rows = await res.json();
+    if (rows && rows.length > 0) {
+      for (const row of rows) {
+        if (row.session_id === mySessionId) continue;
+        try {
+          await peerConn.addIceCandidate(new RTCIceCandidate(JSON.parse(row.data)));
+        } catch(e) {}
+        await fetch(`${SUPABASE_URL}/rest/v1/signals?id=eq.${row.id}`, {
+          method: 'DELETE',
+          headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+        });
+      }
+    }
+  }
+}
+
+// 着信チェック
+async function checkIncoming() {
+  if (pc) return;
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/signals?type=eq.offer&order=id.desc&limit=1`, {
+    headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+  });
+  const rows = await res.json();
+  if (rows && rows.length > 0 && rows[0].session_id !== mySessionId) {
+    document.getElementById('callIncoming').classList.add('active');
+    sendNotif('[CRYPTMAIL] 📞 着信', '暗号化音声通話の要求があります', true);
+  } else {
+    document.getElementById('callIncoming').classList.remove('active');
+  }
+}
+
+// 発信
 async function startCall() {
   if (pc) { endCall(); return; }
   callRole = 'caller';
-  myCallId = Date.now();
 
-  document.getElementById('callBtn').classList.add('calling');
-  showCallOverlay('発信中...', '相手の応答を待っています');
-  document.getElementById('callRing').classList.add('ringing');
-
+  // マイク取得
   try {
     localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
   } catch(e) {
-    showToast('[ERROR] マイクへのアクセスが拒否されました', 'error');
-    hideCallOverlay(); return;
+    showToast('[ERROR] マイクへのアクセスが拒否されました', 'error'); return;
   }
 
+  // 古いシグナルを全部消す
+  await cleanSignals();
+
   pc = new RTCPeerConnection(ICE_SERVERS);
-  localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
+  localStream.getTracks().forEach(t => pc.addTrack(t, localStream));
 
   pc.ontrack = (e) => {
     document.getElementById('remoteAudio').srcObject = e.streams[0];
     onCallConnected();
   };
 
-  pc.onicecandidate = async (e) => {
-    if (e.candidate) {
-      await sendSignal('ice-caller', e.candidate);
+  pc.onconnectionstatechange = () => {
+    if (pc && (pc.connectionState === 'failed' || pc.connectionState === 'disconnected')) {
+      showToast('[CALL] 接続が切断されました', 'error');
+      endCall();
     }
   };
 
-  const offer = await pc.createOffer();
+  setupIceSending(pc, 'ice-caller');
+
+  const offer = await pc.createOffer({ offerToReceiveAudio: true });
   await pc.setLocalDescription(offer);
   await sendSignal('offer', offer);
 
-  // 相手のanswerを待つ
+  showCallOverlay('発信中...', '相手の応答を待っています');
+  document.getElementById('callBtn').classList.add('calling');
   showToast('[CALL] 発信中... 相手が応答するまでお待ちください', '');
-  const ans = await pollSignals(['answer'], 30000);
-  if (!ans) {
+
+  // answerを待つ
+  const answer = await waitForSignal('answer', 30000);
+  if (!answer) {
     showToast('[CALL] 応答がありません', 'error');
     endCall(); return;
   }
-  await pc.setRemoteDescription(new RTCSessionDescription(ans.data));
 
-  // ICE candidateを受け取る
-  collectIceCandidates('ice-callee', pc);
+  await pc.setRemoteDescription(new RTCSessionDescription(answer));
+  startIceReceiving(pc, 'ice-callee');
 }
 
-async function collectIceCandidates(type, peerConn) {
-  for (let i = 0; i < 10; i++) {
-    const rows = await sbFetch(`signals?type=eq.${type}&order=id.asc&limit=5`);
-    if (rows && rows.length > 0) {
-      for (const row of rows) {
-        try { await peerConn.addIceCandidate(new RTCIceCandidate(JSON.parse(row.data))); } catch(e) {}
-        await sbFetch('signals?id=eq.' + row.id, { method: 'DELETE' });
-      }
-    }
-    await new Promise(r => setTimeout(r, 500));
-  }
-}
-
-async function checkIncoming() {
-  if (pc) return;
-  const rows = await sbFetch('signals?type=eq.offer&order=id.desc&limit=1');
-  if (rows && rows.length > 0) {
-    document.getElementById('callIncoming').classList.add('active');
-    sendNotif('[CRYPTMAIL] 📞 着信', '暗号化音声通話の要求があります', true);
-  }
-}
-
+// 着信応答
 async function acceptCall() {
   document.getElementById('callIncoming').classList.remove('active');
   callRole = 'callee';
@@ -4648,26 +4674,40 @@ async function acceptCall() {
   try {
     localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
   } catch(e) {
-    showToast('[ERROR] マイクへのアクセスが拒否されました', 'error');
-    return;
+    showToast('[ERROR] マイクへのアクセスが拒否されました', 'error'); return;
   }
 
-  const offerRow = await sbFetch('signals?type=eq.offer&order=id.desc&limit=1');
-  if (!offerRow || !offerRow.length) { showToast('[ERROR] 接続情報が見つかりません', 'error'); return; }
-  await sbFetch('signals?id=eq.' + offerRow[0].id, { method: 'DELETE' });
-  const offer = JSON.parse(offerRow[0].data);
+  // offerを取得
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/signals?type=eq.offer&order=id.desc&limit=1`, {
+    headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+  });
+  const rows = await res.json();
+  if (!rows || !rows.length) { showToast('[ERROR] 接続情報が見つかりません', 'error'); return; }
+
+  const offerRow = rows[0];
+  await fetch(`${SUPABASE_URL}/rest/v1/signals?id=eq.${offerRow.id}`, {
+    method: 'DELETE',
+    headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+  });
+
+  const offer = JSON.parse(offerRow.data);
 
   pc = new RTCPeerConnection(ICE_SERVERS);
-  localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
+  localStream.getTracks().forEach(t => pc.addTrack(t, localStream));
 
   pc.ontrack = (e) => {
     document.getElementById('remoteAudio').srcObject = e.streams[0];
     onCallConnected();
   };
 
-  pc.onicecandidate = async (e) => {
-    if (e.candidate) await sendSignal('ice-callee', e.candidate);
+  pc.onconnectionstatechange = () => {
+    if (pc && (pc.connectionState === 'failed' || pc.connectionState === 'disconnected')) {
+      showToast('[CALL] 接続が切断されました', 'error');
+      endCall();
+    }
   };
+
+  setupIceSending(pc, 'ice-callee');
 
   await pc.setRemoteDescription(new RTCSessionDescription(offer));
   const answer = await pc.createAnswer();
@@ -4675,12 +4715,22 @@ async function acceptCall() {
   await sendSignal('answer', answer);
 
   showCallOverlay('接続中...', '暗号化チャンネルを確立しています');
-  collectIceCandidates('ice-caller', pc);
+  startIceReceiving(pc, 'ice-caller');
 }
 
 function declineCall() {
   document.getElementById('callIncoming').classList.remove('active');
-  sbFetch('signals?type=eq.offer', { method: 'DELETE' });
+  cleanSignals();
+}
+
+async function cleanSignals() {
+  const types = ['offer','answer','ice-caller','ice-callee'];
+  for (const t of types) {
+    await fetch(`${SUPABASE_URL}/rest/v1/signals?type=eq.${t}`, {
+      method: 'DELETE',
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+    });
+  }
 }
 
 function onCallConnected() {
@@ -4702,17 +4752,15 @@ function onCallConnected() {
 }
 
 function endCall() {
-  if (pc) { pc.close(); pc = null; }
+  if (pc) { try { pc.close(); } catch(e) {} pc = null; }
   if (localStream) { localStream.getTracks().forEach(t => t.stop()); localStream = null; }
   if (callTimer) { clearInterval(callTimer); callTimer = null; }
-  document.getElementById('remoteAudio').srcObject = null;
+  try { document.getElementById('remoteAudio').srcObject = null; } catch(e) {}
   hideCallOverlay();
   document.getElementById('callBtn').className = 'call-btn';
   document.getElementById('callBtn').textContent = '[CALL] 通話';
   document.getElementById('callIncoming').classList.remove('active');
-  // シグナルを全部クリア
-  sbFetch('signals?type=eq.offer', { method: 'DELETE' });
-  sbFetch('signals?type=eq.answer', { method: 'DELETE' });
+  cleanSignals();
   isMuted = false;
   callRole = null;
   showToast('[CALL] 通話を終了しました', '');
@@ -4726,7 +4774,6 @@ function toggleMute() {
   btn.textContent = isMuted ? '🔇' : '🎤';
   btn.classList.toggle('muted', isMuted);
 }
-
 function toggleSpeaker() {
   const audio = document.getElementById('remoteAudio');
   audio.muted = !audio.muted;
