@@ -3664,8 +3664,8 @@ document.addEventListener('keydown', e => {
 });
 
 // ===== TITLE SCREEN & AUTH =====
-const PW1_HASH = '7ac25d5d84cae3dcc037c52a93dfe320fe83b2a6abe787451b4fc15aeba2c9e7';
-const PW2_HASH = 'aeb32cfe00d196040e9758c276853282721fbd222038a54e9ae04d6686066e1b';
+const PW1_HASH = '3dc98813aaed2fa4f0c89ab667f3c718fd035719aed3f544ea9590ac39eea5b1';
+const PW2_HASH = '4d0759419eb196744e0cc1733ff13e631a5dd495b030744fcf062ec39dbb934b';
 
 let idleTimer = null;
 let idleBarAnim = null;
@@ -3726,7 +3726,7 @@ function titleAdminSubmit() {
 async function adminPwScreenSubmit() {
   const val = document.getElementById('adminPwScreenInput').value;
   const hash = await sha256(val);
-  const ADMIN_CONSOLE_HASH = 'c268a2b4464bf8ec6118bc134534a7114f764c183fa3978366240a250621b794';
+  const ADMIN_CONSOLE_HASH = 'eb7aebf2890d171afc6a840869b1d433becdb21eb2efe3e8bff123f6ba0616fa';
   if (hash === ADMIN_CONSOLE_HASH) {
     // 先にLOCKED画面とPW画面を隠してからコンソール表示
     document.getElementById('lockedScreen').style.display = 'none';
