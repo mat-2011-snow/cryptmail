@@ -3850,13 +3850,18 @@ let currentGame = null;
 
 function selectGame(game) {
   currentGame = game;
-  document.getElementById('gameSelector').style.display = game === null ? 'flex' : 'none';
-  document.getElementById('subGomoku').style.display = game === 'gomoku' ? 'flex' : 'none';
-  document.getElementById('subTetris').style.display = game === 'tetris' ? 'flex' : 'none';
-  document.getElementById('subRpg').style.display   = game === 'rpg'    ? 'flex' : 'none';
+  const sel = document.getElementById('gameSelector');
+  const gom = document.getElementById('subGomoku');
+  const tet = document.getElementById('subTetris');
+  const rpg = document.getElementById('subRpg');
+  if (!sel || !gom || !tet || !rpg) return;
+  sel.style.display = game === null     ? 'flex' : 'none';
+  gom.style.display = game === 'gomoku' ? 'flex' : 'none';
+  tet.style.display = game === 'tetris' ? 'flex' : 'none';
+  rpg.style.display = game === 'rpg'    ? 'flex' : 'none';
   if (game === 'gomoku') joinGame();
-  if (game === 'tetris') { tetrisInit(); }
-  if (game === 'rpg')    { rpgStart(); }
+  if (game === 'tetris') tetrisInit();
+  if (game === 'rpg')    rpgStart();
 }
 
 // ===== TETRIS =====
