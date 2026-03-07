@@ -1790,15 +1790,29 @@
     /* Terms overlay */
     .terms-body-wrap { grid-template-columns: 1fr; }
     .terms-toc { display: none; }
-    .terms-scroll { padding-bottom: 80px; }
-    .t-hero { padding: 18px 18px 14px; }
-    .t-title { font-size: 18px; letter-spacing: 2px; }
-    .t-section { padding: 16px 18px; }
-    .t-grid { grid-template-columns: 1fr; }
-    .t-agree-section { margin: 12px 18px 40px; padding: 16px; }
+    .terms-scroll { padding-bottom: 100px; }
+    .terms-topbar { padding: 10px 14px; }
+    .t-hero { padding: 14px 14px 12px; }
+    .t-title { font-size: 15px !important; letter-spacing: 1px; }
+    .t-subtitle { font-size: 9px; }
+    .t-doc-id { font-size: 8px; }
     .t-meta { grid-template-columns: repeat(2,1fr); }
-    .t-table { font-size: 10px; }
-    .t-table th, .t-table td { padding: 5px 7px; }
+    .t-meta-cell { padding: 6px 8px; }
+    .t-meta-cell .val { font-size: 10px; }
+    .t-section { padding: 14px 14px; }
+    .t-sec-title { font-size: 11px !important; letter-spacing: 1px; }
+    .t-body { font-size: 12px; line-height: 1.8; }
+    .t-list li { font-size: 12px; padding: 6px 0 6px 18px; }
+    .t-list li::before { font-size: 9px; }
+    .t-grid { grid-template-columns: 1fr; }
+    .t-grid-cell { font-size: 11px; }
+    .t-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .t-table { font-size: 10px; min-width: 320px; }
+    .t-table th, .t-table td { padding: 5px 7px; white-space: nowrap; }
+    .t-agree-section { margin: 10px 14px 50px; padding: 14px; }
+    .t-agree-section .t-body { font-size: 11px; }
+    .checklist li { padding: 6px 0; font-size: 11px; }
+    .t-agree-btn { font-size: 12px !important; padding: 13px !important; width: 100% !important; }
 
     /* Title screen */
     .title-logo { font-size: 36px; letter-spacing: 4px; }
@@ -2617,7 +2631,7 @@
             <th style="background:rgba(30,41,59,0.6);border:1px solid var(--border);padding:7px 12px;text-align:left;font-family:'Orbitron',monospace;font-size:8px;color:var(--text-dim);letter-spacing:2px;">詳細</th>
           </tr></thead>
           <tbody id="acLogBody"><tr><td colspan="3" style="text-align:center;color:var(--text-muted);padding:20px;border:1px solid var(--border);">読み込み中...</td></tr></tbody>
-        </table>
+        </table></div>
       </div>
     </div>
 
@@ -2816,7 +2830,7 @@
       </div>
       <div class="t-section" id="ts8">
         <div class="t-sec-hdr"><div class="t-sec-num red">第8条</div><div class="t-sec-title">違反と制裁</div></div>
-        <table class="t-table">
+        <div class="t-table-wrap"><table class="t-table">
           <thead><tr><th>違反レベル</th><th>違反例</th><th>制裁措置</th></tr></thead>
           <tbody>
             <tr><td><span class="t-lv low">LEVEL-1 軽微</span></td><td>ガイドラインの軽微な違反</td><td>警告通知の送付</td></tr>
@@ -2824,7 +2838,7 @@
             <tr><td><span class="t-lv high">LEVEL-3 重大</span></td><td>不正アクセス試行、システム改ざん</td><td>永久アカウント停止・当局への通報</td></tr>
             <tr><td><span class="t-lv crit">LEVEL-4 最重大</span></td><td>テロ関連、重大犯罪への使用</td><td>即時停止・法執行機関への全情報提供・法的訴追</td></tr>
           </tbody>
-        </table>
+        </table></div>
       </div>
       <div class="t-section" id="ts9">
         <div class="t-sec-hdr"><div class="t-sec-num cyan">第9条</div><div class="t-sec-title">プライバシーと監視</div></div>
@@ -3726,7 +3740,7 @@ function titleAdminSubmit() {
 async function adminPwScreenSubmit() {
   const val = document.getElementById('adminPwScreenInput').value;
   const hash = await sha256(val);
-  const ADMIN_CONSOLE_HASH = '98c0b442ed73fcc84caa293b7c3c6bff0d5df781487f3f7277946e10153ee954';
+  const ADMIN_CONSOLE_HASH = 'c268a2b4464bf8ec6118bc134534a7114f764c183fa3978366240a250621b794';
   if (hash === ADMIN_CONSOLE_HASH) {
     // 先にLOCKED画面とPW画面を隠してからコンソール表示
     document.getElementById('lockedScreen').style.display = 'none';
@@ -4519,7 +4533,7 @@ let callSeconds = 0;
 let isMuted = false;
 let callRole = null;
 let sigPollInterval = null;
-let mySessionId = Math.random().toString(36).slice(2, 10);
+let myCallTimestamp = null; // 自分が発信した時刻
 
 const ICE_SERVERS = { iceServers: [
   { urls: 'stun:stun.l.google.com:19302' },
@@ -4540,7 +4554,7 @@ async function sendSignal(type, data) {
       'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY,
       'Content-Type': 'application/json', 'Prefer': 'return=minimal'
     },
-    body: JSON.stringify({ type, data: JSON.stringify(data), session_id: mySessionId, created_at: new Date().toISOString() })
+    body: JSON.stringify({ type, data: JSON.stringify(data), created_at: new Date().toISOString() })
   });
 }
 
@@ -4554,13 +4568,14 @@ async function waitForSignal(type, timeoutMs = 30000) {
     const rows = await res.json();
     if (rows && rows.length > 0) {
       // 自分が送ったものは無視
-      if (rows[0].session_id !== mySessionId) {
-        await fetch(`${SUPABASE_URL}/rest/v1/signals?id=eq.${rows[0].id}`, {
-          method: 'DELETE',
-          headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
-        });
-        return JSON.parse(rows[0].data);
-      }
+      const row = rows[0];
+      // 自分が送った直後のシグナルは無視（発信者側が answer を拾わないように）
+      if (callRole === 'caller' && row.type === 'offer') { await new Promise(r => setTimeout(r, 800)); continue; }
+      await fetch(`${SUPABASE_URL}/rest/v1/signals?id=eq.${row.id}`, {
+        method: 'DELETE',
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+      });
+      return JSON.parse(row.data);
     }
     await new Promise(r => setTimeout(r, 800));
   }
@@ -4587,7 +4602,6 @@ async function startIceReceiving(peerConn, iceType) {
     const rows = await res.json();
     if (rows && rows.length > 0) {
       for (const row of rows) {
-        if (row.session_id === mySessionId) continue;
         try {
           await peerConn.addIceCandidate(new RTCIceCandidate(JSON.parse(row.data)));
         } catch(e) {}
@@ -4607,7 +4621,7 @@ async function checkIncoming() {
     headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
   });
   const rows = await res.json();
-  if (rows && rows.length > 0 && rows[0].session_id !== mySessionId) {
+  if (rows && rows.length > 0 && !pc) {
     document.getElementById('callIncoming').classList.add('active');
     sendNotif('[CRYPTMAIL] 📞 着信', '暗号化音声通話の要求があります', true);
   } else {
@@ -4627,6 +4641,7 @@ async function startCall() {
     showToast('[ERROR] マイクへのアクセスが拒否されました', 'error'); return;
   }
 
+  myCallTimestamp = Date.now();
   // 古いシグナルを全部消す
   await cleanSignals();
 
