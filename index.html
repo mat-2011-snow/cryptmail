@@ -2080,7 +2080,7 @@
 <!-- NAV TABS -->
 <div class="nav-tabs" id="navTabs">
   <button class="nav-tab active" onclick="switchTab('mail')" id="tab-mail">[MAIL] メール</button>
-  <button class="nav-tab" onclick="switchTab('game')" id="tab-game">[GAME] N目並べ</button>
+  <button class="nav-tab" onclick="switchTab('game')" id="tab-game">[GAME] ゲーム</button>
   <button class="nav-tab" onclick="switchTab('canvas')" id="tab-canvas">[CANVAS] 共有キャンバス</button>
 </div>
 
@@ -2284,7 +2284,7 @@
 <!-- ===== GAME SCREEN ===== -->
 <div class="game-screen" id="gameScreen">
   <div class="game-header">
-    <span>[GAME] N目並べ</span>
+    <span>[GAME] ゲーム</span>
     <span style="font-size:9px;color:var(--text-muted);">// TACTICAL BOARD GAME</span>
   </div>
 
@@ -3841,7 +3841,494 @@ function switchTab(tab) {
   if (gameScreen) gameScreen.classList.toggle('active', tab === 'game');
   if (canvasScreen) canvasScreen.classList.toggle('active', tab === 'canvas');
   if (tab === 'canvas') initCanvas();
-  if (tab === 'game') { joinGame(); }
+  if (tab === 'game') { selectGame(null); }
+}
+
+
+// ===== GAME SELECTOR =====
+let currentGame = null;
+
+function selectGame(game) {
+  currentGame = game;
+  document.getElementById('gameSelector').style.display = game === null ? 'flex' : 'none';
+  document.getElementById('subGomoku').style.display = game === 'gomoku' ? 'flex' : 'none';
+  document.getElementById('subTetris').style.display = game === 'tetris' ? 'flex' : 'none';
+  document.getElementById('subRpg').style.display   = game === 'rpg'    ? 'flex' : 'none';
+  if (game === 'gomoku') joinGame();
+  if (game === 'tetris') { tetrisInit(); }
+  if (game === 'rpg')    { rpgStart(); }
+}
+
+// ===== TETRIS =====
+const TETRIS_W = 10, TETRIS_H = 20;
+const PIECES = [
+  { shape: [[1,1,1,1]], color: '#06b6d4' },
+  { shape: [[1,1],[1,1]], color: '#eab308' },
+  { shape: [[0,1,0],[1,1,1]], color: '#a855f7' },
+  { shape: [[1,0,0],[1,1,1]], color: '#f97316' },
+  { shape: [[0,0,1],[1,1,1]], color: '#3b82f6' },
+  { shape: [[0,1,1],[1,1,0]], color: '#22c55e' },
+  { shape: [[1,1,0],[0,1,1]], color: '#ef4444' },
+];
+let tBoard, tPiece, tNext, tScore, tLevel, tLines, tRunning, tInterval, tLock;
+
+function tetrisInit() {
+  tBoard = Array.from({length:TETRIS_H}, () => Array(TETRIS_W).fill(0));
+  tScore = 0; tLevel = 1; tLines = 0; tRunning = false; tLock = false;
+  document.getElementById('tetrisScore').textContent = '0';
+  document.getElementById('tetrisLevel').textContent = '1';
+  document.getElementById('tetrisStartBtn').textContent = 'START';
+  tPiece = null; tNext = randomPiece();
+  tetrisDraw();
+}
+
+function randomPiece() {
+  const p = PIECES[Math.floor(Math.random() * PIECES.length)];
+  return { shape: p.shape.map(r => [...r]), color: p.color,
+    x: Math.floor(TETRIS_W/2) - Math.floor(p.shape[0].length/2), y: 0 };
+}
+
+function tetrisStart() {
+  if (tRunning) { tetrisStop(); return; }
+  tetrisInit();
+  tRunning = true;
+  document.getElementById('tetrisStartBtn').textContent = 'STOP';
+  tPiece = randomPiece();
+  tNext = randomPiece();
+  tetrisDrawNext();
+  tInterval = setInterval(tetrisTick, Math.max(100, 800 - (tLevel-1)*80));
+  document.addEventListener('keydown', tetrisKey);
+}
+
+function tetrisStop() {
+  tRunning = false;
+  if (tInterval) { clearInterval(tInterval); tInterval = null; }
+  document.removeEventListener('keydown', tetrisKey);
+  document.getElementById('tetrisStartBtn').textContent = 'START';
+}
+
+function tetrisTick() {
+  if (!tetrisMove(0, 1)) {
+    tetrisPlace();
+  }
+  tetrisDraw();
+}
+
+function tetrisMove(dx, dy) {
+  const nx = tPiece.x + dx, ny = tPiece.y + dy;
+  if (tetrisValid(tPiece.shape, nx, ny)) { tPiece.x = nx; tPiece.y = ny; tetrisDraw(); return true; }
+  return false;
+}
+
+function tetrisRotate() {
+  const s = tPiece.shape;
+  const rot = s[0].map((_,i) => s.map(r => r[i]).reverse());
+  if (tetrisValid(rot, tPiece.x, tPiece.y)) { tPiece.shape = rot; tetrisDraw(); }
+}
+
+function tetrisValid(shape, ox, oy) {
+  for (let r = 0; r < shape.length; r++) {
+    for (let c = 0; c < shape[r].length; c++) {
+      if (!shape[r][c]) continue;
+      const x = ox + c, y = oy + r;
+      if (x < 0 || x >= TETRIS_W || y >= TETRIS_H) return false;
+      if (y >= 0 && tBoard[y][x]) return false;
+    }
+  }
+  return true;
+}
+
+function tetrisPlace() {
+  for (let r = 0; r < tPiece.shape.length; r++)
+    for (let c = 0; c < tPiece.shape[r].length; c++)
+      if (tPiece.shape[r][c] && tPiece.y+r >= 0)
+        tBoard[tPiece.y+r][tPiece.x+c] = tPiece.color;
+  // ライン消去
+  let cleared = 0;
+  for (let r = TETRIS_H-1; r >= 0; r--) {
+    if (tBoard[r].every(c => c)) {
+      tBoard.splice(r, 1);
+      tBoard.unshift(Array(TETRIS_W).fill(0));
+      cleared++; r++;
+    }
+  }
+  if (cleared) {
+    const pts = [0,100,300,500,800];
+    tScore += (pts[cleared] || 800) * tLevel;
+    tLines += cleared;
+    tLevel = Math.floor(tLines / 10) + 1;
+    document.getElementById('tetrisScore').textContent = tScore;
+    document.getElementById('tetrisLevel').textContent = tLevel;
+    clearInterval(tInterval);
+    tInterval = setInterval(tetrisTick, Math.max(100, 800 - (tLevel-1)*80));
+  }
+  tPiece = tNext;
+  tNext = randomPiece();
+  tetrisDrawNext();
+  if (!tetrisValid(tPiece.shape, tPiece.x, tPiece.y)) {
+    tetrisStop();
+    document.getElementById('tetrisStartBtn').textContent = 'RETRY';
+    showToast(`[TETRIS] GAME OVER // スコア: ${tScore}`, 'error');
+  }
+}
+
+function tetrisDrop() {
+  while (tetrisMove(0, 1)) {}
+  tetrisPlace(); tetrisDraw();
+}
+
+function tetrisKey(e) {
+  if (!tRunning) return;
+  if (e.key === 'ArrowLeft')  { tetrisMove(-1, 0); e.preventDefault(); }
+  if (e.key === 'ArrowRight') { tetrisMove(1, 0);  e.preventDefault(); }
+  if (e.key === 'ArrowDown')  { tetrisMove(0, 1);  e.preventDefault(); }
+  if (e.key === 'ArrowUp')    { tetrisRotate();     e.preventDefault(); }
+  if (e.key === ' ')          { tetrisDrop();       e.preventDefault(); }
+}
+
+function tetrisDraw() {
+  const canvas = document.getElementById('tetrisCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const BW = canvas.width / TETRIS_W, BH = canvas.height / TETRIS_H;
+  ctx.fillStyle = '#030712'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+  // グリッド
+  ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 0.5;
+  for (let x = 0; x <= TETRIS_W; x++) { ctx.beginPath(); ctx.moveTo(x*BW,0); ctx.lineTo(x*BW,canvas.height); ctx.stroke(); }
+  for (let y = 0; y <= TETRIS_H; y++) { ctx.beginPath(); ctx.moveTo(0,y*BH); ctx.lineTo(canvas.width,y*BH); ctx.stroke(); }
+  // ボード
+  for (let r = 0; r < TETRIS_H; r++)
+    for (let c = 0; c < TETRIS_W; c++)
+      if (tBoard[r][c]) { ctx.fillStyle = tBoard[r][c]; ctx.fillRect(c*BW+1,r*BH+1,BW-2,BH-2); }
+  // ゴーストピース
+  if (tPiece) {
+    let ghost = {...tPiece, shape: tPiece.shape.map(r=>[...r])};
+    while (tetrisValid(ghost.shape, ghost.x, ghost.y+1)) ghost.y++;
+    ctx.globalAlpha = 0.25;
+    for (let r = 0; r < ghost.shape.length; r++)
+      for (let c = 0; c < ghost.shape[r].length; c++)
+        if (ghost.shape[r][c]) { ctx.fillStyle = tPiece.color; ctx.fillRect((ghost.x+c)*BW+1,(ghost.y+r)*BH+1,BW-2,BH-2); }
+    ctx.globalAlpha = 1;
+    // 現在のピース
+    for (let r = 0; r < tPiece.shape.length; r++)
+      for (let c = 0; c < tPiece.shape[r].length; c++)
+        if (tPiece.shape[r][c]) {
+          ctx.fillStyle = tPiece.color; ctx.fillRect((tPiece.x+c)*BW+1,(tPiece.y+r)*BH+1,BW-2,BH-2);
+          ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.lineWidth = 1;
+          ctx.strokeRect((tPiece.x+c)*BW+1,(tPiece.y+r)*BH+1,BW-2,BH-2);
+        }
+  }
+}
+
+function tetrisDrawNext() {
+  const canvas = document.getElementById('tetrisNext');
+  if (!canvas || !tNext) return;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#030712'; ctx.fillRect(0,0,canvas.width,canvas.height);
+  const BW = 16, BH = 16;
+  const ox = Math.floor((5 - tNext.shape[0].length) / 2);
+  const oy = Math.floor((5 - tNext.shape.length) / 2);
+  tNext.shape.forEach((row, r) => row.forEach((v, c) => {
+    if (v) { ctx.fillStyle = tNext.color; ctx.fillRect((ox+c)*BW+1,(oy+r)*BH+1,BW-2,BH-2); }
+  }));
+}
+
+// ===== RPG =====
+let rpgState = null;
+
+const RPG_STORY = {
+  start: {
+    narr: `暗闇の中、意識が戻ってくる。
+ここは…施設のどこかだ。`,
+    char: `「う…頭が痛い。何が起きたの？」`,
+    sys: `[SYSTEM] AIR を操作してください`,
+    choices: [
+      { text: '>> 周囲を確認する', next: 'look_around' },
+      { text: '>> 記憶を辿る', next: 'remember', pink: true },
+    ]
+  },
+  look_around: {
+    narr: `コンクリートの壁。錆びた鉄扉。小さな明かり取りの窓。
+どうやら独房のような部屋に閉じ込められているようだ。`,
+    char: `「脱出しないと…でも、どうやって？」`,
+    items: ['🔍 周囲の確認完了'],
+    choices: [
+      { text: '>> 扉を調べる', next: 'check_door' },
+      { text: '>> 窓を調べる', next: 'check_window' },
+      { text: '>> 床を調べる', next: 'check_floor', pink: true },
+    ]
+  },
+  remember: {
+    narr: `任務中、謎の人物に罠にかけられた。
+暗号キー「CIPHER-7」を奪われ、ここに連れてこられた。`,
+    char: `「取り戻さなきゃ…絶対に。」`,
+    sys: `[MISSION] CIPHER-7を回収して施設から脱出せよ`,
+    choices: [
+      { text: '>> 周囲を確認する', next: 'look_around' },
+    ]
+  },
+  check_door: {
+    narr: `扉には電子ロックがかかっている。4桁のコードが必要だ。
+扉の横の壁に、かすかな傷跡で数字が刻まれている。「2-4-?-8」`,
+    char: `「3桁目だけ消えてる…でも規則性がある。2、4、?、8。等差数列だから…」`,
+    choices: [
+      { text: '>> コード「2468」を入力する', next: 'door_correct' },
+      { text: '>> コード「2448」を入力する', next: 'door_wrong' },
+      { text: '>> 一旦戻る', next: 'look_around' },
+    ]
+  },
+  check_window: {
+    narr: `窓は高すぎて届かない。でも、窓枠の近くにひびが入っている。
+何か固いもので叩けば…`,
+    choices: [
+      { text: '>> 固いものを探す', next: 'find_object' },
+      { text: '>> 一旦戻る', next: 'look_around' },
+    ]
+  },
+  check_floor: {
+    narr: `床板の一枚がわずかに浮いている。
+持ち上げると…古びた金属片が隠されていた。`,
+    char: `「これ、使えるかも！」`,
+    sys: `[ITEM +1] 🔧 金属片`,
+    items: ['🔧 金属片'],
+    choices: [
+      { text: '>> 扉を調べる', next: 'check_door' },
+      { text: '>> 窓を調べる', next: 'check_window_break' },
+    ]
+  },
+  find_object: {
+    narr: `部屋を隅々まで探すと、マットレスの下に小石が転がっていた。`,
+    char: `「これで叩いてみよう！」`,
+    sys: `[ITEM +1] 🪨 小石`,
+    items: ['🪨 小石'],
+    choices: [
+      { text: '>> 窓を叩く', next: 'break_window' },
+    ]
+  },
+  check_window_break: {
+    narr: `金属片で窓枠のひびを広げる。グラグラしてきた…`,
+    char: `「もう少し！」`,
+    choices: [
+      { text: '>> 思い切り押す', next: 'break_window' },
+    ]
+  },
+  break_window: {
+    narr: `窓枠が崩れ、外の風が吹き込んできた。
+だが…外を覗くと、警備員が巡回している。`,
+    char: `「タイミングを見計らわないと…」`,
+    choices: [
+      { text: '>> 警備員が離れるのを待つ', next: 'sneak_out' },
+      { text: '>> 今すぐ飛び出す', next: 'caught' },
+    ]
+  },
+  door_correct: {
+    narr: `ビープ音とともに鍵が外れ、扉が開く！`,
+    char: `「やった！2-4-6-8、等差数列！」`,
+    sys: `[OK] 扉を解錠しました`,
+    choices: [
+      { text: '>> 廊下に出る', next: 'corridor' },
+    ]
+  },
+  door_wrong: {
+    narr: `エラー音が鳴り響く。アラームが！`,
+    warn: `[ALERT] 警備員が駆けつけてくる！`,
+    hp: -20,
+    choices: [
+      { text: '>> もう一度試す', next: 'check_door' },
+    ]
+  },
+  sneak_out: {
+    narr: `警備員が角を曲がった瞬間、素早く飛び出した。
+外は暗い夜。サーバー棟が見える。`,
+    char: `「CIPHER-7はあそこに違いない…！」`,
+    sys: `[CHAPTER 2] サーバー棟に潜入せよ`,
+    chapter: 2,
+    choices: [
+      { text: '>> サーバー棟に向かう', next: 'server_room' },
+    ]
+  },
+  caught: {
+    narr: `警備員に発見された！`,
+    warn: `[ALERT] 捕まってしまった。`,
+    hp: -30,
+    choices: [
+      { text: '>> やり直す', next: 'start' },
+    ]
+  },
+  corridor: {
+    narr: `薄暗い廊下。左に非常口、右にサーバー棟への通路。`,
+    char: `「どっちに行く？」`,
+    choices: [
+      { text: '>> 非常口から脱出する', next: 'escape_early' },
+      { text: '>> サーバー棟へ向かう', next: 'server_room' },
+    ]
+  },
+  escape_early: {
+    narr: `非常口から脱出することはできた。でも、CIPHER-7は回収できていない。
+ミッション失敗…`,
+    warn: `[MISSION FAILED] CIPHER-7を回収できませんでした`,
+    choices: [
+      { text: '>> もう一度挑戦する', next: 'start' },
+    ]
+  },
+  server_room: {
+    narr: `サーバーがずらりと並ぶ部屋。端末が一台起動している。
+画面には「暗号パズル」が表示されている。
+「A=1, B=2...のとき、CIPHER を数字に変換すると？」`,
+    char: `「えっと…C=3, I=9, P=16, H=8, E=5, R=18。足すと…59！」`,
+    choices: [
+      { text: '>> 「59」を入力する', next: 'cipher_correct' },
+      { text: '>> 「48」を入力する', next: 'cipher_wrong' },
+      { text: '>> もっと考える', next: 'server_think' },
+    ]
+  },
+  server_think: {
+    narr: `A=1, B=2, C=3...と数えていくと。
+C(3)+I(9)+P(16)+H(8)+E(5)+R(18) = 59`,
+    char: `「59だ！間違いない！」`,
+    choices: [
+      { text: '>> 「59」を入力する', next: 'cipher_correct' },
+    ]
+  },
+  cipher_wrong: {
+    narr: `不正解。セキュリティが強化された。`,
+    warn: `[ERROR] 残り試行回数が減りました`,
+    hp: -10,
+    choices: [
+      { text: '>> もう一度試す', next: 'server_room' },
+    ]
+  },
+  cipher_correct: {
+    narr: `端末が解錠され、引き出しが開いた。
+そこには…輝く小型デバイス。CIPHER-7だ！`,
+    char: `「見つけた！！これで任務完了…あとは脱出するだけ！」`,
+    sys: `[ITEM +1] 💎 CIPHER-7`,
+    items: ['💎 CIPHER-7'],
+    chapter: 3,
+    choices: [
+      { text: '>> 脱出ルートを探す', next: 'final_escape' },
+    ]
+  },
+  final_escape: {
+    narr: `屋上への階段。ヘリが待機している。
+だが、最後の番人が立ちはだかった。`,
+    char: `「どいて。私、急いでるの。」`,
+    choices: [
+      { text: '>> 戦う', next: 'fight' },
+      { text: '>> 別ルートを探す', next: 'sneak_final', pink: true },
+    ]
+  },
+  fight: {
+    narr: `AIRは鮮やかな動きで番人を翻弄した。
+トレーニングの成果が出た！`,
+    sys: `[BATTLE] 勝利！`,
+    hp: -15,
+    choices: [
+      { text: '>> 屋上へ！', next: 'ending' },
+    ]
+  },
+  sneak_final: {
+    narr: `通気口を通って番人を迂回。傷一つなく屋上に出た。`,
+    char: `「ふふっ、頭を使えば戦わなくていい。」`,
+    choices: [
+      { text: '>> 屋上へ！', next: 'ending' },
+    ]
+  },
+  ending: {
+    narr: `屋上に出ると、夜明けの空が広がっていた。
+ヘリのローターが轟音を上げる。
+AIRはCIPHER-7を胸に抱きしめ、ヘリに乗り込んだ。`,
+    char: `「任務完了。…でも、これで終わりじゃないよね。」`,
+    sys: `🌸 ✨ MISSION COMPLETE ✨ 🌸
+[CHAPTER 1] クリア！おめでとう！`,
+    success: true,
+    choices: [
+      { text: '>> もう一度プレイする', next: 'start' },
+    ]
+  }
+};
+
+function rpgStart() {
+  rpgState = { hp: 100, items: [], level: 1, chapter: 1 };
+  document.getElementById('rpgLog').innerHTML = '';
+  rpgGoto('start');
+}
+
+function rpgStop() {
+  rpgState = null;
+}
+
+function rpgLog(type, text) {
+  const log = document.getElementById('rpgLog');
+  if (!log) return;
+  text.split('\n').forEach(line => {
+    if (!line.trim()) return;
+    const div = document.createElement('div');
+    div.className = 'rpg-msg ' + type;
+    div.textContent = line;
+    log.appendChild(div);
+  });
+  log.scrollTop = log.scrollHeight;
+}
+
+function rpgGoto(sceneKey) {
+  const scene = RPG_STORY[sceneKey];
+  if (!scene) return;
+
+  // HP変動
+  if (scene.hp && rpgState) {
+    rpgState.hp = Math.max(0, rpgState.hp + scene.hp);
+    document.getElementById('rpgHp').textContent = rpgState.hp;
+    if (scene.hp < 0) rpgLog('warn', `[DAMAGE] HP ${scene.hp}`);
+    if (rpgState.hp <= 0) {
+      rpgLog('warn', '[GAME OVER] HPが0になった…');
+      rpgLog('sys', '>> もう一度挑戦しますか？');
+      const choices = document.getElementById('rpgChoices');
+      choices.innerHTML = '';
+      const btn = document.createElement('button');
+      btn.className = 'rpg-choice pink';
+      btn.textContent = '>> もう一度やり直す';
+      btn.onclick = () => rpgStart();
+      choices.appendChild(btn);
+      return;
+    }
+  }
+
+  // アイテム追加
+  if (scene.items && rpgState) {
+    rpgState.items.push(...scene.items);
+    document.getElementById('rpgItems').textContent = rpgState.items.length;
+  }
+
+  // チャプター更新
+  if (scene.chapter && rpgState) {
+    rpgState.chapter = scene.chapter;
+    document.getElementById('rpgChapter').textContent = scene.chapter;
+    rpgState.level = scene.chapter;
+    document.getElementById('rpgLevel').textContent = scene.chapter;
+  }
+
+  // セパレーター
+  const sep = document.createElement('div');
+  sep.style.cssText = 'height:1px;background:var(--border);margin:4px 0;';
+  document.getElementById('rpgLog').appendChild(sep);
+
+  if (scene.narr) rpgLog('narr', scene.narr);
+  if (scene.char) rpgLog('char', scene.char);
+  if (scene.sys)  rpgLog('sys',  scene.sys);
+  if (scene.warn) rpgLog('warn', scene.warn);
+  if (scene.success) rpgLog('success', '🌸 おめでとう！CIPHER_GIRLの冒険は続く…🌸');
+
+  // 選択肢
+  const choices = document.getElementById('rpgChoices');
+  choices.innerHTML = '';
+  (scene.choices || []).forEach(ch => {
+    const btn = document.createElement('button');
+    btn.className = 'rpg-choice' + (ch.pink ? ' pink' : '');
+    btn.textContent = ch.text;
+    btn.onclick = () => rpgGoto(ch.next);
+    choices.appendChild(btn);
+  });
 }
 
 // ===== N目並べ (Supabase同期) =====
