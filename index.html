@@ -54,10 +54,19 @@
   .ticker-inner { display:inline-block;white-space:nowrap;animation:scroll-text 25s linear infinite;color:var(--red);font-size:11px;letter-spacing:1px;padding-left:80px; }
 
   /* HEADER */
-  .header { border-bottom:1px solid var(--border);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(180deg,rgba(124,58,237,0.08) 0%,transparent 100%);animation:flicker 8s infinite; }
-  .logo { font-family:'Orbitron',monospace;font-weight:900;font-size:22px;color:var(--purple-glow);text-shadow:0 0 20px var(--purple),0 0 40px rgba(124,58,237,0.5);letter-spacing:4px; }
+  .header {
+    border-bottom:1px solid var(--border);
+    padding:0 24px;height:54px;
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+    background:linear-gradient(180deg,rgba(124,58,237,0.08) 0%,transparent 100%);
+    animation:flicker 8s infinite;flex-shrink:0;
+  }
+  .logo { font-family:'Orbitron',monospace;font-weight:900;font-size:20px;color:var(--purple-glow);text-shadow:0 0 20px var(--purple),0 0 40px rgba(124,58,237,0.5);letter-spacing:4px;white-space:nowrap;flex-shrink:0; }
   .logo span { color:var(--red);animation:blink 1s infinite; }
-  .status-bar { display:flex;gap:20px;align-items:center;font-size:10px;color:var(--text-dim); }
+  .header-left { display:flex;align-items:center;gap:20px;flex-shrink:0; }
+  .header-right { display:flex;align-items:center;gap:8px;flex-shrink:0; }
+  .header-clock { font-size:11px;color:var(--text-muted);letter-spacing:1px;white-space:nowrap;padding-left:12px;border-left:1px solid var(--border);flex-shrink:0; }
+  .status-bar { display:flex;gap:14px;align-items:center;font-size:10px;color:var(--text-dim); }
   .status-dot { width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);display:inline-block;animation:blink 2s infinite; }
   .status-dot.red { background:var(--red);box-shadow:0 0 6px var(--red); }
 
@@ -251,9 +260,9 @@
   .lightbox-info { font-size:10px;color:var(--text-dim);letter-spacing:1px; }
 
   /* CALL */
-  .call-btn { background:transparent;border:1px solid var(--green);color:var(--green);padding:5px 12px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:6px; }
-  .call-btn:hover { background:rgba(34,197,94,0.1);box-shadow:0 0 10px rgba(34,197,94,0.3); }
-  .call-btn.active { background:rgba(239,68,68,0.15);border-color:var(--red);color:var(--red); }
+  .call-btn { background:transparent;border:1px solid var(--border-bright);color:var(--text-dim);padding:5px 12px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:6px;white-space:nowrap; }
+  .call-btn:hover { border-color:var(--purple);color:var(--purple-glow);background:rgba(124,58,237,0.08); }
+  .call-btn.active { background:rgba(239,68,68,0.1);border-color:var(--red);color:var(--red); }
   .call-btn.calling { animation:pulse-glow 1s infinite;border-color:var(--yellow);color:var(--yellow); }
   .call-overlay { position:fixed;inset:0;background:rgba(3,7,18,0.97);backdrop-filter:blur(12px);z-index:700;display:none;flex-direction:column;align-items:center;justify-content:center;gap:32px; }
   .call-overlay.active { display:flex; }
@@ -412,27 +421,28 @@
   /* User badge in header */
   .user-badge {
     display:flex;align-items:center;gap:8px;
-    padding:5px 12px;
+    padding:5px 12px;max-width:200px;overflow:hidden;
     border:1px solid var(--purple);
     background:rgba(124,58,237,0.1);
     font-size:10px;color:var(--purple-glow);
     letter-spacing:1px;
-    animation:pulse-glow 4s infinite;
+    animation:pulse-glow 4s infinite;white-space:nowrap;
   }
+  .user-badge .user-name { overflow:hidden;text-overflow:ellipsis;max-width:90px; }
   .user-badge .user-avatar {
-    width:20px;height:20px;border-radius:50%;
+    width:24px;height:24px;border-radius:50%;
     background:linear-gradient(135deg,var(--purple),var(--purple-bright));
     display:flex;align-items:center;justify-content:center;
-    font-size:9px;font-weight:bold;color:white;
-    font-family:'Orbitron',monospace;
+    font-size:10px;font-weight:bold;color:white;
+    font-family:'Orbitron',monospace;flex-shrink:0;
   }
   .logout-btn {
-    background:transparent;border:1px solid rgba(239,68,68,0.4);
-    color:#664444;padding:4px 10px;
+    background:transparent;border:1px solid rgba(239,68,68,0.3);
+    color:#774444;padding:5px 12px;
     font-family:'Share Tech Mono',monospace;font-size:10px;
-    letter-spacing:1px;cursor:pointer;transition:all 0.2s;
+    letter-spacing:1px;cursor:pointer;transition:all 0.2s;white-space:nowrap;
   }
-  .logout-btn:hover { border-color:var(--red);color:var(--red); }
+  .logout-btn:hover { border-color:var(--red);color:var(--red);background:rgba(239,68,68,0.06); }
 
   /* Online users in sidebar */
   .online-users-panel {
@@ -830,21 +840,27 @@
 
 <!-- HEADER -->
 <div class="header">
-  <div class="logo">CRYPT<span>_</span>MAIL <span style="font-size:10px;color:var(--text-dim);font-family:'Share Tech Mono';font-weight:400;letter-spacing:2px;">// 極秘通信システム</span></div>
-  <div class="status-bar">
-    <span><span class="status-dot"></span> E2E暗号化: アクティブ</span>
-    <span><span class="status-dot red"></span> 監視: オン</span>
+  <!-- LEFT: Logo + status indicators -->
+  <div class="header-left">
+    <div class="logo">CRYPT<span>_</span>MAIL</div>
+    <div class="status-bar">
+      <span><span class="status-dot"></span> E2E暗号化</span>
+      <span><span class="status-dot red"></span> 監視: オン</span>
+    </div>
+  </div>
+  <!-- RIGHT: User badge + action buttons + clock -->
+  <div class="header-right">
     <div class="user-badge" id="userBadge" style="display:none;">
       <div class="user-avatar" id="userAvatar">?</div>
-      <span id="userDisplayName">---</span>
-      <span style="color:var(--text-muted);">|</span>
-      <span style="color:var(--text-dim);" id="userIdLabel">---</span>
+      <span class="user-name" id="userDisplayName">---</span>
+      <span style="color:var(--border-bright);">|</span>
+      <span style="color:var(--text-muted);font-size:9px;" id="userIdLabel">---</span>
     </div>
-    <button class="logout-btn" id="logoutBtn" style="display:none;" onclick="doLogout()">[LOGOUT] 退出</button>
-    <button class="call-btn" id="callBtn" onclick="startCall()">[CALL] 通話</button>
-    <button class="call-btn" id="profileBtn" style="display:none;" onclick="openProfile()">[PROFILE] 設定</button>
-    <button class="call-btn" id="adminBtn" onclick="openAdminConsole()" style="border-color:rgba(239,68,68,0.4);color:#664444;">[ADMIN]</button>
-    <span id="clock">--:--:--</span>
+    <button class="logout-btn" id="logoutBtn" style="display:none;" onclick="doLogout()">[LOGOUT]</button>
+    <button class="call-btn" id="profileBtn" style="display:none;" onclick="openProfile()">[PROFILE]</button>
+    <button class="call-btn" id="callBtn" onclick="startCall()">[CALL]</button>
+    <button class="call-btn danger" id="adminBtn" onclick="openAdminConsole()" style="border-color:rgba(239,68,68,0.3);color:#774444;">[ADMIN]</button>
+    <span class="header-clock" id="clock">--:--:--</span>
   </div>
 </div>
 
