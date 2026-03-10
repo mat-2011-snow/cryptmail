@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Google</title>
+<title>CRYPTMAIL</title>
 <link rel="icon" href="https://www.google.com/s2/favicons?domain=classroom.google.com">
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Noto+Sans+JP:wght@300;400;700&display=swap" rel="stylesheet">
 <style>
@@ -588,7 +588,107 @@
   .t-back-btn { width:100%;margin-top:8px;padding:11px;background:transparent;color:var(--text-dim);border:1px solid var(--border-bright);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px;cursor:pointer;transition:all 0.2s; }
   .t-back-btn:hover { color:var(--text);border-color:var(--text-dim);background:rgba(255,255,255,0.04); }
 
+  /* PROFILE / SETTINGS OVERLAY */
+  .profile-overlay { position:fixed;inset:0;background:rgba(3,7,18,0.97);backdrop-filter:blur(12px);z-index:900;display:none;align-items:center;justify-content:center; }
+  .profile-overlay.active { display:flex; }
+  .profile-modal {
+    background:var(--bg2);border:1px solid var(--purple);border-top:3px solid var(--purple-bright);
+    width:520px;max-width:calc(100vw - 32px);max-height:90vh;display:flex;flex-direction:column;
+    box-shadow:0 0 80px rgba(124,58,237,0.3),0 0 160px rgba(124,58,237,0.1);
+    animation:slide-in-right 0.3s ease;overflow:hidden;
+  }
+  .profile-hdr {
+    background:linear-gradient(135deg,rgba(124,58,237,0.2),rgba(168,85,247,0.08));
+    border-bottom:1px solid var(--border);padding:14px 20px;
+    display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
+  }
+  .profile-hdr-title { font-family:'Orbitron',monospace;font-size:12px;font-weight:700;color:var(--purple-glow);letter-spacing:3px; }
+  .profile-close-btn {
+    background:transparent;border:1px solid rgba(239,68,68,0.3);color:var(--text-muted);
+    padding:4px 10px;font-family:'Share Tech Mono',monospace;font-size:11px;cursor:pointer;
+    transition:all 0.2s;
+  }
+  .profile-close-btn:hover { border-color:var(--red);color:var(--red); }
+  .profile-body { padding:24px;overflow-y:auto;display:flex;flex-direction:column;gap:20px;scrollbar-width:thin;scrollbar-color:var(--purple) transparent; }
+
+  /* Avatar grid */
+  .avatar-section { }
+  .avatar-section-label { font-size:10px;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px; }
+  .avatar-preview-row { display:flex;align-items:center;gap:16px;margin-bottom:16px; }
+  .avatar-big {
+    width:64px;height:64px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Orbitron',monospace;font-size:22px;font-weight:900;color:white;
+    border:2px solid var(--purple-bright);box-shadow:0 0 20px rgba(124,58,237,0.4);
+    flex-shrink:0;transition:all 0.3s;position:relative;overflow:hidden;
+  }
+  .avatar-big-info { font-size:11px;color:var(--text-dim);line-height:1.8; }
+  .avatar-big-info .uid { color:var(--cyan);font-size:12px; }
+  .avatar-grid {
+    display:grid;grid-template-columns:repeat(8,1fr);gap:8px;
+    background:rgba(10,15,30,0.6);border:1px solid var(--border);padding:12px;
+  }
+  .avatar-option {
+    width:44px;height:44px;border-radius:50%;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    font-size:20px;transition:all 0.2s;
+    border:2px solid transparent;position:relative;
+  }
+  .avatar-option:hover { transform:scale(1.15);border-color:var(--purple); }
+  .avatar-option.selected { border-color:var(--purple-bright);box-shadow:0 0 12px rgba(168,85,247,0.6);transform:scale(1.1); }
+  .avatar-option.selected::after {
+    content:'✓';position:absolute;bottom:-2px;right:-2px;
+    background:var(--purple-bright);color:#000;border-radius:50%;
+    width:14px;height:14px;font-size:9px;display:flex;align-items:center;justify-content:center;
+    font-family:monospace;font-weight:bold;
+  }
+  /* Custom color avatars */
+  .avatar-color-row { display:flex;gap:8px;flex-wrap:wrap;margin-top:10px; }
+  .avatar-color-chip {
+    width:32px;height:32px;border-radius:50%;cursor:pointer;
+    border:2px solid transparent;transition:all 0.2s;
+  }
+  .avatar-color-chip:hover { transform:scale(1.2);border-color:white; }
+  .avatar-color-chip.selected { border-color:white;box-shadow:0 0 8px rgba(255,255,255,0.4); }
+
+  /* Profile form fields */
+  .profile-field { }
+  .profile-field-label { font-size:10px;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px; }
+  .profile-input {
+    width:100%;background:rgba(10,15,30,0.8);border:1px solid var(--border);
+    border-bottom:2px solid var(--border-bright);color:var(--text);
+    font-family:'Share Tech Mono',monospace;font-size:13px;padding:10px 14px;outline:none;
+    transition:all 0.2s;
+  }
+  .profile-input:focus { border-color:var(--purple);border-bottom-color:var(--purple-bright);box-shadow:0 0 0 1px rgba(124,58,237,0.2); }
+  .profile-hint { font-size:9px;color:var(--text-muted);margin-top:5px;letter-spacing:0.5px; }
+  .profile-save-btn {
+    width:100%;background:linear-gradient(135deg,#4c1d95,#7c3aed);color:white;
+    border:1px solid var(--purple-bright);padding:13px;
+    font-family:'Orbitron',monospace;font-size:11px;font-weight:700;letter-spacing:3px;
+    cursor:pointer;transition:all 0.3s;
+  }
+  .profile-save-btn:hover { box-shadow:0 0 30px rgba(124,58,237,0.6); }
+  .profile-divider { border:none;border-top:1px solid var(--border);margin:0; }
+  .profile-section-title { font-family:'Orbitron',monospace;font-size:10px;color:var(--text-muted);letter-spacing:3px;margin-bottom:12px; }
+
+  /* Send restriction badge */
+  .user-only-badge {
+    display:inline-flex;align-items:center;gap:4px;
+    background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.4);
+    color:var(--green);font-size:9px;padding:2px 8px;letter-spacing:1px;
+  }
+  .to-field-validate { font-size:10px;margin-top:6px;min-height:14px; }
+  .to-field-validate.ok { color:var(--green); }
+  .to-field-validate.err { color:var(--red); }
+  .to-field-validate.checking { color:var(--yellow);animation:blink 1s infinite; }
+
   /* ADMIN */
+  .admin-console-overlay {
+    position:fixed;inset:0;background:rgba(3,7,18,0.97);backdrop-filter:blur(12px);
+    z-index:950;display:none;flex-direction:column;overflow:hidden;
+  }
+  .admin-console-overlay.active { display:flex; }
   .admin-console-header { background:linear-gradient(135deg,rgba(239,68,68,0.1),rgba(185,28,28,0.05));border-bottom:2px solid var(--red);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0; }
   .admin-console-title { font-family:'Orbitron',monospace;font-size:16px;font-weight:900;color:var(--red);letter-spacing:4px;text-shadow:0 0 20px rgba(239,68,68,0.4); }
   .admin-console-body { padding:24px;display:flex;flex-direction:column;gap:16px;flex:1; }
@@ -742,6 +842,8 @@
     </div>
     <button class="logout-btn" id="logoutBtn" style="display:none;" onclick="doLogout()">[LOGOUT] 退出</button>
     <button class="call-btn" id="callBtn" onclick="startCall()">[CALL] 通話</button>
+    <button class="call-btn" id="profileBtn" style="display:none;" onclick="openProfile()">[PROFILE] 設定</button>
+    <button class="call-btn" id="adminBtn" onclick="openAdminConsole()" style="border-color:rgba(239,68,68,0.4);color:#664444;">[ADMIN]</button>
     <span id="clock">--:--:--</span>
   </div>
 </div>
@@ -821,6 +923,7 @@
             <div class="to-suggestions" id="toSuggestions"></div>
           </div>
           <div class="warning-box" style="margin-top:8px;">[ALERT] 入力されたIDはハッシュ化後に送信されます。平文での保存は一切行いません。</div>
+          <div class="to-field-validate" id="toFieldValidate"></div>
         </div>
 
         <div class="form-group">
@@ -1177,6 +1280,151 @@
   <div style="font-size:9px;color:var(--text-muted);letter-spacing:1px;margin-top:10px;">管理者のみがこの状態を解除できます</div>
 </div>
 
+<!-- PROFILE / SETTINGS OVERLAY -->
+<div class="profile-overlay" id="profileOverlay">
+  <div class="profile-modal">
+    <div class="profile-hdr">
+      <div class="profile-hdr-title">⚙ [PROFILE] アカウント設定</div>
+      <button class="profile-close-btn" onclick="closeProfile()">[X] 閉じる</button>
+    </div>
+    <div class="profile-body">
+      <!-- Avatar section -->
+      <div class="avatar-section">
+        <div class="avatar-section-label">// アバター選択</div>
+        <div class="avatar-preview-row">
+          <div class="avatar-big" id="profileAvatarBig">?</div>
+          <div class="avatar-big-info">
+            <div class="uid" id="profileUidDisplay">@---</div>
+            <div id="profileNameDisplay" style="color:var(--text);">---</div>
+            <div style="font-size:9px;color:var(--text-muted);margin-top:4px;">アバターを選択してください</div>
+          </div>
+        </div>
+        <!-- Emoji avatars -->
+        <div class="avatar-section-label" style="margin-top:8px;">// 絵文字アバター</div>
+        <div class="avatar-grid" id="avatarGrid">
+          <!-- filled by JS -->
+        </div>
+        <!-- Color bg for initials -->
+        <div class="avatar-section-label" style="margin-top:12px;">// 初期文字カラー</div>
+        <div class="avatar-color-row" id="avatarColorRow">
+          <!-- filled by JS -->
+        </div>
+      </div>
+      <hr class="profile-divider">
+      <!-- Display name -->
+      <div class="profile-field">
+        <div class="profile-field-label">// 表示名 (Display Name)</div>
+        <input class="profile-input" id="profileDisplayName" type="text" maxlength="30" placeholder="表示名を入力（30文字以内）">
+        <div class="profile-hint">他のユーザーに表示される名前です。変更はすぐに反映されます。</div>
+      </div>
+      <!-- Bio -->
+      <div class="profile-field">
+        <div class="profile-field-label">// 自己紹介 (Bio)</div>
+        <input class="profile-input" id="profileBio" type="text" maxlength="60" placeholder="60文字以内のひとこと（省略可）">
+        <div class="profile-hint">オンラインユーザーリストに表示されます。</div>
+      </div>
+      <hr class="profile-divider">
+      <!-- Change password -->
+      <div class="profile-field">
+        <div class="profile-section-title">// パスワード変更</div>
+        <div class="profile-field-label" style="margin-bottom:8px;">現在のパスワード</div>
+        <div class="password-wrapper" style="margin-bottom:10px;">
+          <input class="profile-input" id="profileOldPw" type="password" placeholder="現在のパスワード">
+          <button class="password-toggle" onclick="togglePass('profileOldPw',this)">[表示]</button>
+        </div>
+        <div class="profile-field-label" style="margin-bottom:8px;">新しいパスワード（6文字以上）</div>
+        <div class="password-wrapper" style="margin-bottom:10px;">
+          <input class="profile-input" id="profileNewPw" type="password" placeholder="新しいパスワード">
+          <button class="password-toggle" onclick="togglePass('profileNewPw',this)">[表示]</button>
+        </div>
+        <div class="profile-field-label" style="margin-bottom:8px;">確認</div>
+        <div class="password-wrapper">
+          <input class="profile-input" id="profileNewPw2" type="password" placeholder="新しいパスワード（確認）">
+          <button class="password-toggle" onclick="togglePass('profileNewPw2',this)">[表示]</button>
+        </div>
+        <div class="to-field-validate" id="profilePwMsg" style="margin-top:6px;"></div>
+      </div>
+      <hr class="profile-divider">
+      <button class="profile-save-btn" onclick="saveProfile()">&gt;&gt; [SAVE] 設定を保存する</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN CONSOLE OVERLAY -->
+<div class="admin-console-overlay" id="adminConsoleOverlay">
+  <div class="admin-console-header">
+    <div class="admin-console-title">⚠ ADMIN CONSOLE</div>
+    <div style="display:flex;gap:12px;align-items:center;">
+      <span style="font-size:10px;color:var(--text-muted);letter-spacing:1px;">// 管理者専用</span>
+      <button onclick="closeAdminConsole()" style="background:transparent;border:1px solid rgba(239,68,68,0.4);color:var(--red);padding:5px 14px;font-family:'Share Tech Mono',monospace;font-size:11px;cursor:pointer;letter-spacing:1px;transition:all 0.2s;" onmouseover="this.style.background='rgba(239,68,68,0.1)'" onmouseout="this.style.background='transparent'">[X] 閉じる</button>
+    </div>
+  </div>
+  <!-- Admin auth gate -->
+  <div id="adminAuthGate" style="flex:1;display:flex;align-items:center;justify-content:center;">
+    <div style="width:360px;background:var(--bg2);border:1px solid rgba(239,68,68,0.4);border-top:3px solid var(--red);padding:30px;box-shadow:0 0 60px rgba(239,68,68,0.2);">
+      <div style="font-family:'Orbitron',monospace;font-size:11px;color:var(--red);letter-spacing:3px;margin-bottom:20px;">[AUTH] 管理者認証</div>
+      <div style="font-size:10px;color:var(--text-muted);margin-bottom:14px;line-height:1.8;">[WARN] このコンソールへのアクセスにはシステム管理者コードが必要です。試行は全てログに記録されます。</div>
+      <input id="adminPwInput" type="password" placeholder="管理者コード"
+        style="width:100%;background:rgba(3,7,18,0.8);border:1px solid var(--border-bright);border-bottom:2px solid var(--red);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:18px;padding:12px 14px;outline:none;letter-spacing:4px;text-align:center;margin-bottom:6px;"
+        onkeydown="if(event.key==='Enter')adminAuthSubmit()">
+      <div id="adminPwError" style="font-size:10px;color:var(--red);text-align:center;min-height:16px;margin-bottom:10px;"></div>
+      <button onclick="adminAuthSubmit()" style="width:100%;background:var(--red);color:white;border:none;padding:12px;font-family:'Orbitron',monospace;font-size:11px;letter-spacing:2px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">&gt;&gt; 認証する</button>
+    </div>
+  </div>
+  <!-- Admin body (hidden until authed) -->
+  <div class="admin-console-body" id="adminBody" style="display:none;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--red) transparent;">
+    <!-- System status -->
+    <div class="ac-card">
+      <div class="ac-card-hd green">◉ システムステータス <button class="ac-refresh-btn" onclick="adminRefreshStatus()">↻ 更新</button></div>
+      <div class="ac-card-bd" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div>
+          <div class="ac-status-big online" id="acSysStatus">ONLINE</div>
+          <div style="font-size:10px;color:var(--text-muted);">現在のシステム状態</div>
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--text-dim);margin-bottom:8px;">ロック理由:</div>
+          <input id="acLockReason" type="text" value="管理者による一時閉鎖" placeholder="ロック理由"
+            style="width:100%;background:rgba(3,7,18,0.8);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:11px;padding:7px 10px;outline:none;">
+        </div>
+      </div>
+      <div class="ac-card-bd" style="border-top:1px solid var(--border);display:flex;gap:12px;padding-top:14px;">
+        <button onclick="adminLockSystem()" style="flex:1;background:rgba(239,68,68,0.15);border:1px solid var(--red);color:var(--red);padding:10px;font-family:'Orbitron',monospace;font-size:10px;letter-spacing:2px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='rgba(239,68,68,0.3)'" onmouseout="this.style.background='rgba(239,68,68,0.15)'">[LOCK] システムをロック</button>
+        <button onclick="adminUnlockSystem()" style="flex:1;background:rgba(34,197,94,0.1);border:1px solid var(--green);color:var(--green);padding:10px;font-family:'Orbitron',monospace;font-size:10px;letter-spacing:2px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='rgba(34,197,94,0.2)'" onmouseout="this.style.background='rgba(34,197,94,0.1)'">[UNLOCK] ロック解除</button>
+      </div>
+    </div>
+
+    <!-- Message management -->
+    <div class="ac-card">
+      <div class="ac-card-hd red">⚠ メッセージ管理</div>
+      <div class="ac-card-bd" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+        <div style="flex:1;font-size:11px;color:var(--text-dim);line-height:1.8;">
+          現在のメッセージ数: <span style="color:var(--cyan);" id="acMsgCount">--</span> 件<br>
+          <span style="font-size:9px;color:var(--text-muted);">[WARN] 削除は不可逆です。実行前に慎重に確認してください。</span>
+        </div>
+        <button onclick="adminPurgeMessages()" style="background:rgba(239,68,68,0.1);border:1px solid var(--red);color:var(--red);padding:10px 20px;font-family:'Orbitron',monospace;font-size:10px;letter-spacing:2px;cursor:pointer;white-space:nowrap;transition:all 0.2s;" onmouseover="this.style.background='rgba(239,68,68,0.25)'" onmouseout="this.style.background='rgba(239,68,68,0.1)'">[PURGE] 全消去</button>
+      </div>
+    </div>
+
+    <!-- User management -->
+    <div class="ac-card">
+      <div class="ac-card-hd yellow">◈ ユーザー管理 <button class="ac-refresh-btn" onclick="adminRefreshUsers()">↻ 更新</button></div>
+      <div class="ac-card-bd">
+        <div style="font-size:10px;color:var(--text-muted);margin-bottom:12px;">登録ユーザー: <span style="color:var(--cyan);" id="acUserCount">--</span> 名</div>
+        <div id="acUserList" style="display:flex;flex-direction:column;gap:6px;max-height:200px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--yellow) transparent;"></div>
+      </div>
+    </div>
+
+    <!-- Security log -->
+    <div class="ac-card">
+      <div class="ac-card-hd red">☠ セキュリティログ <button class="ac-refresh-btn" onclick="adminRefreshLog()">↻ 更新</button></div>
+      <div class="ac-card-bd" style="padding:0;">
+        <div id="acLogList" style="display:flex;flex-direction:column;max-height:320px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--red) transparent;"></div>
+        <div style="padding:10px 16px;border-top:1px solid var(--border);font-size:9px;color:var(--text-muted);">直近50件を表示 // 全ログはSupabaseで確認可</div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 // ===== SUPABASE CONFIG =====
 const SUPABASE_URL = 'https://jkhdfpdnqudzrtzjfyyr.supabase.co';
@@ -1280,40 +1528,54 @@ async function doLogin() {
   const userId = document.getElementById('loginUserId').value.trim();
   const password = document.getElementById('loginPassword').value;
   const errEl = document.getElementById('loginError');
+  const btn = document.getElementById('loginBtn');
 
   if (!userId || !password) { errEl.textContent = '[ERROR] ユーザーIDとパスワードを入力してください'; return; }
 
-  document.getElementById('loginBtn').disabled = true;
-  document.getElementById('loginBtn').textContent = '// 認証中...';
+  btn.disabled = true;
+  btn.textContent = '// 認証中...';
 
   try {
-    const rows = await sbFetch(`cm_users?user_id=eq.${encodeURIComponent(userId)}&limit=1`);
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/cm_users?user_id=eq.${encodeURIComponent(userId)}&limit=1`, {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+    });
+    if (!res.ok) {
+      errEl.textContent = `[ERROR] サーバーエラー: ${res.status} — Supabaseの cm_users テーブルが存在するか確認してください`;
+      btn.disabled = false; btn.textContent = '>> ログイン'; return;
+    }
+    const rows = await res.json();
     if (!rows || rows.length === 0) {
       errEl.textContent = '[DENIED] ユーザーIDが存在しません';
-      document.getElementById('loginBtn').disabled = false;
-      document.getElementById('loginBtn').textContent = '>> ログイン';
-      return;
+      btn.disabled = false; btn.textContent = '>> ログイン'; return;
     }
     const user = rows[0];
     const pwHash = await sha256(password);
     if (pwHash !== user.pw_hash) {
       errEl.textContent = '[DENIED] パスワードが違います';
-      await logSecurityEvent('login_fail', `ログイン失敗: ${userId}`);
-      document.getElementById('loginBtn').disabled = false;
-      document.getElementById('loginBtn').textContent = '>> ログイン';
-      return;
+      try { await logSecurityEvent('login_fail', `ログイン失敗: ${userId}`); } catch(e) {}
+      btn.disabled = false; btn.textContent = '>> ログイン'; return;
     }
-    // Update last_seen
-    await sbFetch(`cm_users?user_id=eq.${encodeURIComponent(userId)}`, {
-      method:'PATCH', body: JSON.stringify({ last_seen: new Date().toISOString() })
-    });
-    currentUser = { user_id: user.user_id, display_name: user.display_name || user.user_id };
-    await logSecurityEvent('login', `ログイン成功: ${userId}`);
+    // Update last_seen (best-effort)
+    try {
+      await fetch(`${SUPABASE_URL}/rest/v1/cm_users?user_id=eq.${encodeURIComponent(userId)}`, {
+        method:'PATCH',
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+        body: JSON.stringify({ last_seen: new Date().toISOString() })
+      });
+    } catch(e) {}
+    currentUser = {
+      user_id: user.user_id,
+      display_name: user.display_name || user.user_id,
+      avatar_emoji: user.avatar_emoji || null,
+      avatar_color: user.avatar_color || '#7c3aed',
+      bio: user.bio || ''
+    };
+    try { await logSecurityEvent('login', `ログイン成功: ${userId}`); } catch(e) {}
     onAccountLoggedIn();
   } catch(e) {
-    errEl.textContent = '[ERROR] 接続エラーが発生しました';
-    document.getElementById('loginBtn').disabled = false;
-    document.getElementById('loginBtn').textContent = '>> ログイン';
+    console.error('Login error:', e);
+    errEl.textContent = '[ERROR] 接続エラー — ネットワークまたはSupabase設定を確認してください: ' + e.message;
+    btn.disabled = false; btn.textContent = '>> ログイン';
   }
 }
 
@@ -1323,26 +1585,35 @@ async function doRegister() {
   const password = document.getElementById('regPassword').value;
   const passwordConfirm = document.getElementById('regPasswordConfirm').value;
   const errEl = document.getElementById('registerError');
+  const btn = document.getElementById('registerBtn');
 
   if (!userId || !password) { errEl.textContent = '[ERROR] ユーザーIDとパスワードを入力してください'; return; }
   if (!/^[a-zA-Z0-9_-]{4,20}$/.test(userId)) { errEl.textContent = '[ERROR] ユーザーIDは英数字・_・-のみ、4〜20文字です'; return; }
   if (password.length < 6) { errEl.textContent = '[ERROR] パスワードは6文字以上必要です'; return; }
   if (password !== passwordConfirm) { errEl.textContent = '[ERROR] パスワードが一致しません'; return; }
 
-  document.getElementById('registerBtn').disabled = true;
-  document.getElementById('registerBtn').textContent = '// 登録中...';
+  btn.disabled = true;
+  btn.textContent = '// 登録中...';
 
   try {
     // Check duplicate
-    const existing = await sbFetch(`cm_users?user_id=eq.${encodeURIComponent(userId)}&limit=1`);
+    const checkRes = await fetch(`${SUPABASE_URL}/rest/v1/cm_users?user_id=eq.${encodeURIComponent(userId)}&limit=1`, {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+    });
+    if (!checkRes.ok) {
+      errEl.textContent = `[ERROR] サーバーエラー: ${checkRes.status} — Supabaseの cm_users テーブルが存在するか確認してください`;
+      btn.disabled = false; btn.textContent = '>> アカウント作成'; return;
+    }
+    const existing = await checkRes.json();
     if (existing && existing.length > 0) {
       errEl.textContent = '[ERROR] このユーザーIDは既に使用されています';
-      document.getElementById('registerBtn').disabled = false;
-      document.getElementById('registerBtn').textContent = '>> アカウント作成';
-      return;
+      btn.disabled = false; btn.textContent = '>> アカウント作成'; return;
     }
+
     const pwHash = await sha256(password);
-    const res = await fetch(SUPABASE_URL + '/rest/v1/cm_users', {
+    const now = new Date().toISOString();
+    // Only insert guaranteed columns (bio/avatar cols may not exist yet)
+    const insertRes = await fetch(`${SUPABASE_URL}/rest/v1/cm_users`, {
       method: 'POST',
       headers: {
         'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY,
@@ -1352,25 +1623,30 @@ async function doRegister() {
         user_id: userId,
         display_name: displayName || userId,
         pw_hash: pwHash,
-        created_at: new Date().toISOString(),
-        last_seen: new Date().toISOString()
+        created_at: now,
+        last_seen: now
       })
     });
-    if (!res.ok) {
-      const txt = await res.text();
-      errEl.textContent = '[ERROR] 登録失敗: ' + res.status;
-      document.getElementById('registerBtn').disabled = false;
-      document.getElementById('registerBtn').textContent = '>> アカウント作成';
-      return;
+    if (!insertRes.ok) {
+      const txt = await insertRes.text();
+      console.error('Register insert error:', insertRes.status, txt);
+      errEl.textContent = `[ERROR] 登録失敗 (${insertRes.status}) — ${txt.slice(0,120)}`;
+      btn.disabled = false; btn.textContent = '>> アカウント作成'; return;
     }
-    currentUser = { user_id: userId, display_name: displayName || userId };
-    await logSecurityEvent('register', `新規登録: ${userId}`);
+    currentUser = {
+      user_id: userId,
+      display_name: displayName || userId,
+      avatar_emoji: null,
+      avatar_color: '#7c3aed',
+      bio: ''
+    };
+    try { await logSecurityEvent('register', `新規登録: ${userId}`); } catch(e) {}
     showToast(`[OK] アカウント「${userId}」を作成しました`, 'success');
     onAccountLoggedIn();
   } catch(e) {
-    errEl.textContent = '[ERROR] 接続エラーが発生しました';
-    document.getElementById('registerBtn').disabled = false;
-    document.getElementById('registerBtn').textContent = '>> アカウント作成';
+    console.error('Register error:', e);
+    errEl.textContent = '[ERROR] 接続エラー — ネットワークまたはSupabase設定を確認してください: ' + e.message;
+    btn.disabled = false; btn.textContent = '>> アカウント作成';
   }
 }
 
@@ -1380,12 +1656,29 @@ function onAccountLoggedIn() {
   // Update header UI
   document.getElementById('userBadge').style.display = 'flex';
   document.getElementById('logoutBtn').style.display = 'block';
-  const initials = currentUser.display_name.slice(0,2).toUpperCase();
-  document.getElementById('userAvatar').textContent = initials;
-  document.getElementById('userDisplayName').textContent = currentUser.display_name;
-  document.getElementById('userIdLabel').textContent = '@' + currentUser.user_id;
+  document.getElementById('profileBtn').style.display = 'block';
+  updateUserBadge();
   // Show title/auth screen
   showTitleScreen();
+}
+
+function updateUserBadge() {
+  if (!currentUser) return;
+  const avatar = currentUser.avatar_emoji || null;
+  const avatarColor = currentUser.avatar_color || '#7c3aed';
+  const initials = (currentUser.display_name || currentUser.user_id).slice(0,2).toUpperCase();
+  const avatarEl = document.getElementById('userAvatar');
+  if (avatar) {
+    avatarEl.textContent = avatar;
+    avatarEl.style.background = 'transparent';
+    avatarEl.style.fontSize = '16px';
+  } else {
+    avatarEl.textContent = initials;
+    avatarEl.style.background = `linear-gradient(135deg, ${avatarColor}, ${avatarColor}88)`;
+    avatarEl.style.fontSize = '9px';
+  }
+  document.getElementById('userDisplayName').textContent = currentUser.display_name || currentUser.user_id;
+  document.getElementById('userIdLabel').textContent = '@' + currentUser.user_id;
 }
 
 function doLogout() {
@@ -1396,6 +1689,7 @@ function doLogout() {
   renderInbox();
   document.getElementById('userBadge').style.display = 'none';
   document.getElementById('logoutBtn').style.display = 'none';
+  document.getElementById('profileBtn').style.display = 'none';
   document.getElementById('titleScreen').classList.add('hidden');
   document.getElementById('termsOverlay').classList.remove('active');
   document.getElementById('pwGateOverlay').classList.remove('active');
@@ -1438,11 +1732,47 @@ async function loadOnlineUsers() {
 
 let allUsers = [];
 
+let toValidateTimer = null;
+
 function setToUser(userId) {
   const composeForm = document.getElementById('composeForm');
   if (composeForm.style.display === 'none') showCompose();
   document.getElementById('compose-to').value = userId;
   closeToSuggestions();
+  validateToUser(userId);
+}
+
+async function validateToUser(userId) {
+  const el = document.getElementById('toFieldValidate');
+  if (!userId) { el.textContent = ''; el.className = 'to-field-validate'; return; }
+  // Check if it's current user
+  if (currentUser && userId === currentUser.user_id) {
+    el.textContent = '[WARN] 自分自身への送信です';
+    el.className = 'to-field-validate err';
+    return;
+  }
+  // Check in allUsers cache first
+  const cached = allUsers.find(u => u.user_id === userId);
+  if (cached) {
+    el.textContent = `[OK] ユーザー確認済み: ${cached.display_name || userId}`;
+    el.className = 'to-field-validate ok';
+    return;
+  }
+  el.textContent = '// ユーザーを確認中...';
+  el.className = 'to-field-validate checking';
+  try {
+    const rows = await sbFetch(`cm_users?user_id=eq.${encodeURIComponent(userId)}&select=user_id,display_name&limit=1`);
+    if (rows && rows.length > 0) {
+      el.textContent = `[OK] ユーザー確認済み: ${rows[0].display_name || userId}`;
+      el.className = 'to-field-validate ok';
+    } else {
+      el.textContent = `[WARN] 未登録のユーザーIDです — 送信は可能ですが、受信できない可能性があります`;
+      el.className = 'to-field-validate err';
+    }
+  } catch(e) {
+    el.textContent = '';
+    el.className = 'to-field-validate';
+  }
 }
 
 function updateToSuggestions() {
@@ -1462,6 +1792,12 @@ function updateToSuggestions() {
     </div>
   `).join('');
   sug.classList.add('open');
+  // Debounced validation
+  clearTimeout(toValidateTimer);
+  toValidateTimer = setTimeout(() => {
+    const fullVal = document.getElementById('compose-to').value.trim();
+    if (fullVal) validateToUser(fullVal);
+  }, 700);
 }
 
 function closeToSuggestions() {
@@ -2409,7 +2745,7 @@ async function checkSystemLock() {
   try {
     const rows = await sbFetch('system_status?limit=1');
     if(rows&&rows.length&&rows[0].is_locked){
-      const adminOpen=document.getElementById('adminConsoleOverlay')?.style.display==='flex';
+      const adminOpen=document.getElementById('adminConsoleOverlay')?.classList.contains('active');
       if(!adminOpen){
         document.getElementById('lockReasonDisplay').textContent='理由: '+(rows[0].lock_reason||'管理者による閉鎖');
         document.getElementById('lockedScreen').style.display='flex';
@@ -2421,8 +2757,313 @@ async function checkSystemLock() {
   } catch(e) { return false; }
 }
 
+// ===== PROFILE / SETTINGS =====
+const AVATAR_EMOJIS = ['🐉','🦊','🐺','🦋','🐙','🦂','🐍','🦅','🐱','🐻','🦁','🐸','🦖','🐬','🦄','🤖','👾','💀','🎭','🎯','⚡','🔥','🌊','🌙','💎','🗡️','🛸','🎲'];
+const AVATAR_COLORS = ['#7c3aed','#ec4899','#06b6d4','#16a34a','#ef4444','#f59e0b','#0ea5e9','#8b5cf6','#14b8a6','#f97316'];
+
+function openProfile() {
+  if (!currentUser) return;
+  const overlay = document.getElementById('profileOverlay');
+  overlay.classList.add('active');
+  // Populate fields
+  document.getElementById('profileDisplayName').value = currentUser.display_name || '';
+  document.getElementById('profileBio').value = currentUser.bio || '';
+  document.getElementById('profileUidDisplay').textContent = '@' + currentUser.user_id;
+  document.getElementById('profileNameDisplay').textContent = currentUser.display_name || currentUser.user_id;
+  document.getElementById('profileOldPw').value = '';
+  document.getElementById('profileNewPw').value = '';
+  document.getElementById('profileNewPw2').value = '';
+  document.getElementById('profilePwMsg').textContent = '';
+  renderAvatarGrid();
+  updateProfilePreview();
+}
+
+function closeProfile() {
+  document.getElementById('profileOverlay').classList.remove('active');
+}
+
+function renderAvatarGrid() {
+  const grid = document.getElementById('avatarGrid');
+  const selected = currentUser.avatar_emoji || null;
+  grid.innerHTML = AVATAR_EMOJIS.map(e => `
+    <div class="avatar-option ${e === selected ? 'selected' : ''}" onclick="selectAvatarEmoji('${e}')" title="${e}">${e}</div>
+  `).join('');
+  const colorRow = document.getElementById('avatarColorRow');
+  const selColor = currentUser.avatar_color || '#7c3aed';
+  colorRow.innerHTML = AVATAR_COLORS.map(c => `
+    <div class="avatar-color-chip ${c === selColor ? 'selected' : ''}" 
+      style="background:${c};" onclick="selectAvatarColor('${c}')" title="${c}"></div>
+  `).join('');
+}
+
+function selectAvatarEmoji(emoji) {
+  currentUser.avatar_emoji = emoji;
+  // Deselect all, select this
+  document.querySelectorAll('.avatar-option').forEach(el => el.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+  updateProfilePreview();
+}
+
+function selectAvatarColor(color) {
+  currentUser.avatar_color = color;
+  document.querySelectorAll('.avatar-color-chip').forEach(el => el.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+  // If emoji is set, color doesn't show; clear emoji to use color
+  if (currentUser.avatar_emoji) {
+    currentUser.avatar_emoji = null;
+    document.querySelectorAll('.avatar-option').forEach(el => el.classList.remove('selected'));
+  }
+  updateProfilePreview();
+}
+
+function updateProfilePreview() {
+  const big = document.getElementById('profileAvatarBig');
+  const nameEl = document.getElementById('profileNameDisplay');
+  const nameInput = document.getElementById('profileDisplayName');
+  const name = nameInput.value || currentUser.display_name || currentUser.user_id;
+  nameEl.textContent = name;
+  if (currentUser.avatar_emoji) {
+    big.textContent = currentUser.avatar_emoji;
+    big.style.background = 'rgba(124,58,237,0.15)';
+    big.style.fontSize = '32px';
+  } else {
+    const initials = name.slice(0,2).toUpperCase();
+    big.textContent = initials;
+    big.style.background = `linear-gradient(135deg, ${currentUser.avatar_color || '#7c3aed'}, ${(currentUser.avatar_color||'#7c3aed')}88)`;
+    big.style.fontSize = '22px';
+  }
+}
+
+async function saveProfile() {
+  if (!currentUser) return;
+  const displayName = document.getElementById('profileDisplayName').value.trim();
+  const bio = document.getElementById('profileBio').value.trim();
+  const oldPw = document.getElementById('profileOldPw').value;
+  const newPw = document.getElementById('profileNewPw').value;
+  const newPw2 = document.getElementById('profileNewPw2').value;
+  const pwMsg = document.getElementById('profilePwMsg');
+
+  const updates = {
+    display_name: displayName || currentUser.user_id,
+    bio: bio,
+    avatar_emoji: currentUser.avatar_emoji || null,
+    avatar_color: currentUser.avatar_color || '#7c3aed'
+  };
+
+  // Handle password change
+  if (oldPw || newPw || newPw2) {
+    if (!oldPw) { pwMsg.textContent = '[ERROR] 現在のパスワードを入力してください'; pwMsg.className='to-field-validate err'; return; }
+    if (newPw.length < 6) { pwMsg.textContent = '[ERROR] 新しいパスワードは6文字以上必要です'; pwMsg.className='to-field-validate err'; return; }
+    if (newPw !== newPw2) { pwMsg.textContent = '[ERROR] パスワードが一致しません'; pwMsg.className='to-field-validate err'; return; }
+    // Verify old password
+    const rows = await sbFetch(`cm_users?user_id=eq.${encodeURIComponent(currentUser.user_id)}&limit=1`);
+    if (!rows || rows.length === 0) { pwMsg.textContent = '[ERROR] ユーザー情報取得失敗'; pwMsg.className='to-field-validate err'; return; }
+    const oldHash = await sha256(oldPw);
+    if (oldHash !== rows[0].pw_hash) { pwMsg.textContent = '[DENIED] 現在のパスワードが違います'; pwMsg.className='to-field-validate err'; return; }
+    updates.pw_hash = await sha256(newPw);
+    pwMsg.textContent = '[OK] パスワードを変更します';
+    pwMsg.className = 'to-field-validate ok';
+  }
+
+  try {
+    const res = await sbFetch(`cm_users?user_id=eq.${encodeURIComponent(currentUser.user_id)}`, {
+      method:'PATCH', body: JSON.stringify(updates)
+    });
+    currentUser.display_name = updates.display_name;
+    currentUser.bio = bio;
+    updateUserBadge();
+    showToast('[OK] プロフィールを保存しました', 'success');
+    closeProfile();
+  } catch(e) {
+    showToast('[ERROR] 保存に失敗しました', 'error');
+  }
+}
+
+// ===== ADMIN CONSOLE =====
+const ADMIN_PW_HASH_CONST = 'admin'; // Change this to actual admin password
+
+let adminAuthed = false;
+
+function openAdminConsole() {
+  document.getElementById('adminConsoleOverlay').classList.add('active');
+  if (!adminAuthed) {
+    document.getElementById('adminAuthGate').style.display = 'flex';
+    document.getElementById('adminBody').style.display = 'none';
+    document.getElementById('adminPwInput').value = '';
+    document.getElementById('adminPwError').textContent = '';
+    setTimeout(() => document.getElementById('adminPwInput').focus(), 100);
+  } else {
+    document.getElementById('adminAuthGate').style.display = 'none';
+    document.getElementById('adminBody').style.display = 'flex';
+    adminRefreshAll();
+  }
+}
+
+function closeAdminConsole() {
+  document.getElementById('adminConsoleOverlay').classList.remove('active');
+  adminAuthed = false;
+}
+
+async function adminAuthSubmit() {
+  const pw = document.getElementById('adminPwInput').value;
+  const errEl = document.getElementById('adminPwError');
+  if (!pw) { errEl.textContent = '[ERROR] コードを入力してください'; return; }
+  // Hash check against ADMIN constant or env
+  const hash = await sha256(pw);
+  // For flexibility, check against PW1_HASH or a dedicated admin hash
+  if (hash === PW1_HASH) {
+    adminAuthed = true;
+    document.getElementById('adminAuthGate').style.display = 'none';
+    document.getElementById('adminBody').style.display = 'flex';
+    await logSecurityEvent('admin_access', 'Admin console opened');
+    adminRefreshAll();
+  } else {
+    errEl.textContent = '[DENIED] 認証コードが違います';
+    await logSecurityEvent('admin_fail', 'Admin auth failed');
+    document.getElementById('adminPwInput').value = '';
+  }
+}
+
+async function adminRefreshAll() {
+  adminRefreshStatus();
+  adminRefreshLog();
+  adminRefreshUsers();
+  adminRefreshMsgCount();
+}
+
+async function adminRefreshStatus() {
+  try {
+    const rows = await sbFetch('system_status?limit=1');
+    const el = document.getElementById('acSysStatus');
+    if (rows && rows.length && rows[0].is_locked) {
+      el.textContent = 'LOCKED';
+      el.className = 'ac-status-big locked';
+      document.getElementById('acLockReason').value = rows[0].lock_reason || '';
+    } else {
+      el.textContent = 'ONLINE';
+      el.className = 'ac-status-big online';
+    }
+  } catch(e) {}
+}
+
+async function adminRefreshLog() {
+  try {
+    const rows = await sbFetch('security_log?order=id.desc&limit=50');
+    const list = document.getElementById('acLogList');
+    if (!rows || rows.length === 0) {
+      list.innerHTML = '<div style="padding:14px;font-size:10px;color:var(--text-muted);">ログなし</div>';
+      return;
+    }
+    list.innerHTML = rows.map(r => {
+      const dt = r.created_at ? new Date(r.created_at).toLocaleString('ja-JP') : '--';
+      return `<div style="display:flex;gap:10px;align-items:flex-start;padding:8px 16px;border-bottom:1px solid rgba(30,41,59,0.3);font-size:10px;">
+        <span class="ac-badge ${r.event_type||''}">${r.event_type||'?'}</span>
+        <span style="color:var(--text-dim);flex:1;line-height:1.6;">${r.detail||''}</span>
+        <span style="color:var(--text-muted);white-space:nowrap;font-size:9px;">${dt}</span>
+      </div>`;
+    }).join('');
+  } catch(e) {}
+}
+
+async function adminRefreshUsers() {
+  try {
+    const rows = await sbFetch('cm_users?order=created_at.desc&select=user_id,display_name,last_seen,created_at');
+    const list = document.getElementById('acUserList');
+    const countEl = document.getElementById('acUserCount');
+    if (!rows) return;
+    countEl.textContent = rows.length;
+    list.innerHTML = rows.map(u => {
+      const seen = u.last_seen ? new Date(u.last_seen).toLocaleString('ja-JP') : '--';
+      return `<div style="display:flex;gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid rgba(30,41,59,0.3);font-size:10px;">
+        <span style="color:var(--purple-glow);font-family:'Orbitron',monospace;font-size:9px;min-width:100px;">${u.user_id}</span>
+        <span style="color:var(--text-dim);flex:1;">${u.display_name||'-'}</span>
+        <span style="color:var(--text-muted);font-size:9px;">最終: ${seen}</span>
+        <button onclick="adminBanUser('${u.user_id}')" style="background:transparent;border:1px solid rgba(239,68,68,0.3);color:var(--red);padding:2px 8px;font-family:'Share Tech Mono',monospace;font-size:9px;cursor:pointer;" title="削除">[DEL]</button>
+      </div>`;
+    }).join('');
+  } catch(e) {}
+}
+
+async function adminRefreshMsgCount() {
+  try {
+    const rows = await sbFetch('messages?select=id');
+    document.getElementById('acMsgCount').textContent = rows ? rows.length : '?';
+  } catch(e) {}
+}
+
+async function adminLockSystem() {
+  const reason = document.getElementById('acLockReason').value || '管理者による一時閉鎖';
+  if (!confirm(`システムをロックしますか?\n理由: ${reason}`)) return;
+  try {
+    const rows = await sbFetch('system_status?limit=1');
+    if (rows && rows.length > 0) {
+      await sbFetch(`system_status?id=eq.${rows[0].id}`, {
+        method:'PATCH', body:JSON.stringify({ is_locked:true, lock_reason:reason })
+      });
+    } else {
+      await sbFetch('system_status', {
+        method:'POST', body:JSON.stringify({ is_locked:true, lock_reason:reason })
+      });
+    }
+    await logSecurityEvent('lock', `システムロック: ${reason}`);
+    showToast('[OK] システムをロックしました', 'error');
+    adminRefreshStatus();
+  } catch(e) { showToast('[ERROR] 操作失敗', 'error'); }
+}
+
+async function adminUnlockSystem() {
+  if (!confirm('ロックを解除しますか?')) return;
+  try {
+    const rows = await sbFetch('system_status?limit=1');
+    if (rows && rows.length > 0) {
+      await sbFetch(`system_status?id=eq.${rows[0].id}`, {
+        method:'PATCH', body:JSON.stringify({ is_locked:false, lock_reason:'' })
+      });
+    }
+    await logSecurityEvent('unlock', 'システムロック解除');
+    showToast('[OK] ロックを解除しました', 'success');
+    adminRefreshStatus();
+    document.getElementById('lockedScreen').style.display = 'none';
+  } catch(e) { showToast('[ERROR] 操作失敗', 'error'); }
+}
+
+async function adminPurgeMessages() {
+  if (!confirm('[DANGER] 全てのメッセージを完全に削除します。この操作は取り消せません。実行しますか？')) return;
+  try {
+    await sbFetch('messages?id=gt.0', { method:'DELETE' });
+    messages = [];
+    renderInbox();
+    document.getElementById('emptyState').style.display = 'flex';
+    document.getElementById('composeForm').style.display = 'none';
+    document.getElementById('messageView').style.display = 'none';
+    await logSecurityEvent('purge', '全メッセージを削除');
+    showToast('[OK] 全メッセージを消去しました', 'success');
+    adminRefreshMsgCount();
+  } catch(e) { showToast('[ERROR] 消去失敗', 'error'); }
+}
+
+async function adminBanUser(userId) {
+  if (!confirm(`ユーザー「${userId}」を削除しますか？この操作は元に戻せません。`)) return;
+  try {
+    await sbFetch(`cm_users?user_id=eq.${encodeURIComponent(userId)}`, { method:'DELETE' });
+    await logSecurityEvent('user_delete', `ユーザー削除: ${userId}`);
+    showToast(`[OK] ユーザー「${userId}」を削除しました`, 'success');
+    adminRefreshUsers();
+  } catch(e) { showToast('[ERROR] 削除失敗', 'error'); }
+}
+
 // ===== INIT =====
 window.addEventListener('DOMContentLoaded', () => {
+  // Admin button hover
+  const ab = document.getElementById('adminBtn');
+  if (ab) {
+    ab.addEventListener('mouseenter', () => { ab.style.borderColor='var(--red)'; ab.style.color='var(--red)'; });
+    ab.addEventListener('mouseleave', () => { ab.style.borderColor='rgba(239,68,68,0.4)'; ab.style.color='#664444'; });
+  }
+  // Profile display name live preview
+  const dnInput = document.getElementById('profileDisplayName');
+  if (dnInput) dnInput.addEventListener('input', updateProfilePreview);
+
   requestNotifPermission();
   document.getElementById('sessionId').textContent = sessionId;
   setInterval(updateClock, 1000);
@@ -2455,14 +3096,29 @@ window.addEventListener('DOMContentLoaded', () => {
     id BIGSERIAL PRIMARY KEY,
     user_id TEXT UNIQUE NOT NULL,
     display_name TEXT,
+    bio TEXT,
+    avatar_emoji TEXT,
+    avatar_color TEXT DEFAULT '#7c3aed',
     pw_hash TEXT NOT NULL,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     last_seen TIMESTAMPTZ DEFAULT NOW()
   );
-  また messagesテーブルに to_addr カラムを追加:
+  -- 既存テーブルへの追加:
+  ALTER TABLE cm_users ADD COLUMN IF NOT EXISTS bio TEXT;
+  ALTER TABLE cm_users ADD COLUMN IF NOT EXISTS avatar_emoji TEXT;
+  ALTER TABLE cm_users ADD COLUMN IF NOT EXISTS avatar_color TEXT DEFAULT '#7c3aed';
+  -- messages テーブル:
   ALTER TABLE messages ADD COLUMN IF NOT EXISTS to_addr TEXT;
+  ALTER TABLE messages ADD COLUMN IF NOT EXISTS from_addr TEXT;
   CREATE INDEX IF NOT EXISTS idx_messages_to_addr ON messages(to_addr);
   CREATE INDEX IF NOT EXISTS idx_messages_from_addr ON messages(from_addr);
+  -- system_status テーブル（admin用）:
+  CREATE TABLE IF NOT EXISTS system_status (
+    id BIGSERIAL PRIMARY KEY,
+    is_locked BOOLEAN DEFAULT FALSE,
+    lock_reason TEXT,
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+  );
 -->
 </body>
 </html>
