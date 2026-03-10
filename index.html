@@ -899,7 +899,7 @@
 <body>
 
 <!-- ===== ACCOUNT SCREEN ===== -->
-<div class="account-screen" id="accountScreen">
+<div class="account-screen hidden" id="accountScreen">
   <div class="account-scanlines"></div>
   <div class="account-inner">
     <div class="account-logo">CRYPT<span class="blink">_</span>MAIL</div>
@@ -2515,7 +2515,7 @@ document.addEventListener('keydown', e => { if(e.key==='Escape') closeLightbox()
 const PW1_HASH = '7ac25d5d84cae3dcc037c52a93dfe320fe83b2a6abe787451b4fc15aeba2c9e7';
 const PW2_HASH = 'aeb32cfe00d196040e9758c276853282721fbd222038a54e9ae04d6686066e1b';
 let idleTimer = null;
-const IDLE_SECONDS = 300; // 5 min after login
+const IDLE_SECONDS = 60; // 1 min → auto logout + close tab
 let pwGateAttempts = 0;
 
 function showTitleScreen() {
@@ -2537,7 +2537,26 @@ function startIdleBar() {
 
 function resetIdleTimer() {
   clearTimeout(idleTimer);
-  idleTimer = setTimeout(() => { if(currentUser) showTitleScreen(); }, IDLE_SECONDS * 1000);
+  idleTimer = setTimeout(() => {
+    if (!currentUser) return;
+    // Auto logout
+    logSecurityEvent('logout', `アイドルタイムアウト: ${currentUser.user_id}`);
+    currentUser = null;
+    messages = [];
+    renderInbox();
+    document.getElementById('headerAvatarWrap').style.display = 'none';
+    document.getElementById('termsOverlay').classList.remove('active');
+    document.getElementById('pwGateOverlay').classList.remove('active');
+    document.getElementById('accountScreen').classList.add('hidden');
+    showTitleScreen();
+    showToast('[TIMEOUT] セッションタイムアウト — タブを閉じます', 'error');
+    // Try to close tab after short delay
+    setTimeout(() => {
+      try { window.close(); } catch(e) {}
+      // Fallback: replace with blank if window.close() blocked
+      try { window.location.replace('about:blank'); } catch(e) {}
+    }, 1500);
+  }, IDLE_SECONDS * 1000);
 }
 
 ['mousemove','keydown','mousedown','touchstart','scroll','click'].forEach(ev => {
