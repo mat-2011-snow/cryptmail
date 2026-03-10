@@ -418,6 +418,44 @@
     letter-spacing:2px;z-index:2;text-align:center;
   }
 
+  /* Google-style header avatar */
+  .header-avatar-wrap {
+    position:relative;
+    display:flex;align-items:center;
+  }
+  .header-avatar-btn {
+    width:36px;height:36px;border-radius:50%;
+    border:2px solid var(--purple);
+    background:transparent;cursor:pointer;
+    padding:0;overflow:hidden;
+    transition:all 0.2s;
+    box-shadow:0 0 0 0 rgba(124,58,237,0);
+  }
+  .header-avatar-btn:hover {
+    border-color:var(--purple-bright);
+    box-shadow:0 0 0 3px rgba(124,58,237,0.25);
+    transform:scale(1.05);
+  }
+  .header-avatar-inner {
+    width:100%;height:100%;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Orbitron',monospace;font-size:13px;font-weight:900;color:white;
+    background:linear-gradient(135deg,var(--purple),var(--purple-bright));
+    overflow:hidden;
+  }
+  .header-avatar-inner img {
+    width:100%;height:100%;object-fit:cover;border-radius:50%;
+  }
+  .header-avatar-tooltip {
+    position:absolute;top:calc(100% + 8px);right:0;
+    background:var(--bg2);border:1px solid var(--border);
+    color:var(--text-dim);font-size:9px;letter-spacing:1px;
+    padding:4px 10px;white-space:nowrap;
+    opacity:0;pointer-events:none;transition:opacity 0.15s;
+    font-family:'Share Tech Mono',monospace;
+  }
+  .header-avatar-wrap:hover .header-avatar-tooltip { opacity:1; }
+
   /* User badge in header */
   .user-badge {
     display:flex;align-items:center;gap:8px;
@@ -752,6 +790,110 @@
     .t-agree-section { margin:10px 14px 50px;padding:14px; }
     .game-cell { width:52px;height:52px;font-size:18px; }
   }
+
+  /* Photo upload in profile */
+  .photo-upload-area {
+    display:flex;flex-direction:column;align-items:center;gap:12px;
+    padding:20px;border:1px dashed var(--border-bright);
+    background:rgba(10,15,30,0.6);cursor:pointer;transition:all 0.2s;
+    position:relative;
+  }
+  .photo-upload-area:hover { border-color:var(--purple);background:rgba(124,58,237,0.05); }
+  .photo-upload-area input[type=file] { position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%; }
+  .photo-upload-preview {
+    width:80px;height:80px;border-radius:50%;
+    border:2px solid var(--purple-bright);
+    overflow:hidden;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(135deg,var(--purple),var(--purple-bright));
+    font-family:'Orbitron',monospace;font-size:24px;font-weight:900;color:white;
+    box-shadow:0 0 20px rgba(124,58,237,0.4);flex-shrink:0;
+  }
+  .photo-upload-preview img { width:100%;height:100%;object-fit:cover; }
+  .photo-upload-hint { font-size:10px;color:var(--text-muted);letter-spacing:1px;text-align:center;line-height:1.8; }
+  .photo-upload-hint span { color:var(--purple-glow); }
+  .photo-tabs { display:flex;border-bottom:1px solid var(--border);margin-bottom:16px; }
+  .photo-tab {
+    flex:1;padding:8px;background:transparent;border:none;
+    font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;
+    color:var(--text-muted);cursor:pointer;transition:all 0.15s;
+    border-bottom:2px solid transparent;
+  }
+  .photo-tab.active { color:var(--purple-glow);border-bottom-color:var(--purple); }
+  .photo-tab-panel { display:none; }
+  .photo-tab-panel.active { display:block; }
+  .camera-preview-wrap {
+    position:relative;background:#000;
+    display:flex;align-items:center;justify-content:center;
+    height:200px;overflow:hidden;
+  }
+  .camera-preview-wrap video, .camera-preview-wrap canvas {
+    max-height:200px;max-width:100%;object-fit:contain;
+  }
+  .camera-snap-btn {
+    width:100%;margin-top:10px;
+    background:rgba(124,58,237,0.15);border:1px solid var(--purple);
+    color:var(--purple-glow);padding:10px;
+    font-family:'Orbitron',monospace;font-size:10px;letter-spacing:2px;
+    cursor:pointer;transition:all 0.2s;
+  }
+  .camera-snap-btn:hover { background:rgba(124,58,237,0.3); }
+  .camera-retake-btn {
+    width:100%;margin-top:6px;
+    background:transparent;border:1px solid var(--border-bright);
+    color:var(--text-dim);padding:8px;
+    font-family:'Share Tech Mono',monospace;font-size:10px;
+    cursor:pointer;transition:all 0.2s;
+  }
+
+  /* Photo upload in profile */
+  .photo-upload-area {
+    display:flex;flex-direction:column;align-items:center;gap:12px;
+    padding:20px;border:1px dashed var(--border-bright);
+    background:rgba(10,15,30,0.6);cursor:pointer;transition:all 0.2s;
+    position:relative;
+  }
+  .photo-upload-area:hover { border-color:var(--purple);background:rgba(124,58,237,0.05); }
+  .photo-upload-area input[type=file] { position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%; }
+  .photo-upload-preview {
+    width:80px;height:80px;border-radius:50%;
+    border:2px solid var(--purple-bright);
+    overflow:hidden;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(135deg,var(--purple),var(--purple-bright));
+    font-family:'Orbitron',monospace;font-size:24px;font-weight:900;color:white;
+    box-shadow:0 0 20px rgba(124,58,237,0.4);flex-shrink:0;
+  }
+  .photo-upload-preview img { width:100%;height:100%;object-fit:cover; }
+  .photo-upload-hint { font-size:10px;color:var(--text-muted);letter-spacing:1px;text-align:center;line-height:1.8; }
+  .photo-upload-hint span { color:var(--purple-glow); }
+  .photo-tabs { display:flex;border-bottom:1px solid var(--border);margin-bottom:16px; }
+  .photo-tab {
+    flex:1;padding:8px;background:transparent;border:none;
+    font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;
+    color:var(--text-muted);cursor:pointer;transition:all 0.15s;
+    border-bottom:2px solid transparent;
+  }
+  .photo-tab.active { color:var(--purple-glow);border-bottom-color:var(--purple); }
+  .photo-tab-panel { display:none; }
+  .photo-tab-panel.active { display:block; }
+  .camera-preview-wrap {
+    background:#000;display:flex;align-items:center;justify-content:center;
+    height:200px;overflow:hidden;position:relative;
+  }
+  .camera-preview-wrap video, .camera-preview-wrap canvas { max-height:200px;max-width:100%;object-fit:contain; }
+  .camera-snap-btn {
+    width:100%;margin-top:10px;
+    background:rgba(124,58,237,0.15);border:1px solid var(--purple);
+    color:var(--purple-glow);padding:10px;
+    font-family:'Orbitron',monospace;font-size:10px;letter-spacing:2px;
+    cursor:pointer;transition:all 0.2s;
+  }
+  .camera-snap-btn:hover { background:rgba(124,58,237,0.3); }
+  .camera-retake-btn {
+    width:100%;margin-top:6px;background:transparent;border:1px solid var(--border-bright);
+    color:var(--text-dim);padding:8px;
+    font-family:'Share Tech Mono',monospace;font-size:10px;cursor:pointer;transition:all 0.2s;
+  }
+
 </style>
 </head>
 <body>
@@ -848,19 +990,19 @@
       <span><span class="status-dot red"></span> 監視: オン</span>
     </div>
   </div>
-  <!-- RIGHT: User badge + action buttons + clock -->
+  <!-- RIGHT: action buttons + clock + Google-style avatar -->
   <div class="header-right">
-    <div class="user-badge" id="userBadge" style="display:none;">
-      <div class="user-avatar" id="userAvatar">?</div>
-      <span class="user-name" id="userDisplayName">---</span>
-      <span style="color:var(--border-bright);">|</span>
-      <span style="color:var(--text-muted);font-size:9px;" id="userIdLabel">---</span>
-    </div>
-    <button class="logout-btn" id="logoutBtn" style="display:none;" onclick="doLogout()">[LOGOUT]</button>
-    <button class="call-btn" id="profileBtn" style="display:none;" onclick="openProfile()">[PROFILE]</button>
     <button class="call-btn" id="callBtn" onclick="startCall()">[CALL]</button>
     <button class="call-btn danger" id="adminBtn" onclick="openAdminConsole()" style="border-color:rgba(239,68,68,0.3);color:#774444;">[ADMIN]</button>
     <span class="header-clock" id="clock">--:--:--</span>
+    <!-- Google-style avatar button (far right) -->
+    <div class="header-avatar-wrap" id="headerAvatarWrap" style="display:none;">
+      <button class="header-avatar-btn" id="headerAvatarBtn" onclick="openProfile()" title="アカウント設定">
+        <div class="header-avatar-inner" id="headerAvatarInner">?</div>
+      </button>
+      <!-- Dropdown hint -->
+      <div class="header-avatar-tooltip">アカウント設定</div>
+    </div>
   </div>
 </div>
 
@@ -1304,26 +1446,79 @@
       <button class="profile-close-btn" onclick="closeProfile()">[X] 閉じる</button>
     </div>
     <div class="profile-body">
-      <!-- Avatar section -->
+      <!-- Avatar / Photo section -->
       <div class="avatar-section">
-        <div class="avatar-section-label">// アバター選択</div>
+        <div class="avatar-section-label">// プロフィール画像</div>
+        <!-- Preview row -->
         <div class="avatar-preview-row">
           <div class="avatar-big" id="profileAvatarBig">?</div>
           <div class="avatar-big-info">
             <div class="uid" id="profileUidDisplay">@---</div>
-            <div id="profileNameDisplay" style="color:var(--text);">---</div>
-            <div style="font-size:9px;color:var(--text-muted);margin-top:4px;">アバターを選択してください</div>
+            <div id="profileNameDisplay" style="color:var(--text);font-size:13px;">---</div>
+            <div id="profileBioPreview" style="font-size:9px;color:var(--text-muted);margin-top:4px;"></div>
           </div>
         </div>
-        <!-- Emoji avatars -->
-        <div class="avatar-section-label" style="margin-top:8px;">// 絵文字アバター</div>
-        <div class="avatar-grid" id="avatarGrid">
-          <!-- filled by JS -->
+
+        <!-- Tabs: PHOTO / EMOJI / COLOR -->
+        <div class="photo-tabs">
+          <button class="photo-tab active" onclick="switchPhotoTab('photo',this)">📷 写真</button>
+          <button class="photo-tab" onclick="switchPhotoTab('emoji',this)">😀 絵文字</button>
+          <button class="photo-tab" onclick="switchPhotoTab('color',this)">🎨 カラー</button>
         </div>
-        <!-- Color bg for initials -->
-        <div class="avatar-section-label" style="margin-top:12px;">// 初期文字カラー</div>
-        <div class="avatar-color-row" id="avatarColorRow">
-          <!-- filled by JS -->
+
+        <!-- TAB: PHOTO -->
+        <div class="photo-tab-panel active" id="photoTabPhoto">
+          <!-- Sub-tabs: upload / camera -->
+          <div style="display:flex;gap:8px;margin-bottom:12px;">
+            <button onclick="switchCameraMode('upload')" id="modeUploadBtn"
+              style="flex:1;padding:7px;background:rgba(124,58,237,0.2);border:1px solid var(--purple);color:var(--purple-glow);font-family:'Share Tech Mono',monospace;font-size:10px;cursor:pointer;letter-spacing:1px;transition:all 0.2s;">
+              📁 ファイル選択
+            </button>
+            <button onclick="switchCameraMode('camera')" id="modeCameraBtn"
+              style="flex:1;padding:7px;background:transparent;border:1px solid var(--border-bright);color:var(--text-dim);font-family:'Share Tech Mono',monospace;font-size:10px;cursor:pointer;letter-spacing:1px;transition:all 0.2s;">
+              📷 カメラ撮影
+            </button>
+          </div>
+
+          <!-- Upload area -->
+          <div id="uploadArea">
+            <div class="photo-upload-area" onclick="document.getElementById('photoFileInput').click()">
+              <input type="file" id="photoFileInput" accept="image/*" style="display:none;" onchange="handlePhotoUpload(event)">
+              <div class="photo-upload-preview" id="photoUploadPreview">
+                <span id="photoUploadIcon">＋</span>
+              </div>
+              <div class="photo-upload-hint">
+                クリックして画像を選択<br>
+                <span>PNG / JPG / GIF / WEBP 対応</span><br>
+                <span style="color:var(--text-muted);">最大 2MB</span>
+              </div>
+            </div>
+            <button class="camera-retake-btn" id="removePhotoBtn" style="display:none;margin-top:8px;" onclick="removePhoto()">
+              [×] 写真を削除してイニシャルに戻す
+            </button>
+          </div>
+
+          <!-- Camera area -->
+          <div id="cameraArea" style="display:none;">
+            <div class="camera-preview-wrap">
+              <video id="cameraVideo" autoplay playsinline style="display:block;width:100%;"></video>
+              <canvas id="cameraCanvas" style="display:none;width:100%;"></canvas>
+            </div>
+            <button class="camera-snap-btn" id="cameraSnapBtn" onclick="snapPhoto()">📸 シャッター</button>
+            <button class="camera-retake-btn" id="cameraRetakeBtn" style="display:none;" onclick="retakePhoto()">↺ 撮り直す</button>
+            <button class="camera-retake-btn" onclick="stopCamera()">✕ カメラを閉じる</button>
+          </div>
+        </div>
+
+        <!-- TAB: EMOJI -->
+        <div class="photo-tab-panel" id="photoTabEmoji">
+          <div class="avatar-grid" id="avatarGrid"></div>
+        </div>
+
+        <!-- TAB: COLOR (initials bg) -->
+        <div class="photo-tab-panel" id="photoTabColor">
+          <div style="font-size:10px;color:var(--text-muted);letter-spacing:1px;margin-bottom:12px;">// イニシャル表示時の背景カラー</div>
+          <div class="avatar-color-row" id="avatarColorRow"></div>
         </div>
       </div>
       <hr class="profile-divider">
@@ -1584,6 +1779,7 @@ async function doLogin() {
       display_name: user.display_name || user.user_id,
       avatar_emoji: user.avatar_emoji || null,
       avatar_color: user.avatar_color || '#7c3aed',
+      avatar_image: user.avatar_image || null,
       bio: user.bio || ''
     };
     try { await logSecurityEvent('login', `ログイン成功: ${userId}`); } catch(e) {}
@@ -1669,10 +1865,8 @@ async function doRegister() {
 function onAccountLoggedIn() {
   // Hide account screen
   document.getElementById('accountScreen').classList.add('hidden');
-  // Update header UI
-  document.getElementById('userBadge').style.display = 'flex';
-  document.getElementById('logoutBtn').style.display = 'block';
-  document.getElementById('profileBtn').style.display = 'block';
+  // Show header avatar (Google-style)
+  document.getElementById('headerAvatarWrap').style.display = 'flex';
   updateUserBadge();
   // Show title/auth screen
   showTitleScreen();
@@ -1680,21 +1874,26 @@ function onAccountLoggedIn() {
 
 function updateUserBadge() {
   if (!currentUser) return;
-  const avatar = currentUser.avatar_emoji || null;
+  const inner = document.getElementById('headerAvatarInner');
+  if (!inner) return;
   const avatarColor = currentUser.avatar_color || '#7c3aed';
   const initials = (currentUser.display_name || currentUser.user_id).slice(0,2).toUpperCase();
-  const avatarEl = document.getElementById('userAvatar');
-  if (avatar) {
-    avatarEl.textContent = avatar;
-    avatarEl.style.background = 'transparent';
-    avatarEl.style.fontSize = '16px';
+
+  if (currentUser.avatar_image) {
+    // Photo
+    inner.innerHTML = `<img src="${currentUser.avatar_image}" alt="avatar">`;
+    inner.style.background = 'transparent';
+  } else if (currentUser.avatar_emoji) {
+    // Emoji
+    inner.innerHTML = currentUser.avatar_emoji;
+    inner.style.background = 'transparent';
+    inner.style.fontSize = '18px';
   } else {
-    avatarEl.textContent = initials;
-    avatarEl.style.background = `linear-gradient(135deg, ${avatarColor}, ${avatarColor}88)`;
-    avatarEl.style.fontSize = '9px';
+    // Initials
+    inner.innerHTML = initials;
+    inner.style.background = `linear-gradient(135deg, ${avatarColor}, ${avatarColor}88)`;
+    inner.style.fontSize = '13px';
   }
-  document.getElementById('userDisplayName').textContent = currentUser.display_name || currentUser.user_id;
-  document.getElementById('userIdLabel').textContent = '@' + currentUser.user_id;
 }
 
 function doLogout() {
@@ -1703,9 +1902,7 @@ function doLogout() {
   currentUser = null;
   messages = [];
   renderInbox();
-  document.getElementById('userBadge').style.display = 'none';
-  document.getElementById('logoutBtn').style.display = 'none';
-  document.getElementById('profileBtn').style.display = 'none';
+  document.getElementById('headerAvatarWrap').style.display = 'none';
   document.getElementById('titleScreen').classList.add('hidden');
   document.getElementById('termsOverlay').classList.remove('active');
   document.getElementById('pwGateOverlay').classList.remove('active');
@@ -2777,25 +2974,137 @@ async function checkSystemLock() {
 const AVATAR_EMOJIS = ['🐉','🦊','🐺','🦋','🐙','🦂','🐍','🦅','🐱','🐻','🦁','🐸','🦖','🐬','🦄','🤖','👾','💀','🎭','🎯','⚡','🔥','🌊','🌙','💎','🗡️','🛸','🎲'];
 const AVATAR_COLORS = ['#7c3aed','#ec4899','#06b6d4','#16a34a','#ef4444','#f59e0b','#0ea5e9','#8b5cf6','#14b8a6','#f97316'];
 
+let cameraStream = null;
+let capturedPhotoData = null; // base64 data URL of captured/uploaded photo
+
 function openProfile() {
   if (!currentUser) return;
-  const overlay = document.getElementById('profileOverlay');
-  overlay.classList.add('active');
-  // Populate fields
+  document.getElementById('profileOverlay').classList.add('active');
   document.getElementById('profileDisplayName').value = currentUser.display_name || '';
   document.getElementById('profileBio').value = currentUser.bio || '';
   document.getElementById('profileUidDisplay').textContent = '@' + currentUser.user_id;
-  document.getElementById('profileNameDisplay').textContent = currentUser.display_name || currentUser.user_id;
   document.getElementById('profileOldPw').value = '';
   document.getElementById('profileNewPw').value = '';
   document.getElementById('profileNewPw2').value = '';
   document.getElementById('profilePwMsg').textContent = '';
+  capturedPhotoData = currentUser.avatar_image || null;
+  // Default to photo tab
+  switchPhotoTab('photo', document.querySelector('.photo-tab'));
   renderAvatarGrid();
   updateProfilePreview();
 }
 
 function closeProfile() {
   document.getElementById('profileOverlay').classList.remove('active');
+  stopCamera();
+}
+
+function switchPhotoTab(tab, btn) {
+  document.querySelectorAll('.photo-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.photo-tab-panel').forEach(p => p.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  const panel = document.getElementById('photoTab' + tab.charAt(0).toUpperCase() + tab.slice(1));
+  if (panel) panel.classList.add('active');
+  if (tab !== 'photo') stopCamera();
+}
+
+function switchCameraMode(mode) {
+  const uploadArea = document.getElementById('uploadArea');
+  const cameraArea = document.getElementById('cameraArea');
+  const upBtn = document.getElementById('modeUploadBtn');
+  const camBtn = document.getElementById('modeCameraBtn');
+  if (mode === 'camera') {
+    uploadArea.style.display = 'none';
+    cameraArea.style.display = 'block';
+    upBtn.style.background = 'transparent'; upBtn.style.borderColor = 'var(--border-bright)'; upBtn.style.color = 'var(--text-dim)';
+    camBtn.style.background = 'rgba(124,58,237,0.2)'; camBtn.style.borderColor = 'var(--purple)'; camBtn.style.color = 'var(--purple-glow)';
+    startCamera();
+  } else {
+    cameraArea.style.display = 'none';
+    uploadArea.style.display = 'block';
+    camBtn.style.background = 'transparent'; camBtn.style.borderColor = 'var(--border-bright)'; camBtn.style.color = 'var(--text-dim)';
+    upBtn.style.background = 'rgba(124,58,237,0.2)'; upBtn.style.borderColor = 'var(--purple)'; upBtn.style.color = 'var(--purple-glow)';
+    stopCamera();
+  }
+}
+
+async function startCamera() {
+  try {
+    cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
+    const video = document.getElementById('cameraVideo');
+    video.srcObject = cameraStream;
+    video.style.display = 'block';
+    document.getElementById('cameraCanvas').style.display = 'none';
+    document.getElementById('cameraSnapBtn').style.display = 'block';
+    document.getElementById('cameraRetakeBtn').style.display = 'none';
+  } catch(e) {
+    showToast('[ERROR] カメラへのアクセスが拒否されました', 'error');
+  }
+}
+
+function stopCamera() {
+  if (cameraStream) {
+    cameraStream.getTracks().forEach(t => t.stop());
+    cameraStream = null;
+  }
+  const video = document.getElementById('cameraVideo');
+  if (video) { video.srcObject = null; video.style.display = 'none'; }
+}
+
+function snapPhoto() {
+  const video = document.getElementById('cameraVideo');
+  const canvas = document.getElementById('cameraCanvas');
+  if (!video || !cameraStream) return;
+  canvas.width = video.videoWidth || 320;
+  canvas.height = video.videoHeight || 240;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(video, 0, 0);
+  const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+  setPhotoPreview(dataUrl);
+  video.style.display = 'none';
+  canvas.style.display = 'block';
+  document.getElementById('cameraSnapBtn').style.display = 'none';
+  document.getElementById('cameraRetakeBtn').style.display = 'block';
+  stopCamera();
+}
+
+function retakePhoto() {
+  document.getElementById('cameraCanvas').style.display = 'none';
+  document.getElementById('cameraRetakeBtn').style.display = 'none';
+  capturedPhotoData = null;
+  startCamera();
+}
+
+function handlePhotoUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  if (file.size > 2 * 1024 * 1024) { showToast('[ERROR] ファイルサイズは2MB以下にしてください', 'error'); return; }
+  const reader = new FileReader();
+  reader.onload = (e) => setPhotoPreview(e.target.result);
+  reader.readAsDataURL(file);
+}
+
+function setPhotoPreview(dataUrl) {
+  capturedPhotoData = dataUrl;
+  // Clear emoji so photo takes priority
+  currentUser.avatar_emoji = null;
+  // Update upload area preview
+  const preview = document.getElementById('photoUploadPreview');
+  if (preview) {
+    preview.innerHTML = `<img src="${dataUrl}" alt="preview" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+  }
+  document.getElementById('removePhotoBtn').style.display = 'block';
+  updateProfilePreview();
+}
+
+function removePhoto() {
+  capturedPhotoData = null;
+  currentUser.avatar_image = null;
+  const preview = document.getElementById('photoUploadPreview');
+  if (preview) { preview.innerHTML = '<span id="photoUploadIcon">＋</span>'; }
+  document.getElementById('removePhotoBtn').style.display = 'none';
+  document.getElementById('photoFileInput').value = '';
+  updateProfilePreview();
 }
 
 function renderAvatarGrid() {
@@ -2807,45 +3116,52 @@ function renderAvatarGrid() {
   const colorRow = document.getElementById('avatarColorRow');
   const selColor = currentUser.avatar_color || '#7c3aed';
   colorRow.innerHTML = AVATAR_COLORS.map(c => `
-    <div class="avatar-color-chip ${c === selColor ? 'selected' : ''}" 
+    <div class="avatar-color-chip ${c === selColor ? 'selected' : ''}"
       style="background:${c};" onclick="selectAvatarColor('${c}')" title="${c}"></div>
   `).join('');
 }
 
 function selectAvatarEmoji(emoji) {
+  capturedPhotoData = null; // photo cleared when emoji chosen
   currentUser.avatar_emoji = emoji;
-  // Deselect all, select this
   document.querySelectorAll('.avatar-option').forEach(el => el.classList.remove('selected'));
   event.currentTarget.classList.add('selected');
   updateProfilePreview();
 }
 
 function selectAvatarColor(color) {
+  capturedPhotoData = null;
   currentUser.avatar_color = color;
+  currentUser.avatar_emoji = null;
   document.querySelectorAll('.avatar-color-chip').forEach(el => el.classList.remove('selected'));
   event.currentTarget.classList.add('selected');
-  // If emoji is set, color doesn't show; clear emoji to use color
-  if (currentUser.avatar_emoji) {
-    currentUser.avatar_emoji = null;
-    document.querySelectorAll('.avatar-option').forEach(el => el.classList.remove('selected'));
-  }
+  document.querySelectorAll('.avatar-option').forEach(el => el.classList.remove('selected'));
   updateProfilePreview();
 }
 
 function updateProfilePreview() {
   const big = document.getElementById('profileAvatarBig');
   const nameEl = document.getElementById('profileNameDisplay');
+  const bioEl = document.getElementById('profileBioPreview');
   const nameInput = document.getElementById('profileDisplayName');
-  const name = nameInput.value || currentUser.display_name || currentUser.user_id;
-  nameEl.textContent = name;
-  if (currentUser.avatar_emoji) {
-    big.textContent = currentUser.avatar_emoji;
+  const bioInput = document.getElementById('profileBio');
+  const name = (nameInput ? nameInput.value : '') || currentUser.display_name || currentUser.user_id;
+  if (nameEl) nameEl.textContent = name;
+  if (bioEl && bioInput) bioEl.textContent = bioInput.value || '';
+
+  if (!big) return;
+  if (capturedPhotoData) {
+    big.innerHTML = `<img src="${capturedPhotoData}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+    big.style.background = 'transparent';
+    big.style.fontSize = 'inherit';
+  } else if (currentUser.avatar_emoji) {
+    big.innerHTML = currentUser.avatar_emoji;
     big.style.background = 'rgba(124,58,237,0.15)';
     big.style.fontSize = '32px';
   } else {
     const initials = name.slice(0,2).toUpperCase();
-    big.textContent = initials;
-    big.style.background = `linear-gradient(135deg, ${currentUser.avatar_color || '#7c3aed'}, ${(currentUser.avatar_color||'#7c3aed')}88)`;
+    big.innerHTML = initials;
+    big.style.background = `linear-gradient(135deg, ${currentUser.avatar_color||'#7c3aed'}, ${(currentUser.avatar_color||'#7c3aed')}88)`;
     big.style.fontSize = '22px';
   }
 }
@@ -2862,31 +3178,32 @@ async function saveProfile() {
   const updates = {
     display_name: displayName || currentUser.user_id,
     bio: bio,
-    avatar_emoji: currentUser.avatar_emoji || null,
-    avatar_color: currentUser.avatar_color || '#7c3aed'
+    avatar_emoji: capturedPhotoData ? null : (currentUser.avatar_emoji || null),
+    avatar_color: currentUser.avatar_color || '#7c3aed',
+    avatar_image: capturedPhotoData || null
   };
 
-  // Handle password change
+  // Password change
   if (oldPw || newPw || newPw2) {
     if (!oldPw) { pwMsg.textContent = '[ERROR] 現在のパスワードを入力してください'; pwMsg.className='to-field-validate err'; return; }
     if (newPw.length < 6) { pwMsg.textContent = '[ERROR] 新しいパスワードは6文字以上必要です'; pwMsg.className='to-field-validate err'; return; }
     if (newPw !== newPw2) { pwMsg.textContent = '[ERROR] パスワードが一致しません'; pwMsg.className='to-field-validate err'; return; }
-    // Verify old password
     const rows = await sbFetch(`cm_users?user_id=eq.${encodeURIComponent(currentUser.user_id)}&limit=1`);
     if (!rows || rows.length === 0) { pwMsg.textContent = '[ERROR] ユーザー情報取得失敗'; pwMsg.className='to-field-validate err'; return; }
     const oldHash = await sha256(oldPw);
     if (oldHash !== rows[0].pw_hash) { pwMsg.textContent = '[DENIED] 現在のパスワードが違います'; pwMsg.className='to-field-validate err'; return; }
     updates.pw_hash = await sha256(newPw);
-    pwMsg.textContent = '[OK] パスワードを変更します';
-    pwMsg.className = 'to-field-validate ok';
+    pwMsg.textContent = '[OK] パスワードを変更します'; pwMsg.className = 'to-field-validate ok';
   }
 
   try {
-    const res = await sbFetch(`cm_users?user_id=eq.${encodeURIComponent(currentUser.user_id)}`, {
+    await sbFetch(`cm_users?user_id=eq.${encodeURIComponent(currentUser.user_id)}`, {
       method:'PATCH', body: JSON.stringify(updates)
     });
     currentUser.display_name = updates.display_name;
     currentUser.bio = bio;
+    currentUser.avatar_emoji = updates.avatar_emoji;
+    currentUser.avatar_image = updates.avatar_image;
     updateUserBadge();
     showToast('[OK] プロフィールを保存しました', 'success');
     closeProfile();
@@ -2894,6 +3211,7 @@ async function saveProfile() {
     showToast('[ERROR] 保存に失敗しました', 'error');
   }
 }
+
 
 // ===== ADMIN CONSOLE =====
 const ADMIN_PW_HASH_CONST = 'admin'; // Change this to actual admin password
