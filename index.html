@@ -1,5 +1,3 @@
-html
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -305,9 +303,10 @@ html
   ::-webkit-scrollbar-thumb { background:var(--purple); }
 
   /* =====================================================
-     ACCOUNT SYSTEM STYLES
+     ★ ACCOUNT SYSTEM STYLES
      ===================================================== */
 
+  /* Account login/register screen */
   .account-screen {
     position:fixed;inset:0;background:var(--bg);z-index:900;
     display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;
@@ -345,6 +344,7 @@ html
     margin-bottom:32px;
   }
 
+  /* Tab switcher for login / register */
   .account-tabs {
     display:flex;width:100%;margin-bottom:0;
     border:1px solid var(--border);
@@ -418,6 +418,7 @@ html
     letter-spacing:2px;z-index:2;text-align:center;
   }
 
+  /* Google-style header avatar */
   .header-avatar-wrap {
     position:relative;
     display:flex;align-items:center;
@@ -455,6 +456,7 @@ html
   }
   .header-avatar-wrap:hover .header-avatar-tooltip { opacity:1; }
 
+  /* User badge in header */
   .user-badge {
     display:flex;align-items:center;gap:8px;
     padding:5px 12px;max-width:200px;overflow:hidden;
@@ -480,6 +482,7 @@ html
   }
   .logout-btn:hover { border-color:var(--red);color:var(--red);background:rgba(239,68,68,0.06); }
 
+  /* Online users in sidebar */
   .online-users-panel {
     border-top:1px solid var(--border);
     padding:10px 16px;
@@ -500,6 +503,7 @@ html
   .online-user-item:last-child { border-bottom:none; }
   .online-user-dot { width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 4px var(--green);flex-shrink:0; }
 
+  /* Compose: TO field autocomplete */
   .to-autocomplete {
     position:relative;
   }
@@ -518,6 +522,7 @@ html
   .to-suggestion-item:hover { background:rgba(124,58,237,0.1);color:var(--purple-glow); }
   .to-suggestion-item .sug-dot { width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 4px var(--green); }
 
+  /* Inbox tabs: INBOX / SENT */
   .inbox-tabs {
     display:flex;border-bottom:1px solid var(--border);
   }
@@ -530,6 +535,7 @@ html
   .inbox-tab.active { color:var(--purple-glow);border-bottom-color:var(--purple); }
   .inbox-tab:hover:not(.active) { color:var(--text-dim); }
 
+  /* TITLE SCREEN (after account login) */
   .title-screen { position:fixed;inset:0;background:var(--bg);z-index:800;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0; }
   .title-screen.hidden { display:none; }
   .title-logo { font-family:'Orbitron',monospace;font-weight:900;font-size:56px;color:var(--purple-glow);letter-spacing:8px;animation:title-pulse 3s infinite,title-glitch 8s infinite,fade-in 1s ease both;margin-bottom:8px; }
@@ -548,6 +554,7 @@ html
   .idle-bar-wrap { width:200px;height:1px;background:var(--border);position:relative;overflow:hidden;margin-top:6px; }
   .idle-bar-fill { height:100%;background:var(--purple);width:100%; }
 
+  /* PW GATE */
   .pw-gate-overlay { position:fixed;inset:0;background:rgba(3,7,18,0.95);backdrop-filter:blur(10px);z-index:600;display:none;align-items:center;justify-content:center; }
   .pw-gate-overlay.active { display:flex; }
   .pw-gate-modal { background:var(--bg2);border:1px solid var(--purple);border-top:3px solid var(--purple-bright);width:400px;box-shadow:0 0 60px rgba(124,58,237,0.3);animation:glitch 0.2s ease; }
@@ -562,6 +569,7 @@ html
   .pw-gate-btn:hover { background:var(--purple-bright);box-shadow:0 0 20px rgba(168,85,247,0.4); }
   .pw-gate-footer { padding:10px 20px;border-top:1px solid var(--border);font-size:9px;color:var(--text-muted);text-align:center;line-height:1.6; }
 
+  /* TERMS */
   .terms-overlay { position:fixed;inset:0;background:var(--bg);z-index:500;display:none;flex-direction:column;overflow:hidden; }
   .terms-overlay.active { display:flex; }
   .terms-topbar { border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(180deg,rgba(124,58,237,0.08) 0%,transparent 100%);flex-shrink:0;position:relative; }
@@ -628,6 +636,7 @@ html
   .t-back-btn { width:100%;margin-top:8px;padding:11px;background:transparent;color:var(--text-dim);border:1px solid var(--border-bright);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px;cursor:pointer;transition:all 0.2s; }
   .t-back-btn:hover { color:var(--text);border-color:var(--text-dim);background:rgba(255,255,255,0.04); }
 
+  /* PROFILE / SETTINGS OVERLAY */
   .profile-overlay { position:fixed;inset:0;background:rgba(3,7,18,0.97);backdrop-filter:blur(12px);z-index:900;display:none;align-items:center;justify-content:center; }
   .profile-overlay.active { display:flex; }
   .profile-modal {
@@ -650,6 +659,7 @@ html
   .profile-close-btn:hover { border-color:var(--red);color:var(--red); }
   .profile-body { padding:24px;overflow-y:auto;display:flex;flex-direction:column;gap:20px;scrollbar-width:thin;scrollbar-color:var(--purple) transparent; }
 
+  /* Avatar grid */
   .avatar-section { }
   .avatar-section-label { font-size:10px;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px; }
   .avatar-preview-row { display:flex;align-items:center;gap:16px;margin-bottom:16px; }
@@ -680,6 +690,7 @@ html
     width:14px;height:14px;font-size:9px;display:flex;align-items:center;justify-content:center;
     font-family:monospace;font-weight:bold;
   }
+  /* Custom color avatars */
   .avatar-color-row { display:flex;gap:8px;flex-wrap:wrap;margin-top:10px; }
   .avatar-color-chip {
     width:32px;height:32px;border-radius:50%;cursor:pointer;
@@ -688,6 +699,7 @@ html
   .avatar-color-chip:hover { transform:scale(1.2);border-color:white; }
   .avatar-color-chip.selected { border-color:white;box-shadow:0 0 8px rgba(255,255,255,0.4); }
 
+  /* Profile form fields */
   .profile-field { }
   .profile-field-label { font-size:10px;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px; }
   .profile-input {
@@ -708,6 +720,7 @@ html
   .profile-divider { border:none;border-top:1px solid var(--border);margin:0; }
   .profile-section-title { font-family:'Orbitron',monospace;font-size:10px;color:var(--text-muted);letter-spacing:3px;margin-bottom:12px; }
 
+  /* Send restriction badge */
   .user-only-badge {
     display:inline-flex;align-items:center;gap:4px;
     background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.4);
@@ -718,6 +731,7 @@ html
   .to-field-validate.err { color:var(--red); }
   .to-field-validate.checking { color:var(--yellow);animation:blink 1s infinite; }
 
+  /* ADMIN */
   .admin-console-overlay {
     position:fixed;inset:0;background:rgba(3,7,18,0.97);backdrop-filter:blur(12px);
     z-index:1010;display:none;flex-direction:column;overflow:hidden;
@@ -831,56 +845,54 @@ html
     cursor:pointer;transition:all 0.2s;
   }
 
-  /* USER PANEL DROPDOWN */
-  .user-panel {
-    position:fixed;top:54px;right:0;width:300px;
-    background:var(--bg2);border:1px solid var(--border);
-    border-top:2px solid var(--purple-bright);
-    z-index:800;display:none;flex-direction:column;
-    max-height:calc(100vh - 80px);overflow:hidden;
-    box-shadow:0 10px 40px rgba(124,58,237,0.25),0 0 1px var(--purple);
-    animation:slide-in-right 0.2s ease;
+  /* Photo upload in profile */
+  .photo-upload-area {
+    display:flex;flex-direction:column;align-items:center;gap:12px;
+    padding:20px;border:1px dashed var(--border-bright);
+    background:rgba(10,15,30,0.6);cursor:pointer;transition:all 0.2s;
+    position:relative;
   }
-  .user-panel.active { display:flex; }
-  .user-panel-hdr {
-    padding:10px 16px;font-family:'Orbitron',monospace;font-size:10px;
-    letter-spacing:2px;color:var(--purple-glow);
-    background:linear-gradient(135deg,rgba(124,58,237,0.15),transparent);
-    border-bottom:1px solid var(--border);
-    display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
+  .photo-upload-area:hover { border-color:var(--purple);background:rgba(124,58,237,0.05); }
+  .photo-upload-area input[type=file] { position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%; }
+  .photo-upload-preview {
+    width:80px;height:80px;border-radius:50%;
+    border:2px solid var(--purple-bright);
+    overflow:hidden;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(135deg,var(--purple),var(--purple-bright));
+    font-family:'Orbitron',monospace;font-size:24px;font-weight:900;color:white;
+    box-shadow:0 0 20px rgba(124,58,237,0.4);flex-shrink:0;
   }
-  .user-panel-scroll {
-    overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--purple) transparent;
-    flex:1;
+  .photo-upload-preview img { width:100%;height:100%;object-fit:cover; }
+  .photo-upload-hint { font-size:10px;color:var(--text-muted);letter-spacing:1px;text-align:center;line-height:1.8; }
+  .photo-upload-hint span { color:var(--purple-glow); }
+  .photo-tabs { display:flex;border-bottom:1px solid var(--border);margin-bottom:16px; }
+  .photo-tab {
+    flex:1;padding:8px;background:transparent;border:none;
+    font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;
+    color:var(--text-muted);cursor:pointer;transition:all 0.15s;
+    border-bottom:2px solid transparent;
   }
-  .user-panel-section-label {
-    padding:8px 16px 4px;font-size:9px;color:var(--text-muted);
-    letter-spacing:2px;display:flex;align-items:center;
-    justify-content:space-between;position:sticky;top:0;
-    background:var(--bg2);border-bottom:1px solid rgba(30,41,59,0.4);
+  .photo-tab.active { color:var(--purple-glow);border-bottom-color:var(--purple); }
+  .photo-tab-panel { display:none; }
+  .photo-tab-panel.active { display:block; }
+  .camera-preview-wrap {
+    background:#000;display:flex;align-items:center;justify-content:center;
+    height:200px;overflow:hidden;position:relative;
   }
-  .user-panel-section-label .count-badge {
-    background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.4);
-    color:var(--green);font-size:9px;padding:1px 6px;
+  .camera-preview-wrap video, .camera-preview-wrap canvas { max-height:200px;max-width:100%;object-fit:contain; }
+  .camera-snap-btn {
+    width:100%;margin-top:10px;
+    background:rgba(124,58,237,0.15);border:1px solid var(--purple);
+    color:var(--purple-glow);padding:10px;
+    font-family:'Orbitron',monospace;font-size:10px;letter-spacing:2px;
+    cursor:pointer;transition:all 0.2s;
   }
-  .user-panel-section-label .count-badge.offline {
-    background:rgba(100,116,139,0.1);border-color:var(--border-bright);
-    color:var(--text-muted);
+  .camera-snap-btn:hover { background:rgba(124,58,237,0.3); }
+  .camera-retake-btn {
+    width:100%;margin-top:6px;background:transparent;border:1px solid var(--border-bright);
+    color:var(--text-dim);padding:8px;
+    font-family:'Share Tech Mono',monospace;font-size:10px;cursor:pointer;transition:all 0.2s;
   }
-  .user-panel-item {
-    display:flex;align-items:center;gap:10px;
-    padding:8px 16px;font-size:11px;cursor:pointer;
-    transition:all 0.15s;border-bottom:1px solid rgba(30,41,59,0.2);
-    color:var(--text-dim);
-  }
-  .user-panel-item:hover { background:rgba(124,58,237,0.08);color:var(--purple-glow); }
-  .user-panel-item:last-child { border-bottom:none; }
-  .up-dot-on { width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 5px var(--green);flex-shrink:0;animation:blink 2s infinite; }
-  .up-dot-off { width:7px;height:7px;border-radius:50%;background:var(--border-bright);flex-shrink:0; }
-  .up-name { flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
-  .up-uid { font-size:9px;color:var(--text-muted);white-space:nowrap; }
-  .up-empty { padding:16px;font-size:10px;color:var(--text-muted);text-align:center; }
-  .user-panel-sep { height:1px;background:var(--border);flex-shrink:0; }
 
 </style>
 </head>
@@ -893,52 +905,69 @@ html
     <div class="account-logo">CRYPT<span class="blink">_</span>MAIL</div>
     <div class="account-tagline">// 極秘通信システム — END-TO-END ENCRYPTED</div>
     <div class="account-divider"></div>
+
+    <!-- Tab switcher -->
     <div class="account-tabs">
       <button class="account-tab active" id="tabLogin" onclick="switchAccountTab('login')">[LOGIN] ログイン</button>
       <button class="account-tab" id="tabRegister" onclick="switchAccountTab('register')">[REGISTER] 新規登録</button>
     </div>
+
+    <!-- LOGIN FORM -->
     <div class="account-form-wrap" id="loginForm">
       <div class="account-field">
         <div class="account-label">// ユーザーID</div>
-        <input class="account-input" id="loginUserId" type="text" placeholder="user_id" autocomplete="username" oninput="clearAccountError()">
+        <input class="account-input" id="loginUserId" type="text" placeholder="user_id"
+          autocomplete="username" oninput="clearAccountError()">
       </div>
       <div class="account-field">
         <div class="account-label">// パスワード</div>
         <div class="account-input-wrap">
-          <input class="account-input" id="loginPassword" type="password" placeholder="••••••••" autocomplete="current-password" oninput="clearAccountError()" onkeydown="if(event.key==='Enter')doLogin()">
+          <input class="account-input" id="loginPassword" type="password" placeholder="••••••••"
+            autocomplete="current-password" oninput="clearAccountError()"
+            onkeydown="if(event.key==='Enter')doLogin()">
           <button class="account-vis-btn" onclick="togglePass('loginPassword',this)">[表示]</button>
         </div>
       </div>
       <div class="account-error" id="loginError"></div>
       <button class="account-submit-btn" onclick="doLogin()" id="loginBtn">>> ログイン</button>
     </div>
+
+    <!-- REGISTER FORM -->
     <div class="account-form-wrap" id="registerForm" style="display:none;">
       <div class="account-field">
         <div class="account-label">// ユーザーID <span style="color:var(--red);font-size:9px;">[英数字・_・-のみ、4〜20文字]</span></div>
-        <input class="account-input" id="regUserId" type="text" placeholder="my_user_id" maxlength="20" autocomplete="username" oninput="clearAccountError();validateUserId(this)">
+        <input class="account-input" id="regUserId" type="text" placeholder="my_user_id"
+          maxlength="20" autocomplete="username"
+          oninput="clearAccountError();validateUserId(this)">
         <div style="font-size:9px;color:var(--text-muted);margin-top:4px;" id="userIdHint"></div>
       </div>
       <div class="account-field">
         <div class="account-label">// 表示名</div>
-        <input class="account-input" id="regDisplayName" type="text" placeholder="エージェント名（省略可）" maxlength="30" oninput="clearAccountError()">
+        <input class="account-input" id="regDisplayName" type="text" placeholder="エージェント名（省略可）"
+          maxlength="30" oninput="clearAccountError()">
       </div>
       <div class="account-field">
         <div class="account-label">// パスワード <span style="color:var(--text-muted);font-size:9px;">[6文字以上]</span></div>
         <div class="account-input-wrap">
-          <input class="account-input" id="regPassword" type="password" placeholder="••••••••" autocomplete="new-password" oninput="clearAccountError()">
+          <input class="account-input" id="regPassword" type="password" placeholder="••••••••"
+            autocomplete="new-password" oninput="clearAccountError()">
           <button class="account-vis-btn" onclick="togglePass('regPassword',this)">[表示]</button>
         </div>
       </div>
       <div class="account-field">
         <div class="account-label">// パスワード確認</div>
         <div class="account-input-wrap">
-          <input class="account-input" id="regPasswordConfirm" type="password" placeholder="••••••••" autocomplete="new-password" oninput="clearAccountError()" onkeydown="if(event.key==='Enter')doRegister()">
+          <input class="account-input" id="regPasswordConfirm" type="password" placeholder="••••••••"
+            autocomplete="new-password" oninput="clearAccountError()"
+            onkeydown="if(event.key==='Enter')doRegister()">
           <button class="account-vis-btn" onclick="togglePass('regPasswordConfirm',this)">[表示]</button>
         </div>
       </div>
       <div class="account-error" id="registerError"></div>
       <button class="account-submit-btn" onclick="doRegister()" id="registerBtn">>> アカウント作成</button>
-      <div style="font-size:9px;color:var(--text-muted);text-align:center;line-height:1.8;">アカウント作成後、利用規約への同意と<br>セカンダリ認証が必要です</div>
+      <div style="font-size:9px;color:var(--text-muted);text-align:center;line-height:1.8;">
+        アカウント作成後、利用規約への同意と<br>セカンダリ認証が必要です
+      </div>
     </div>
   </div>
   <div class="account-footer">CRYPTMAIL v9.4.1 // SECURE LOGIN PORTAL</div>
@@ -946,11 +975,14 @@ html
 
 <!-- TICKER -->
 <div class="ticker">
-  <div class="ticker-inner">██ この通信システムは完全監視下にあります ██ 全メッセージは軍用256bit AES-GCM暗号化 ██ 不正アクセスは自動的に記録され当局に通報されます ██ このシステムの無断使用は厳重に禁止されています ██ メッセージは設定時刻に完全消去されます ██ 受信したメッセージの複製・スクリーンショットは厳禁 ██ この接続はエンドツーエンド暗号化されています ██ セッションは非活動状態が続く場合自動終了します ██</div>
+  <div class="ticker-inner">
+    ██ この通信システムは完全監視下にあります ██ 全メッセージは軍用256bit AES-GCM暗号化 ██ 不正アクセスは自動的に記録され当局に通報されます ██ このシステムの無断使用は厳重に禁止されています ██ メッセージは設定時刻に完全消去されます ██ 受信したメッセージの複製・スクリーンショットは厳禁 ██ この接続はエンドツーエンド暗号化されています ██ セッションは非活動状態が続く場合自動終了します ██
+  </div>
 </div>
 
 <!-- HEADER -->
 <div class="header">
+  <!-- LEFT: Logo + status indicators -->
   <div class="header-left">
     <div class="logo">CRYPT<span>_</span>MAIL</div>
     <div class="status-bar">
@@ -958,15 +990,17 @@ html
       <span><span class="status-dot red"></span> 監視: オン</span>
     </div>
   </div>
+  <!-- RIGHT: action buttons + clock + Google-style avatar -->
   <div class="header-right">
-    <button class="call-btn" id="userBtn" onclick="toggleUserPanel()">[USER]</button>
     <button class="call-btn" id="callBtn" onclick="startCall()">[CALL]</button>
     <button class="call-btn danger" id="adminBtn" onclick="openAdminConsole()" style="border-color:rgba(239,68,68,0.3);color:#774444;">[ADMIN]</button>
     <span class="header-clock" id="clock">--:--:--</span>
+    <!-- Google-style avatar button (far right) -->
     <div class="header-avatar-wrap" id="headerAvatarWrap" style="display:none;">
       <button class="header-avatar-btn" id="headerAvatarBtn" onclick="openProfile()" title="アカウント設定">
         <div class="header-avatar-inner" id="headerAvatarInner">?</div>
       </button>
+      <!-- Dropdown hint -->
       <div class="header-avatar-tooltip">アカウント設定</div>
     </div>
   </div>
@@ -975,8 +1009,13 @@ html
 <!-- CLEARANCE BANNER -->
 <div class="clearance-banner">
   <div class="clearance-level">TOP SECRET</div>
-  <div style="font-size:10px;color:var(--purple-glow);flex:1;">この通信システムへのアクセスはセキュリティクリアランスレベル5以上の認証済みユーザーに限定されています。全ての操作はログに記録されます。</div>
-  <div style="font-size:9px;color:var(--text-dim);text-align:right;white-space:nowrap;">セッションID: <span style="color:var(--cyan);" id="sessionId">--</span><br>IPマスク: <span style="color:var(--green);">有効</span></div>
+  <div style="font-size:10px;color:var(--purple-glow);flex:1;">
+    この通信システムへのアクセスはセキュリティクリアランスレベル5以上の認証済みユーザーに限定されています。全ての操作はログに記録されます。
+  </div>
+  <div style="font-size:9px;color:var(--text-dim);text-align:right;white-space:nowrap;">
+    セッションID: <span style="color:var(--cyan);" id="sessionId">--</span><br>
+    IPマスク: <span style="color:var(--green);">有効</span>
+  </div>
 </div>
 
 <!-- NAV TABS -->
@@ -986,19 +1025,9 @@ html
   <button class="nav-tab" onclick="switchTab('canvas')" id="tab-canvas">[CANVAS] 共有キャンバス</button>
 </div>
 
-<!-- USER PANEL -->
-<div class="user-panel" id="userPanel">
-  <div class="user-panel-hdr">
-    <span>// ユーザー一覧</span>
-    <button onclick="closeUserPanel()" style="background:none;border:none;color:var(--text-dim);cursor:pointer;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;transition:color 0.15s;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--text-dim)'">[X] 閉じる</button>
-  </div>
-  <div class="user-panel-scroll" id="userPanelScroll">
-    <div class="up-empty">// 読み込み中...</div>
-  </div>
-</div>
-
 <!-- MAIN LAYOUT -->
 <div class="main">
+  <!-- SIDEBAR -->
   <div class="sidebar">
     <button class="compose-btn" onclick="showCompose()">+ 新規極秘メッセージを作成</button>
     <div class="inbox-tabs">
@@ -1010,6 +1039,8 @@ html
       <span style="color:var(--cyan);" id="unreadCount">0 件</span>
     </div>
     <div class="inbox-list" id="inboxList"></div>
+
+    <!-- Online users -->
     <div class="online-users-panel">
       <div class="online-users-hdr">
         <span>// オンラインユーザー</span>
@@ -1018,29 +1049,41 @@ html
       <div id="onlineUsersList"></div>
     </div>
   </div>
+
+  <!-- CONTENT -->
   <div class="content">
     <div class="panel" id="mainPanel">
       <div class="empty-state" id="emptyState">
         <div class="empty-icon">[ENCRYPTED]</div>
         <div style="font-family:'Orbitron',monospace;font-size:12px;color:var(--purple-glow);letter-spacing:2px;">待機中</div>
-        <div style="line-height:1.8;color:var(--text-muted)">メッセージを選択するか<br>新規作成してください<br><span style="color:var(--red);font-size:10px;">// 全通信は暗号化されます</span></div>
+        <div style="line-height:1.8;color:var(--text-muted)">
+          メッセージを選択するか<br>新規作成してください<br>
+          <span style="color:var(--red);font-size:10px;">// 全通信は暗号化されます</span>
+        </div>
       </div>
+
+      <!-- COMPOSE FORM -->
       <div id="composeForm" style="display:none;">
         <div class="panel-title">[LOCKED] 新規極秘メッセージ作成<span class="step-indicator">// COMPOSE_NEW_MESSAGE</span></div>
         <div class="danger-box" style="margin:12px 24px 0;">[WARN] このメッセージは量子暗号化されます。送信後の取り消しは不可能です。受信者のみが設定されたパスワードで閲覧できます。</div>
+
         <div class="form-group">
           <div class="form-label">件名 <span class="security-badge">暗号化対象</span></div>
           <input class="form-input" id="compose-subject" type="text" placeholder="件名なし（省略可）">
         </div>
+
         <div class="form-group">
           <div class="form-label">宛先 <span class="required-badge">必須</span></div>
           <div class="to-autocomplete">
-            <input class="form-input" id="compose-to" type="text" placeholder="受信者のユーザーID" oninput="updateToSuggestions()" onblur="setTimeout(()=>closeToSuggestions(),200)" autocomplete="off">
+            <input class="form-input" id="compose-to" type="text" placeholder="受信者のユーザーID"
+              oninput="updateToSuggestions()" onblur="setTimeout(()=>closeToSuggestions(),200)"
+              autocomplete="off">
             <div class="to-suggestions" id="toSuggestions"></div>
           </div>
           <div class="warning-box" style="margin-top:8px;">[ALERT] 入力されたIDはハッシュ化後に送信されます。平文での保存は一切行いません。</div>
           <div class="to-field-validate" id="toFieldValidate"></div>
         </div>
+
         <div class="form-group">
           <div class="form-label">本文 <span class="required-badge">必須</span> <span class="security-badge">AES-256-GCM暗号化</span></div>
           <textarea class="form-textarea" id="compose-body" placeholder="ここに極秘メッセージを入力してください..."></textarea>
@@ -1049,14 +1092,19 @@ html
             <span>暗号化後推定サイズ: <span id="encSize" style="color:var(--cyan);">0</span> bytes</span>
           </div>
         </div>
+
         <div class="form-group">
           <div class="form-label">添付画像 <span class="security-badge">AES-256-GCM暗号化</span> <span style="color:var(--text-muted);font-size:9px;margin-left:4px;">複数枚OK</span></div>
-          <div class="img-upload-area" id="imgUploadArea" ondragover="event.preventDefault();this.classList.add('dragover')" ondragleave="this.classList.remove('dragover')" ondrop="handleImgDrop(event)">
+          <div class="img-upload-area" id="imgUploadArea"
+            ondragover="event.preventDefault();this.classList.add('dragover')"
+            ondragleave="this.classList.remove('dragover')"
+            ondrop="handleImgDrop(event)">
             <input type="file" id="imgFileInput" accept="image/*" multiple onchange="handleImgSelect(event)">
             <div class="img-upload-label">クリックまたはドラッグで画像を追加<br><span>// PNG / JPG / GIF / WEBP</span></div>
           </div>
           <div class="img-preview-grid" id="imgPreviewGrid"></div>
         </div>
+
         <div class="form-group">
           <div class="form-label">閲覧パスワード <span class="required-badge">必須 // 4文字以上</span></div>
           <div class="password-wrapper">
@@ -1065,12 +1113,17 @@ html
           </div>
           <div class="password-strength" id="passStrength" style="margin-top:8px;">
             <div class="strength-bars">
-              <div class="strength-bar" id="sb1"></div><div class="strength-bar" id="sb2"></div><div class="strength-bar" id="sb3"></div><div class="strength-bar" id="sb4"></div><div class="strength-bar" id="sb5"></div>
+              <div class="strength-bar" id="sb1"></div>
+              <div class="strength-bar" id="sb2"></div>
+              <div class="strength-bar" id="sb3"></div>
+              <div class="strength-bar" id="sb4"></div>
+              <div class="strength-bar" id="sb5"></div>
             </div>
             <span id="passStrengthLabel">強度: 未入力</span>
           </div>
           <div class="info-box" style="margin-top:8px;">[INFO] パスワードは受信者に別チャンネルで伝達してください。当システムはパスワードを保存しません。</div>
         </div>
+
         <div class="form-group">
           <div class="form-label">自動消去タイマー <span class="required-badge">必須</span></div>
           <select class="form-select" id="compose-timer">
@@ -1083,6 +1136,7 @@ html
           </select>
           <div class="danger-box" style="margin-top:8px;">[DESTROY] タイマー終了後、メッセージは全サーバーから完全に削除されます。復元は技術的に不可能です。</div>
         </div>
+
         <div class="form-group">
           <div class="form-label">送信オプション</div>
           <label style="display:flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid var(--border);cursor:pointer;font-size:11px;color:var(--text-dim);transition:all 0.2s;">
@@ -1090,6 +1144,7 @@ html
             <span>ワンタイムメッセージ — 1回読んだら即消去</span>
           </label>
         </div>
+
         <div class="submit-area">
           <div style="font-family:'Orbitron',monospace;font-size:10px;color:var(--text-dim);letter-spacing:2px;margin-bottom:4px;">送信前確認チェックリスト</div>
           <div class="confirm-checklist" id="checklistForm">
@@ -1102,12 +1157,14 @@ html
           <button class="send-btn" id="sendBtn" disabled onclick="startSendProcess()">[LOCKED] 暗号化して送信</button>
         </div>
       </div>
+
+      <!-- MESSAGE VIEW -->
       <div id="messageView" style="display:none;"></div>
     </div>
   </div>
 </div>
 
-<!-- GAME SCREEN -->
+<!-- ===== GAME SCREEN ===== -->
 <div class="game-screen" id="gameScreen">
   <div class="game-header"><span>[GAME] N目並べ</span><span style="font-size:9px;color:var(--text-muted);">// TACTICAL BOARD GAME</span></div>
   <div class="game-setup">
@@ -1125,7 +1182,7 @@ html
   <div class="game-board-wrap"><div class="game-board" id="gameBoard"></div></div>
 </div>
 
-<!-- CANVAS SCREEN -->
+<!-- ===== CANVAS SCREEN ===== -->
 <div class="canvas-screen" id="canvasScreen">
   <div class="canvas-toolbar">
     <button class="canvas-tool-btn active" id="toolPen" onclick="setTool('pen')">✏ ペン</button>
@@ -1231,7 +1288,7 @@ html
   </div>
 </div>
 
-<!-- TITLE SCREEN -->
+<!-- TITLE SCREEN (second auth after account login) -->
 <div class="title-screen hidden" id="titleScreen">
   <div style="position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.12) 2px,rgba(0,0,0,0.12) 4px);pointer-events:none;z-index:1;"></div>
   <div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:0;">
@@ -1256,7 +1313,7 @@ html
   </div>
 </div>
 
-<!-- PW GATE -->
+<!-- PW GATE (secondary auth) -->
 <div class="pw-gate-overlay" id="pwGateOverlay">
   <div class="pw-gate-modal">
     <div class="pw-gate-header">[AUTH] セカンダリ認証 — 第2関門</div>
@@ -1314,7 +1371,9 @@ html
 <div class="terms-overlay" id="termsOverlay">
   <div class="terms-topbar">
     <div class="logo" style="font-size:18px;">CRYPT<span style="color:var(--red);animation:blink 1s infinite;">_</span>MAIL <span style="font-size:10px;color:var(--text-dim);font-family:'Share Tech Mono';font-weight:400;letter-spacing:2px;">// 利用規約 v9.4.1</span></div>
-    <div style="display:flex;gap:16px;align-items:center;font-size:10px;color:var(--text-dim);"><span>既読: <span style="color:var(--cyan);" id="tReadPct">0%</span></span></div>
+    <div style="display:flex;gap:16px;align-items:center;font-size:10px;color:var(--text-dim);">
+      <span>既読: <span style="color:var(--cyan);" id="tReadPct">0%</span></span>
+    </div>
     <div class="terms-read-bar" id="tReadBar"></div>
   </div>
   <div class="terms-body-wrap">
@@ -1388,8 +1447,10 @@ html
       <button class="profile-close-btn" onclick="closeProfile()">[X] 閉じる</button>
     </div>
     <div class="profile-body">
+      <!-- Avatar / Photo section -->
       <div class="avatar-section">
         <div class="avatar-section-label">// プロフィール画像</div>
+        <!-- Preview row -->
         <div class="avatar-preview-row">
           <div class="avatar-big" id="profileAvatarBig">?</div>
           <div class="avatar-big-info">
@@ -1398,24 +1459,47 @@ html
             <div id="profileBioPreview" style="font-size:9px;color:var(--text-muted);margin-top:4px;"></div>
           </div>
         </div>
+
+        <!-- Tabs: PHOTO / EMOJI / COLOR -->
         <div class="photo-tabs">
           <button class="photo-tab active" onclick="switchPhotoTab('photo',this)">📷 写真</button>
           <button class="photo-tab" onclick="switchPhotoTab('emoji',this)">😀 絵文字</button>
           <button class="photo-tab" onclick="switchPhotoTab('color',this)">🎨 カラー</button>
         </div>
+
+        <!-- TAB: PHOTO -->
         <div class="photo-tab-panel active" id="photoTabPhoto">
+          <!-- Sub-tabs: upload / camera -->
           <div style="display:flex;gap:8px;margin-bottom:12px;">
-            <button onclick="switchCameraMode('upload')" id="modeUploadBtn" style="flex:1;padding:7px;background:rgba(124,58,237,0.2);border:1px solid var(--purple);color:var(--purple-glow);font-family:'Share Tech Mono',monospace;font-size:10px;cursor:pointer;letter-spacing:1px;transition:all 0.2s;">📁 ファイル選択</button>
-            <button onclick="switchCameraMode('camera')" id="modeCameraBtn" style="flex:1;padding:7px;background:transparent;border:1px solid var(--border-bright);color:var(--text-dim);font-family:'Share Tech Mono',monospace;font-size:10px;cursor:pointer;letter-spacing:1px;transition:all 0.2s;">📷 カメラ撮影</button>
+            <button onclick="switchCameraMode('upload')" id="modeUploadBtn"
+              style="flex:1;padding:7px;background:rgba(124,58,237,0.2);border:1px solid var(--purple);color:var(--purple-glow);font-family:'Share Tech Mono',monospace;font-size:10px;cursor:pointer;letter-spacing:1px;transition:all 0.2s;">
+              📁 ファイル選択
+            </button>
+            <button onclick="switchCameraMode('camera')" id="modeCameraBtn"
+              style="flex:1;padding:7px;background:transparent;border:1px solid var(--border-bright);color:var(--text-dim);font-family:'Share Tech Mono',monospace;font-size:10px;cursor:pointer;letter-spacing:1px;transition:all 0.2s;">
+              📷 カメラ撮影
+            </button>
           </div>
+
+          <!-- Upload area -->
           <div id="uploadArea">
             <div class="photo-upload-area" onclick="document.getElementById('photoFileInput').click()">
               <input type="file" id="photoFileInput" accept="image/*" style="display:none;" onchange="handlePhotoUpload(event)">
-              <div class="photo-upload-preview" id="photoUploadPreview"><span id="photoUploadIcon">＋</span></div>
-              <div class="photo-upload-hint">クリックして画像を選択<br><span>PNG / JPG / GIF / WEBP 対応</span><br><span style="color:var(--text-muted);">最大 2MB</span></div>
+              <div class="photo-upload-preview" id="photoUploadPreview">
+                <span id="photoUploadIcon">＋</span>
+              </div>
+              <div class="photo-upload-hint">
+                クリックして画像を選択<br>
+                <span>PNG / JPG / GIF / WEBP 対応</span><br>
+                <span style="color:var(--text-muted);">最大 2MB</span>
+              </div>
             </div>
-            <button class="camera-retake-btn" id="removePhotoBtn" style="display:none;margin-top:8px;" onclick="removePhoto()">[×] 写真を削除してイニシャルに戻す</button>
+            <button class="camera-retake-btn" id="removePhotoBtn" style="display:none;margin-top:8px;" onclick="removePhoto()">
+              [×] 写真を削除してイニシャルに戻す
+            </button>
           </div>
+
+          <!-- Camera area -->
           <div id="cameraArea" style="display:none;">
             <div class="camera-preview-wrap">
               <video id="cameraVideo" autoplay playsinline style="display:block;width:100%;"></video>
@@ -1426,24 +1510,33 @@ html
             <button class="camera-retake-btn" onclick="stopCamera()">✕ カメラを閉じる</button>
           </div>
         </div>
-        <div class="photo-tab-panel" id="photoTabEmoji"><div class="avatar-grid" id="avatarGrid"></div></div>
+
+        <!-- TAB: EMOJI -->
+        <div class="photo-tab-panel" id="photoTabEmoji">
+          <div class="avatar-grid" id="avatarGrid"></div>
+        </div>
+
+        <!-- TAB: COLOR (initials bg) -->
         <div class="photo-tab-panel" id="photoTabColor">
           <div style="font-size:10px;color:var(--text-muted);letter-spacing:1px;margin-bottom:12px;">// イニシャル表示時の背景カラー</div>
           <div class="avatar-color-row" id="avatarColorRow"></div>
         </div>
       </div>
       <hr class="profile-divider">
+      <!-- Display name -->
       <div class="profile-field">
         <div class="profile-field-label">// 表示名 (Display Name)</div>
         <input class="profile-input" id="profileDisplayName" type="text" maxlength="30" placeholder="表示名を入力（30文字以内）">
         <div class="profile-hint">他のユーザーに表示される名前です。変更はすぐに反映されます。</div>
       </div>
+      <!-- Bio -->
       <div class="profile-field">
         <div class="profile-field-label">// 自己紹介 (Bio)</div>
         <input class="profile-input" id="profileBio" type="text" maxlength="60" placeholder="60文字以内のひとこと（省略可）">
         <div class="profile-hint">オンラインユーザーリストに表示されます。</div>
       </div>
       <hr class="profile-divider">
+      <!-- Change password -->
       <div class="profile-field">
         <div class="profile-section-title">// パスワード変更</div>
         <div class="profile-field-label" style="margin-bottom:8px;">現在のパスワード</div>
@@ -1478,34 +1571,53 @@ html
       <button onclick="closeAdminConsole()" style="background:transparent;border:1px solid rgba(239,68,68,0.4);color:var(--red);padding:5px 14px;font-family:'Share Tech Mono',monospace;font-size:11px;cursor:pointer;letter-spacing:1px;transition:all 0.2s;" onmouseover="this.style.background='rgba(239,68,68,0.1)'" onmouseout="this.style.background='transparent'">[X] 閉じる</button>
     </div>
   </div>
+  <!-- Admin auth gate -->
   <div id="adminAuthGate" style="flex:1;display:flex;align-items:center;justify-content:center;">
     <div style="width:360px;background:var(--bg2);border:1px solid rgba(239,68,68,0.4);border-top:3px solid var(--red);padding:30px;box-shadow:0 0 60px rgba(239,68,68,0.2);">
       <div style="font-family:'Orbitron',monospace;font-size:11px;color:var(--red);letter-spacing:3px;margin-bottom:20px;">[AUTH] 管理者認証</div>
       <div style="font-size:10px;color:var(--text-muted);margin-bottom:14px;line-height:1.8;">[WARN] このコンソールへのアクセスにはシステム管理者コードが必要です。試行は全てログに記録されます。</div>
-      <input id="adminPwInput" type="password" placeholder="管理者コード" style="width:100%;background:rgba(3,7,18,0.8);border:1px solid var(--border-bright);border-bottom:2px solid var(--red);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:18px;padding:12px 14px;outline:none;letter-spacing:4px;text-align:center;margin-bottom:6px;" onkeydown="if(event.key==='Enter')adminAuthSubmit()">
+      <input id="adminPwInput" type="password" placeholder="管理者コード"
+        style="width:100%;background:rgba(3,7,18,0.8);border:1px solid var(--border-bright);border-bottom:2px solid var(--red);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:18px;padding:12px 14px;outline:none;letter-spacing:4px;text-align:center;margin-bottom:6px;"
+        onkeydown="if(event.key==='Enter')adminAuthSubmit()">
       <div id="adminPwError" style="font-size:10px;color:var(--red);text-align:center;min-height:16px;margin-bottom:10px;"></div>
       <button onclick="adminAuthSubmit()" style="width:100%;background:var(--red);color:white;border:none;padding:12px;font-family:'Orbitron',monospace;font-size:11px;letter-spacing:2px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">&gt;&gt; 認証する</button>
     </div>
   </div>
+  <!-- Admin body (hidden until authed) -->
   <div class="admin-console-body" id="adminBody" style="display:none;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--red) transparent;">
+    <!-- System status -->
     <div class="ac-card">
       <div class="ac-card-hd green">◉ システムステータス <button class="ac-refresh-btn" onclick="adminRefreshStatus()">↻ 更新</button></div>
       <div class="ac-card-bd" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-        <div><div class="ac-status-big online" id="acSysStatus">ONLINE</div><div style="font-size:10px;color:var(--text-muted);">現在のシステム状態</div></div>
-        <div><div style="font-size:11px;color:var(--text-dim);margin-bottom:8px;">ロック理由:</div><input id="acLockReason" type="text" value="管理者による一時閉鎖" placeholder="ロック理由" style="width:100%;background:rgba(3,7,18,0.8);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:11px;padding:7px 10px;outline:none;"></div>
+        <div>
+          <div class="ac-status-big online" id="acSysStatus">ONLINE</div>
+          <div style="font-size:10px;color:var(--text-muted);">現在のシステム状態</div>
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--text-dim);margin-bottom:8px;">ロック理由:</div>
+          <input id="acLockReason" type="text" value="管理者による一時閉鎖" placeholder="ロック理由"
+            style="width:100%;background:rgba(3,7,18,0.8);border:1px solid var(--border);color:var(--text);font-family:'Share Tech Mono',monospace;font-size:11px;padding:7px 10px;outline:none;">
+        </div>
       </div>
       <div class="ac-card-bd" style="border-top:1px solid var(--border);display:flex;gap:12px;padding-top:14px;">
         <button onclick="adminLockSystem()" style="flex:1;background:rgba(239,68,68,0.15);border:1px solid var(--red);color:var(--red);padding:10px;font-family:'Orbitron',monospace;font-size:10px;letter-spacing:2px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='rgba(239,68,68,0.3)'" onmouseout="this.style.background='rgba(239,68,68,0.15)'">[LOCK] システムをロック</button>
         <button onclick="adminUnlockSystem()" style="flex:1;background:rgba(34,197,94,0.1);border:1px solid var(--green);color:var(--green);padding:10px;font-family:'Orbitron',monospace;font-size:10px;letter-spacing:2px;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='rgba(34,197,94,0.2)'" onmouseout="this.style.background='rgba(34,197,94,0.1)'">[UNLOCK] ロック解除</button>
       </div>
     </div>
+
+    <!-- Message management -->
     <div class="ac-card">
       <div class="ac-card-hd red">⚠ メッセージ管理</div>
       <div class="ac-card-bd" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
-        <div style="flex:1;font-size:11px;color:var(--text-dim);line-height:1.8;">現在のメッセージ数: <span style="color:var(--cyan);" id="acMsgCount">--</span> 件<br><span style="font-size:9px;color:var(--text-muted);">[WARN] 削除は不可逆です。実行前に慎重に確認してください。</span></div>
+        <div style="flex:1;font-size:11px;color:var(--text-dim);line-height:1.8;">
+          現在のメッセージ数: <span style="color:var(--cyan);" id="acMsgCount">--</span> 件<br>
+          <span style="font-size:9px;color:var(--text-muted);">[WARN] 削除は不可逆です。実行前に慎重に確認してください。</span>
+        </div>
         <button onclick="adminPurgeMessages()" style="background:rgba(239,68,68,0.1);border:1px solid var(--red);color:var(--red);padding:10px 20px;font-family:'Orbitron',monospace;font-size:10px;letter-spacing:2px;cursor:pointer;white-space:nowrap;transition:all 0.2s;" onmouseover="this.style.background='rgba(239,68,68,0.25)'" onmouseout="this.style.background='rgba(239,68,68,0.1)'">[PURGE] 全消去</button>
       </div>
     </div>
+
+    <!-- User management -->
     <div class="ac-card">
       <div class="ac-card-hd yellow">◈ ユーザー管理 <button class="ac-refresh-btn" onclick="adminRefreshUsers()">↻ 更新</button></div>
       <div class="ac-card-bd">
@@ -1513,6 +1625,8 @@ html
         <div id="acUserList" style="display:flex;flex-direction:column;gap:6px;max-height:200px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--yellow) transparent;"></div>
       </div>
     </div>
+
+    <!-- Security log -->
     <div class="ac-card">
       <div class="ac-card-hd red">☠ セキュリティログ <button class="ac-refresh-btn" onclick="adminRefreshLog()">↻ 更新</button></div>
       <div class="ac-card-bd" style="padding:0;">
@@ -1529,8 +1643,8 @@ const SUPABASE_URL = 'https://jkhdfpdnqudzrtzjfyyr.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpraGRmcGRucXVkenJ0empmeXlyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1MTcwNzksImV4cCI6MjA4ODA5MzA3OX0.gzl9df9Zghr2HxCqtfwSrqFM7mTryCnMMVb0CRQ01sA';
 
 // ===== CURRENT USER =====
-let currentUser = null;
-let currentInboxTab = 'inbox';
+let currentUser = null; // { user_id, display_name, pw_hash }
+let currentInboxTab = 'inbox'; // 'inbox' | 'sent'
 
 // ===== ENCRYPTION =====
 async function sha256(str) {
@@ -1627,23 +1741,55 @@ async function doLogin() {
   const password = document.getElementById('loginPassword').value;
   const errEl = document.getElementById('loginError');
   const btn = document.getElementById('loginBtn');
+
   if (!userId || !password) { errEl.textContent = '[ERROR] ユーザーIDとパスワードを入力してください'; return; }
-  btn.disabled = true; btn.textContent = '// 認証中...';
+
+  btn.disabled = true;
+  btn.textContent = '// 認証中...';
+
   try {
     const res = await fetch(`${SUPABASE_URL}/rest/v1/cm_users?user_id=eq.${encodeURIComponent(userId)}&limit=1`, {
       headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
     });
-    if (!res.ok) { errEl.textContent = `[ERROR] サーバーエラー: ${res.status}`; btn.disabled = false; btn.textContent = '>> ログイン'; return; }
+    if (!res.ok) {
+      errEl.textContent = `[ERROR] サーバーエラー: ${res.status} — Supabaseの cm_users テーブルが存在するか確認してください`;
+      btn.disabled = false; btn.textContent = '>> ログイン'; return;
+    }
     const rows = await res.json();
-    if (!rows || rows.length === 0) { errEl.textContent = '[DENIED] ユーザーIDが存在しません'; btn.disabled = false; btn.textContent = '>> ログイン'; return; }
+    if (!rows || rows.length === 0) {
+      errEl.textContent = '[DENIED] ユーザーIDが存在しません';
+      btn.disabled = false; btn.textContent = '>> ログイン'; return;
+    }
     const user = rows[0];
     const pwHash = await sha256(password);
-    if (pwHash !== user.pw_hash) { errEl.textContent = '[DENIED] パスワードが違います'; try { await logSecurityEvent('login_fail', `ログイン失敗: ${userId}`); } catch(e) {} btn.disabled = false; btn.textContent = '>> ログイン'; return; }
-    try { await fetch(`${SUPABASE_URL}/rest/v1/cm_users?user_id=eq.${encodeURIComponent(userId)}`, { method:'PATCH', headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' }, body: JSON.stringify({ last_seen: new Date().toISOString() }) }); } catch(e) {}
-    currentUser = { user_id: user.user_id, display_name: user.display_name || user.user_id, avatar_emoji: user.avatar_emoji || null, avatar_color: user.avatar_color || '#7c3aed', avatar_image: user.avatar_image || null, bio: user.bio || '' };
+    if (pwHash !== user.pw_hash) {
+      errEl.textContent = '[DENIED] パスワードが違います';
+      try { await logSecurityEvent('login_fail', `ログイン失敗: ${userId}`); } catch(e) {}
+      btn.disabled = false; btn.textContent = '>> ログイン'; return;
+    }
+    // Update last_seen (best-effort)
+    try {
+      await fetch(`${SUPABASE_URL}/rest/v1/cm_users?user_id=eq.${encodeURIComponent(userId)}`, {
+        method:'PATCH',
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+        body: JSON.stringify({ last_seen: new Date().toISOString() })
+      });
+    } catch(e) {}
+    currentUser = {
+      user_id: user.user_id,
+      display_name: user.display_name || user.user_id,
+      avatar_emoji: user.avatar_emoji || null,
+      avatar_color: user.avatar_color || '#7c3aed',
+      avatar_image: user.avatar_image || null,
+      bio: user.bio || ''
+    };
     try { await logSecurityEvent('login', `ログイン成功: ${userId}`); } catch(e) {}
     onAccountLoggedIn();
-  } catch(e) { errEl.textContent = '[ERROR] 接続エラー: ' + e.message; btn.disabled = false; btn.textContent = '>> ログイン'; }
+  } catch(e) {
+    console.error('Login error:', e);
+    errEl.textContent = '[ERROR] 接続エラー — ネットワークまたはSupabase設定を確認してください: ' + e.message;
+    btn.disabled = false; btn.textContent = '>> ログイン';
+  }
 }
 
 async function doRegister() {
@@ -1653,31 +1799,77 @@ async function doRegister() {
   const passwordConfirm = document.getElementById('regPasswordConfirm').value;
   const errEl = document.getElementById('registerError');
   const btn = document.getElementById('registerBtn');
+
   if (!userId || !password) { errEl.textContent = '[ERROR] ユーザーIDとパスワードを入力してください'; return; }
   if (!/^[a-zA-Z0-9_-]{4,20}$/.test(userId)) { errEl.textContent = '[ERROR] ユーザーIDは英数字・_・-のみ、4〜20文字です'; return; }
   if (password.length < 6) { errEl.textContent = '[ERROR] パスワードは6文字以上必要です'; return; }
   if (password !== passwordConfirm) { errEl.textContent = '[ERROR] パスワードが一致しません'; return; }
-  btn.disabled = true; btn.textContent = '// 登録中...';
+
+  btn.disabled = true;
+  btn.textContent = '// 登録中...';
+
   try {
-    const checkRes = await fetch(`${SUPABASE_URL}/rest/v1/cm_users?user_id=eq.${encodeURIComponent(userId)}&limit=1`, { headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY } });
-    if (!checkRes.ok) { errEl.textContent = `[ERROR] サーバーエラー: ${checkRes.status}`; btn.disabled = false; btn.textContent = '>> アカウント作成'; return; }
+    // Check duplicate
+    const checkRes = await fetch(`${SUPABASE_URL}/rest/v1/cm_users?user_id=eq.${encodeURIComponent(userId)}&limit=1`, {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+    });
+    if (!checkRes.ok) {
+      errEl.textContent = `[ERROR] サーバーエラー: ${checkRes.status} — Supabaseの cm_users テーブルが存在するか確認してください`;
+      btn.disabled = false; btn.textContent = '>> アカウント作成'; return;
+    }
     const existing = await checkRes.json();
-    if (existing && existing.length > 0) { errEl.textContent = '[ERROR] このユーザーIDは既に使用されています'; btn.disabled = false; btn.textContent = '>> アカウント作成'; return; }
+    if (existing && existing.length > 0) {
+      errEl.textContent = '[ERROR] このユーザーIDは既に使用されています';
+      btn.disabled = false; btn.textContent = '>> アカウント作成'; return;
+    }
+
     const pwHash = await sha256(password);
     const now = new Date().toISOString();
-    const insertRes = await fetch(`${SUPABASE_URL}/rest/v1/cm_users`, { method: 'POST', headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' }, body: JSON.stringify({ user_id: userId, display_name: displayName || userId, pw_hash: pwHash, created_at: now, last_seen: now }) });
-    if (!insertRes.ok) { const txt = await insertRes.text(); errEl.textContent = `[ERROR] 登録失敗 (${insertRes.status})`; btn.disabled = false; btn.textContent = '>> アカウント作成'; return; }
-    currentUser = { user_id: userId, display_name: displayName || userId, avatar_emoji: null, avatar_color: '#7c3aed', bio: '' };
+    // Only insert guaranteed columns (bio/avatar cols may not exist yet)
+    const insertRes = await fetch(`${SUPABASE_URL}/rest/v1/cm_users`, {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY,
+        'Content-Type': 'application/json', 'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({
+        user_id: userId,
+        display_name: displayName || userId,
+        pw_hash: pwHash,
+        created_at: now,
+        last_seen: now
+      })
+    });
+    if (!insertRes.ok) {
+      const txt = await insertRes.text();
+      console.error('Register insert error:', insertRes.status, txt);
+      errEl.textContent = `[ERROR] 登録失敗 (${insertRes.status}) — ${txt.slice(0,120)}`;
+      btn.disabled = false; btn.textContent = '>> アカウント作成'; return;
+    }
+    currentUser = {
+      user_id: userId,
+      display_name: displayName || userId,
+      avatar_emoji: null,
+      avatar_color: '#7c3aed',
+      bio: ''
+    };
     try { await logSecurityEvent('register', `新規登録: ${userId}`); } catch(e) {}
     showToast(`[OK] アカウント「${userId}」を作成しました`, 'success');
     onAccountLoggedIn();
-  } catch(e) { errEl.textContent = '[ERROR] 接続エラー: ' + e.message; btn.disabled = false; btn.textContent = '>> アカウント作成'; }
+  } catch(e) {
+    console.error('Register error:', e);
+    errEl.textContent = '[ERROR] 接続エラー — ネットワークまたはSupabase設定を確認してください: ' + e.message;
+    btn.disabled = false; btn.textContent = '>> アカウント作成';
+  }
 }
 
 function onAccountLoggedIn() {
+  // Hide account screen
   document.getElementById('accountScreen').classList.add('hidden');
+  // Show header avatar (Google-style)
   document.getElementById('headerAvatarWrap').style.display = 'flex';
   updateUserBadge();
+  // Now proceed to terms → PW2 → main
   resetIdleTimer();
   showTerms();
 }
@@ -1688,14 +1880,18 @@ function updateUserBadge() {
   if (!inner) return;
   const avatarColor = currentUser.avatar_color || '#7c3aed';
   const initials = (currentUser.display_name || currentUser.user_id).slice(0,2).toUpperCase();
+
   if (currentUser.avatar_image) {
+    // Photo
     inner.innerHTML = `<img src="${currentUser.avatar_image}" alt="avatar">`;
     inner.style.background = 'transparent';
   } else if (currentUser.avatar_emoji) {
+    // Emoji
     inner.innerHTML = currentUser.avatar_emoji;
     inner.style.background = 'transparent';
     inner.style.fontSize = '18px';
   } else {
+    // Initials
     inner.innerHTML = initials;
     inner.style.background = `linear-gradient(135deg, ${avatarColor}, ${avatarColor}88)`;
     inner.style.fontSize = '13px';
@@ -1705,11 +1901,14 @@ function updateUserBadge() {
 function doLogout() {
   if (!confirm('ログアウトしますか？')) return;
   logSecurityEvent('logout', `ログアウト: ${currentUser ? currentUser.user_id : '?'}`);
-  currentUser = null; messages = []; renderInbox();
+  currentUser = null;
+  messages = [];
+  renderInbox();
   document.getElementById('headerAvatarWrap').style.display = 'none';
   document.getElementById('titleScreen').classList.add('hidden');
   document.getElementById('termsOverlay').classList.remove('active');
   document.getElementById('pwGateOverlay').classList.remove('active');
+  // Reset login form
   document.getElementById('loginUserId').value = '';
   document.getElementById('loginPassword').value = '';
   document.getElementById('regUserId').value = '';
@@ -1729,103 +1928,25 @@ async function loadOnlineUsers() {
   await sbFetch(`cm_users?user_id=eq.${encodeURIComponent(currentUser.user_id)}`, {
     method:'PATCH', body: JSON.stringify({ last_seen: new Date().toISOString() })
   });
-  // Fetch ALL users for panel
-  const allRows = await sbFetch(`cm_users?select=user_id,display_name,last_seen&order=last_seen.desc&limit=100`);
-  if (!allRows) return;
-  allUsers = allRows;
-
-  // Split into online / offline (online = seen within 3 min, exclude self)
-  const since3m = Date.now() - 3 * 60 * 1000;
-  const onlineUsers = allRows.filter(u =>
-    u.user_id !== currentUser.user_id &&
-    u.last_seen && new Date(u.last_seen).getTime() > since3m
-  );
-  const offlineUsers = allRows.filter(u =>
-    u.user_id !== currentUser.user_id &&
-    (!u.last_seen || new Date(u.last_seen).getTime() <= since3m)
-  );
-
-  // Update sidebar (only online, exclude self)
+  // Fetch users seen in last 3 minutes
+  const since = new Date(Date.now() - 3 * 60 * 1000).toISOString();
+  const rows = await sbFetch(`cm_users?last_seen=gte.${since}&select=user_id,display_name,last_seen&order=last_seen.desc&limit=20`);
+  if (!rows) return;
+  allUsers = rows;
   const list = document.getElementById('onlineUsersList');
   const count = document.getElementById('onlineCount');
-  count.textContent = onlineUsers.length;
-  list.innerHTML = onlineUsers.length === 0
-    ? `<div style="font-size:9px;color:var(--text-muted);padding:4px 0;">// オフライン</div>`
-    : onlineUsers.slice(0,6).map(u => `
+  count.textContent = rows.length;
+  list.innerHTML = rows.slice(0,8).map(u => `
     <div class="online-user-item" onclick="setToUser('${u.user_id}')">
       <div class="online-user-dot"></div>
       <span style="color:var(--purple-glow);">${u.display_name || u.user_id}</span>
       <span style="color:var(--text-muted);font-size:9px;margin-left:auto;">@${u.user_id}</span>
     </div>
   `).join('');
-
-  // Update user panel
-  renderUserPanel(onlineUsers, offlineUsers);
-}
-
-function renderUserPanel(onlineUsers, offlineUsers) {
-  const scroll = document.getElementById('userPanelScroll');
-  if (!scroll) return;
-  let html = '';
-
-  // Online section
-  html += `<div class="user-panel-section-label">
-    <span>// ONLINE</span>
-    <span class="count-badge">${onlineUsers.length}</span>
-  </div>`;
-  if (onlineUsers.length === 0) {
-    html += `<div class="up-empty">// 接続中のユーザーなし</div>`;
-  } else {
-    html += onlineUsers.map(u => `
-      <div class="user-panel-item" onclick="setToUser('${u.user_id}');closeUserPanel()">
-        <div class="up-dot-on"></div>
-        <span class="up-name" style="color:var(--purple-glow);">${u.display_name || u.user_id}</span>
-        <span class="up-uid">@${u.user_id}</span>
-      </div>
-    `).join('');
-  }
-
-  html += `<div class="user-panel-sep"></div>`;
-
-  // Offline section
-  html += `<div class="user-panel-section-label">
-    <span>// OFFLINE</span>
-    <span class="count-badge offline">${offlineUsers.length}</span>
-  </div>`;
-  if (offlineUsers.length === 0) {
-    html += `<div class="up-empty">// オフラインユーザーなし</div>`;
-  } else {
-    html += offlineUsers.map(u => `
-      <div class="user-panel-item" onclick="setToUser('${u.user_id}');closeUserPanel()" style="opacity:0.6;">
-        <div class="up-dot-off"></div>
-        <span class="up-name">${u.display_name || u.user_id}</span>
-        <span class="up-uid">@${u.user_id}</span>
-      </div>
-    `).join('');
-  }
-
-  scroll.innerHTML = html;
-}
-
-function toggleUserPanel() {
-  const panel = document.getElementById('userPanel');
-  const btn = document.getElementById('userBtn');
-  if (panel.classList.contains('active')) {
-    panel.classList.remove('active');
-    btn.classList.remove('calling');
-  } else {
-    panel.classList.add('active');
-    btn.classList.add('calling');
-    loadOnlineUsers();
-  }
-}
-
-function closeUserPanel() {
-  document.getElementById('userPanel').classList.remove('active');
-  document.getElementById('userBtn').classList.remove('calling');
 }
 
 let allUsers = [];
+
 let toValidateTimer = null;
 
 function setToUser(userId) {
@@ -1839,15 +1960,34 @@ function setToUser(userId) {
 async function validateToUser(userId) {
   const el = document.getElementById('toFieldValidate');
   if (!userId) { el.textContent = ''; el.className = 'to-field-validate'; return; }
-  if (currentUser && userId === currentUser.user_id) { el.textContent = '[WARN] 自分自身への送信です'; el.className = 'to-field-validate err'; return; }
+  // Check if it's current user
+  if (currentUser && userId === currentUser.user_id) {
+    el.textContent = '[WARN] 自分自身への送信です';
+    el.className = 'to-field-validate err';
+    return;
+  }
+  // Check in allUsers cache first
   const cached = allUsers.find(u => u.user_id === userId);
-  if (cached) { el.textContent = `[OK] ユーザー確認済み: ${cached.display_name || userId}`; el.className = 'to-field-validate ok'; return; }
-  el.textContent = '// ユーザーを確認中...'; el.className = 'to-field-validate checking';
+  if (cached) {
+    el.textContent = `[OK] ユーザー確認済み: ${cached.display_name || userId}`;
+    el.className = 'to-field-validate ok';
+    return;
+  }
+  el.textContent = '// ユーザーを確認中...';
+  el.className = 'to-field-validate checking';
   try {
     const rows = await sbFetch(`cm_users?user_id=eq.${encodeURIComponent(userId)}&select=user_id,display_name&limit=1`);
-    if (rows && rows.length > 0) { el.textContent = `[OK] ユーザー確認済み: ${rows[0].display_name || userId}`; el.className = 'to-field-validate ok'; }
-    else { el.textContent = `[WARN] 未登録のユーザーIDです`; el.className = 'to-field-validate err'; }
-  } catch(e) { el.textContent = ''; el.className = 'to-field-validate'; }
+    if (rows && rows.length > 0) {
+      el.textContent = `[OK] ユーザー確認済み: ${rows[0].display_name || userId}`;
+      el.className = 'to-field-validate ok';
+    } else {
+      el.textContent = `[WARN] 未登録のユーザーIDです — 送信は可能ですが、受信できない可能性があります`;
+      el.className = 'to-field-validate err';
+    }
+  } catch(e) {
+    el.textContent = '';
+    el.className = 'to-field-validate';
+  }
 }
 
 function updateToSuggestions() {
@@ -1867,11 +2007,17 @@ function updateToSuggestions() {
     </div>
   `).join('');
   sug.classList.add('open');
+  // Debounced validation
   clearTimeout(toValidateTimer);
-  toValidateTimer = setTimeout(() => { const fullVal = document.getElementById('compose-to').value.trim(); if (fullVal) validateToUser(fullVal); }, 700);
+  toValidateTimer = setTimeout(() => {
+    const fullVal = document.getElementById('compose-to').value.trim();
+    if (fullVal) validateToUser(fullVal);
+  }, 700);
 }
 
-function closeToSuggestions() { document.getElementById('toSuggestions').classList.remove('open'); }
+function closeToSuggestions() {
+  document.getElementById('toSuggestions').classList.remove('open');
+}
 
 // ===== MESSAGES =====
 let messages = [];
@@ -1883,14 +2029,32 @@ let sessionId = Math.random().toString(36).substr(2,9).toUpperCase();
 async function loadMessages() {
   if (!currentUser) return;
   let query;
-  if (currentInboxTab === 'inbox') { query = `messages?to_addr=eq.${encodeURIComponent(currentUser.user_id)}&order=id.desc&select=*`; }
-  else { query = `messages?from_addr=eq.${encodeURIComponent(currentUser.user_id)}&order=id.desc&select=*`; }
+  if (currentInboxTab === 'inbox') {
+    query = `messages?to_addr=eq.${encodeURIComponent(currentUser.user_id)}&order=id.desc&select=*`;
+  } else {
+    query = `messages?from_addr=eq.${encodeURIComponent(currentUser.user_id)}&order=id.desc&select=*`;
+  }
   const data = await sbFetch(query);
   if (!data || !Array.isArray(data)) return;
+
   const prevIds = new Set(messages.map(m => m.id));
-  messages = data.map(m => ({ id: m.id, from: m.from_addr, to: m.to_addr, subject: m.subject, body: m.body, password: m.password, timer: m.timer, remaining: m.remaining, sent: m.sent_at, read: false, deleted: m.is_deleted, isRead: m.is_read || false, isOnetime: m.is_onetime || false, scheduledAt: m.scheduled_at || null, decryptedBody: null, decryptedImages: null }));
-  messages = messages.filter(m => { if (m.scheduledAt && new Date(m.scheduledAt) > new Date()) return false; return true; });
-  messages.forEach(m => { if (!prevIds.has(m.id) && !m.deleted && currentInboxTab === 'inbox') { sendNotif('[CRYPTMAIL] 新着極秘メッセージ', `件名: ${m.subject}`, false); } });
+  messages = data.map(m => ({
+    id: m.id, from: m.from_addr, to: m.to_addr,
+    subject: m.subject, body: m.body, password: m.password,
+    timer: m.timer, remaining: m.remaining, sent: m.sent_at,
+    read: false, deleted: m.is_deleted, isRead: m.is_read || false,
+    isOnetime: m.is_onetime || false, scheduledAt: m.scheduled_at || null,
+    decryptedBody: null, decryptedImages: null
+  }));
+  messages = messages.filter(m => {
+    if (m.scheduledAt && new Date(m.scheduledAt) > new Date()) return false;
+    return true;
+  });
+  messages.forEach(m => {
+    if (!prevIds.has(m.id) && !m.deleted && currentInboxTab === 'inbox') {
+      sendNotif('[CRYPTMAIL] 新着極秘メッセージ', `件名: ${m.subject}`, false);
+    }
+  });
   renderInbox();
 }
 
@@ -1905,19 +2069,35 @@ async function saveMessage(msg) {
   const encBody = await encryptText(payload, msg.password);
   const pwHash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(msg.password));
   const pwHashHex = Array.from(new Uint8Array(pwHash)).map(b => b.toString(16).padStart(2,'0')).join('');
-  await sbFetch('messages', { method: 'POST', body: JSON.stringify({ from_addr: currentUser.user_id, to_addr: msg.to, subject: msg.subject, body: encBody, password: pwHashHex, timer: msg.timer, remaining: msg.remaining, sent_at: msg.sent, is_deleted: false, is_read: false, is_onetime: msg.isOnetime || false, scheduled_at: msg.scheduledAt || null }) });
+  await sbFetch('messages', {
+    method: 'POST',
+    body: JSON.stringify({
+      from_addr: currentUser.user_id,
+      to_addr: msg.to,
+      subject: msg.subject, body: encBody,
+      password: pwHashHex, timer: msg.timer, remaining: msg.remaining,
+      sent_at: msg.sent, is_deleted: false, is_read: false,
+      is_onetime: msg.isOnetime || false,
+      scheduled_at: msg.scheduledAt || null
+    })
+  });
 }
 
 async function updateRemaining(id, remaining, is_deleted) {
-  await sbFetch('messages?id=eq.' + id, { method: 'PATCH', body: JSON.stringify({ remaining, is_deleted }) });
+  await sbFetch('messages?id=eq.' + id, {
+    method: 'PATCH', body: JSON.stringify({ remaining, is_deleted })
+  });
 }
 
+// ===== INBOX TAB =====
 function switchInboxTab(tab) {
   currentInboxTab = tab;
   document.getElementById('inboxTabInbox').classList.toggle('active', tab === 'inbox');
   document.getElementById('inboxTabSent').classList.toggle('active', tab === 'sent');
   document.getElementById('inboxLabel').textContent = tab === 'inbox' ? '受信ボックス' : '送信済み';
-  messages = []; renderInbox(); loadMessages();
+  messages = [];
+  renderInbox();
+  loadMessages();
 }
 
 function renderInbox() {
@@ -1925,10 +2105,14 @@ function renderInbox() {
   list.innerHTML = '';
   const unread = messages.filter(m => !m.read && !m.deleted).length;
   document.getElementById('unreadCount').textContent = `${unread} 件${currentInboxTab === 'inbox' ? '未読' : ''}`;
+
   if (messages.length === 0) {
-    list.innerHTML = `<div style="padding:20px 16px;font-size:10px;color:var(--text-muted);text-align:center;line-height:1.8;">${currentInboxTab === 'inbox' ? '受信メッセージなし<br><span style="font-size:9px;">[INBOX EMPTY]</span>' : '送信済みメッセージなし<br><span style="font-size:9px;">[SENT EMPTY]</span>'}</div>`;
+    list.innerHTML = `<div style="padding:20px 16px;font-size:10px;color:var(--text-muted);text-align:center;line-height:1.8;">
+      ${currentInboxTab === 'inbox' ? '受信メッセージなし<br><span style="font-size:9px;">[INBOX EMPTY]</span>' : '送信済みメッセージなし<br><span style="font-size:9px;">[SENT EMPTY]</span>'}
+    </div>`;
     return;
   }
+
   messages.forEach(msg => {
     const div = document.createElement('div');
     div.className = 'inbox-item' + (currentMsgId === msg.id ? ' active' : '');
@@ -1936,7 +2120,17 @@ function renderInbox() {
     const mins = Math.floor(msg.remaining / 60), secs = msg.remaining % 60;
     const timeStr = msg.remaining > 3600 ? `${Math.floor(msg.remaining/3600)}h` : `${mins}:${String(secs).padStart(2,'0')}`;
     const counterpart = currentInboxTab === 'inbox' ? msg.from : (msg.to || '?');
-    div.innerHTML = `<div class="from"><span>${currentInboxTab === 'inbox' ? '← ' : '→ '}${counterpart}</span>${!msg.read && !msg.deleted && currentInboxTab === 'inbox' ? '<div class="unread-dot"></div>' : ''}</div><div class="subject">${msg.deleted ? '[消去済み]' : msg.subject}</div><div class="meta"><span class="lock-badge">[LOCKED]</span>${msg.isOnetime ? '<span style="color:var(--cyan);font-size:9px;border:1px solid rgba(6,182,212,0.4);padding:1px 5px;">[1×]</span>' : ''}${!msg.deleted ? `<span class="timer-badge">[T] ${timeStr}</span>` : '<span style="color:var(--red);font-size:9px;">消去済</span>'}</div>`;
+    div.innerHTML = `
+      <div class="from">
+        <span>${currentInboxTab === 'inbox' ? '← ' : '→ '}${counterpart}</span>
+        ${!msg.read && !msg.deleted && currentInboxTab === 'inbox' ? '<div class="unread-dot"></div>' : ''}
+      </div>
+      <div class="subject">${msg.deleted ? '[消去済み]' : msg.subject}</div>
+      <div class="meta">
+        <span class="lock-badge">[LOCKED]</span>
+        ${msg.isOnetime ? '<span style="color:var(--cyan);font-size:9px;border:1px solid rgba(6,182,212,0.4);padding:1px 5px;">[1×]</span>' : ''}
+        ${!msg.deleted ? `<span class="timer-badge">[T] ${timeStr}</span>` : '<span style="color:var(--red);font-size:9px;">消去済</span>'}
+      </div>`;
     list.appendChild(div);
   });
 }
@@ -1947,18 +2141,27 @@ function tickTimers() {
     if (!msg.deleted && msg.remaining > 0) {
       msg.remaining--;
       updateRemaining(msg.id, msg.remaining, false);
-      if (msg.remaining <= 0) { msg.deleted = true; msg.body = null; updateRemaining(msg.id, 0, true); if (currentMsgId === msg.id) showDeletedView(); showToast(`[WARN] 「${msg.subject}」が自動消去されました`, 'error'); }
+      if (msg.remaining <= 0) {
+        msg.deleted = true; msg.body = null;
+        updateRemaining(msg.id, 0, true);
+        if (currentMsgId === msg.id) showDeletedView();
+        showToast(`[WARN] 「${msg.subject}」が自動消去されました`, 'error');
+      }
     }
   });
   renderInbox();
   if (currentMsgId) {
     const msg = messages.find(m => m.id === currentMsgId);
-    if (msg && !msg.deleted) { const el = document.getElementById('countdown'); if (el) { const m2 = Math.floor(msg.remaining/60), s = msg.remaining%60; el.textContent = `${m2}:${String(s).padStart(2,'0')}`; } }
+    if (msg && !msg.deleted) {
+      const el = document.getElementById('countdown');
+      if (el) { const m2 = Math.floor(msg.remaining/60), s = msg.remaining%60; el.textContent = `${m2}:${String(s).padStart(2,'0')}`; }
+    }
   }
 }
 
 function openMessage(id) {
-  currentMsgId = id; renderInbox();
+  currentMsgId = id;
+  renderInbox();
   const msg = messages.find(m => m.id === id);
   if (msg.deleted) { showDeletedView(); return; }
   showMessagePreview(msg);
@@ -1971,7 +2174,25 @@ function showMessagePreview(msg) {
   view.style.display = 'block';
   const m = Math.floor(msg.remaining/60), s = msg.remaining%60;
   const isSent = currentInboxTab === 'sent';
-  view.innerHTML = `<div class="panel-title">[LOCKED] 件名プレビュー — 本文は暗号化済み<span class="step-indicator">// MSG_ID: ${String(msg.id).padStart(6,'0')}</span></div><div class="self-destruct-warning">[DESTROY] 自動消去カウントダウン:<span class="countdown" id="countdown">${m}:${String(s).padStart(2,'0')}</span><span style="font-size:10px;animation:none;color:var(--red);">タイマー終了後、完全消去されます</span></div><div class="message-header"><div class="message-subject">${msg.subject}</div><div class="message-meta">${isSent ? '宛先' : '差出人'}: <span>${isSent ? (msg.to||'?') : msg.from}</span> &nbsp;|&nbsp; 送信日時: <span>${msg.sent}</span> &nbsp;|&nbsp; 暗号化: <span>AES-256-GCM</span></div></div><div style="margin:0 24px;"><div class="danger-box" style="display:flex;align-items:center;justify-content:space-between;gap:16px;"><span>[LOCKED] 本文は暗号化されています。閲覧にはパスワードが必要です。</span><button onclick="openPasswordModal()" style="background:var(--purple);color:white;border:none;padding:8px 18px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px;cursor:pointer;white-space:nowrap;transition:all 0.2s;" onmouseover="this.style.background='var(--purple-bright)'" onmouseout="this.style.background='var(--purple)'">  >> 本文を復号する</button></div></div>`;
+  view.innerHTML = `
+    <div class="panel-title">[LOCKED] 件名プレビュー — 本文は暗号化済み<span class="step-indicator">// MSG_ID: ${String(msg.id).padStart(6,'0')}</span></div>
+    <div class="self-destruct-warning">[DESTROY] 自動消去カウントダウン:<span class="countdown" id="countdown">${m}:${String(s).padStart(2,'0')}</span><span style="font-size:10px;animation:none;color:var(--red);">タイマー終了後、完全消去されます</span></div>
+    <div class="message-header">
+      <div class="message-subject">${msg.subject}</div>
+      <div class="message-meta">
+        ${isSent ? '宛先' : '差出人'}: <span>${isSent ? (msg.to||'?') : msg.from}</span> &nbsp;|&nbsp;
+        送信日時: <span>${msg.sent}</span> &nbsp;|&nbsp;
+        暗号化: <span>AES-256-GCM</span>
+      </div>
+    </div>
+    <div style="margin:0 24px;">
+      <div class="danger-box" style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
+        <span>[LOCKED] 本文は暗号化されています。閲覧にはパスワードが必要です。</span>
+        <button onclick="openPasswordModal()" style="background:var(--purple);color:white;border:none;padding:8px 18px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:1px;cursor:pointer;white-space:nowrap;transition:all 0.2s;" onmouseover="this.style.background='var(--purple-bright)'" onmouseout="this.style.background='var(--purple)'">
+          >> 本文を復号する
+        </button>
+      </div>
+    </div>`;
 }
 
 function openPasswordModal() {
@@ -1983,12 +2204,19 @@ function openPasswordModal() {
   setTimeout(() => document.getElementById('modalPassInput').focus(), 100);
 }
 
-function closePasswordModal() { document.getElementById('passwordModal').classList.remove('active'); document.getElementById('modalPassInput').value = ''; }
+function closePasswordModal() {
+  document.getElementById('passwordModal').classList.remove('active');
+  document.getElementById('modalPassInput').value = '';
+}
 
 async function verifyPassword() {
   const id = currentMsgId;
   const msg = messages.find(m => m.id === id);
-  if (!msg || msg.deleted || msg.remaining <= 0) { document.getElementById('passwordModal').classList.remove('active'); if (msg) { msg.deleted = true; msg.body = null; await updateRemaining(id, 0, true); renderInbox(); } showDeletedView(); showToast('[WARN] タイマー満了により消去されました', 'error'); return; }
+  if (!msg || msg.deleted || msg.remaining <= 0) {
+    document.getElementById('passwordModal').classList.remove('active');
+    if (msg) { msg.deleted = true; msg.body = null; await updateRemaining(id, 0, true); renderInbox(); }
+    showDeletedView(); showToast('[WARN] タイマー満了により消去されました', 'error'); return;
+  }
   const input = document.getElementById('modalPassInput').value;
   const pwHash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(input));
   const pwHashHex = Array.from(new Uint8Array(pwHash)).map(b => b.toString(16).padStart(2,'0')).join('');
@@ -1996,18 +2224,40 @@ async function verifyPassword() {
     const decryptedRaw = await decryptText(msg.body, input);
     if (decryptedRaw === null) { showToast('[ERROR] 復号に失敗しました', 'error'); return; }
     let decryptedBody = decryptedRaw, decryptedImages = [];
-    try { const parsed = JSON.parse(decryptedRaw); if (parsed.text !== undefined) { decryptedBody = parsed.text; if (parsed.images && parsed.images.length > 0) decryptedImages = await decryptImages(parsed.images, input); } } catch(e) {}
+    try {
+      const parsed = JSON.parse(decryptedRaw);
+      if (parsed.text !== undefined) {
+        decryptedBody = parsed.text;
+        if (parsed.images && parsed.images.length > 0)
+          decryptedImages = await decryptImages(parsed.images, input);
+      }
+    } catch(e) {}
     msg.decryptedBody = decryptedBody; msg.decryptedImages = decryptedImages;
-    if (!msg.isRead) { msg.isRead = true; await sbFetch('messages?id=eq.' + msg.id, { method:'PATCH', body: JSON.stringify({ is_read: true }) }); }
-    if (msg.isOnetime) { msg.deleted = true; await sbFetch('messages?id=eq.' + msg.id, { method:'PATCH', body: JSON.stringify({ is_deleted: true, remaining: 0 }) }); showToast('[ONETIME] 読後即時消去されました', 'error'); }
+    if (!msg.isRead) {
+      msg.isRead = true;
+      await sbFetch('messages?id=eq.' + msg.id, { method:'PATCH', body: JSON.stringify({ is_read: true }) });
+    }
+    if (msg.isOnetime) {
+      msg.deleted = true;
+      await sbFetch('messages?id=eq.' + msg.id, { method:'PATCH', body: JSON.stringify({ is_deleted: true, remaining: 0 }) });
+      showToast('[ONETIME] 読後即時消去されました', 'error');
+    }
     document.getElementById('passwordModal').classList.remove('active');
     msg.read = true; renderInbox(); showMessageView(msg);
     showToast('[OK] 復号成功', 'success');
   } else {
     attempts[id] = (attempts[id] || 0) + 1;
     document.getElementById('modalPassInput').value = '';
-    if (attempts[id] >= 3) { msg.deleted = true; msg.body = null; await updateRemaining(id, 0, true); document.getElementById('passwordModal').classList.remove('active'); showDeletedView(); renderInbox(); showToast('[DENIED] 認証失敗3回。メッセージを即時消去しました', 'error'); }
-    else { document.getElementById('attemptCounter').textContent = `[WARN] パスワードが違います。残り試行: ${3 - attempts[id]} 回`; showToast(`[WARN] 認証失敗 (${attempts[id]}/3)`, 'error'); }
+    if (attempts[id] >= 3) {
+      msg.deleted = true; msg.body = null;
+      await updateRemaining(id, 0, true);
+      document.getElementById('passwordModal').classList.remove('active');
+      showDeletedView(); renderInbox();
+      showToast('[DENIED] 認証失敗3回。メッセージを即時消去しました', 'error');
+    } else {
+      document.getElementById('attemptCounter').textContent = `[WARN] パスワードが違います。残り試行: ${3 - attempts[id]} 回`;
+      showToast(`[WARN] 認証失敗 (${attempts[id]}/3)`, 'error');
+    }
   }
 }
 
@@ -2018,7 +2268,27 @@ function showMessageView(msg) {
   view.style.display = 'block';
   const m = Math.floor(msg.remaining/60), s = msg.remaining%60;
   const isSent = currentInboxTab === 'sent';
-  view.innerHTML = `<div class="panel-title">[UNLOCKED] 復号完了<span class="step-indicator">// MSG_ID: ${String(msg.id).padStart(6,'0')}</span></div><div class="self-destruct-warning">[DESTROY] 自動消去カウントダウン:<span class="countdown" id="countdown">${m}:${String(s).padStart(2,'0')}</span></div><div class="message-header"><div class="message-subject">${msg.subject}</div><div class="message-meta">${isSent ? '宛先' : '差出人'}: <span>${isSent ? (msg.to||'?') : msg.from}</span> &nbsp;|&nbsp; 送信日時: <span>${msg.sent}</span> &nbsp;|&nbsp; 暗号化: <span>AES-256-GCM</span></div></div>${msg.isOnetime ? '<div style="padding:4px 24px;"><span style="color:var(--cyan);font-size:9px;border:1px solid rgba(6,182,212,0.4);padding:1px 6px;">[ONETIME] 読後即消去</span></div>' : ''}<div class="message-body">${msg.decryptedBody || msg.body}</div>${msg.decryptedImages && msg.decryptedImages.length > 0 ? `<div style="padding:0 24px 4px;"><div style="font-size:9px;color:var(--text-muted);letter-spacing:2px;margin-bottom:8px;">[DECRYPTED IMAGES] ${msg.decryptedImages.length}枚</div><div class="msg-images" style="margin:0;">${msg.decryptedImages.map((img,i) => `<div class="msg-image-wrap" onclick="openLightbox('${img.dataUrl}','${img.name}',${i},${msg.decryptedImages.length})"><img src="${img.dataUrl}" alt="${img.name}"><div class="msg-image-badge">[ENC] ${img.name}</div></div>`).join('')}</div></div>` : ''}<div style="padding:0 24px 24px;"><div class="danger-box">[PROHIBITED] このメッセージのスクリーンショット、コピー、転送は禁止されています。</div></div>`;
+  view.innerHTML = `
+    <div class="panel-title">[UNLOCKED] 復号完了<span class="step-indicator">// MSG_ID: ${String(msg.id).padStart(6,'0')}</span></div>
+    <div class="self-destruct-warning">[DESTROY] 自動消去カウントダウン:<span class="countdown" id="countdown">${m}:${String(s).padStart(2,'0')}</span></div>
+    <div class="message-header">
+      <div class="message-subject">${msg.subject}</div>
+      <div class="message-meta">
+        ${isSent ? '宛先' : '差出人'}: <span>${isSent ? (msg.to||'?') : msg.from}</span> &nbsp;|&nbsp;
+        送信日時: <span>${msg.sent}</span> &nbsp;|&nbsp;
+        暗号化: <span>AES-256-GCM</span>
+      </div>
+    </div>
+    ${msg.isOnetime ? '<div style="padding:4px 24px;"><span style="color:var(--cyan);font-size:9px;border:1px solid rgba(6,182,212,0.4);padding:1px 6px;">[ONETIME] 読後即消去</span></div>' : ''}
+    <div class="message-body">${msg.decryptedBody || msg.body}</div>
+    ${msg.decryptedImages && msg.decryptedImages.length > 0 ? `
+    <div style="padding:0 24px 4px;">
+      <div style="font-size:9px;color:var(--text-muted);letter-spacing:2px;margin-bottom:8px;">[DECRYPTED IMAGES] ${msg.decryptedImages.length}枚</div>
+      <div class="msg-images" style="margin:0;">
+        ${msg.decryptedImages.map((img,i) => `<div class="msg-image-wrap" onclick="openLightbox('${img.dataUrl}','${img.name}',${i},${msg.decryptedImages.length})"><img src="${img.dataUrl}" alt="${img.name}"><div class="msg-image-badge">[ENC] ${img.name}</div></div>`).join('')}
+      </div>
+    </div>` : ''}
+    <div style="padding:0 24px 24px;"><div class="danger-box">[PROHIBITED] このメッセージのスクリーンショット、コピー、転送は禁止されています。</div></div>`;
 }
 
 function showDeletedView() {
@@ -2045,14 +2315,18 @@ function showCompose() {
   document.querySelectorAll('.checklist-item').forEach(c => c.classList.remove('checked'));
   document.getElementById('sendBtn').disabled = true;
   updatePasswordStrength('');
-  selectedImages = []; renderImgPreviews();
+  selectedImages = [];
+  renderImgPreviews();
 }
 
 function updateChecklist() {
   const items = document.querySelectorAll('#checklistForm input[type=checkbox]');
   const allChecked = Array.from(items).every(i => i.checked);
   document.getElementById('sendBtn').disabled = !allChecked;
-  items.forEach(inp => { const label = inp.closest('.checklist-item'); if (inp.checked) label.classList.add('checked'); else label.classList.remove('checked'); });
+  items.forEach(inp => {
+    const label = inp.closest('.checklist-item');
+    if (inp.checked) label.classList.add('checked'); else label.classList.remove('checked');
+  });
 }
 
 function updatePasswordStrength(pw) {
@@ -2095,7 +2369,10 @@ function startSendProcess() {
   updateSendStep();
 }
 
-function closeSendModal() { document.getElementById('sendModal').classList.remove('active'); showToast('[ABORTED] 送信をキャンセルしました', ''); }
+function closeSendModal() {
+  document.getElementById('sendModal').classList.remove('active');
+  showToast('[ABORTED] 送信をキャンセルしました', '');
+}
 
 function updateSendStep() {
   ['step1','step2','step3','step4','step5'].forEach((s,i) => {
@@ -2108,5 +2385,1097 @@ function updateSendStep() {
 
 function nextSendStep() {
   sendStep++;
-  if (sendStep < 4) { updateSendStep
+  if (sendStep < 4) { updateSendStep(); }
+  else if (sendStep === 4) { updateSendStep(); document.getElementById('sendConfirmBtn').textContent = '>> 暗号化を開始する'; }
+  else if (sendStep === 5) {
+    updateSendStep();
+    const scb = document.getElementById('sendCancelBtn'); if(scb) scb.style.display = 'none';
+    const smf = document.getElementById('sendModalFooter'); if(smf) smf.style.display = 'none';
+    const ep = document.getElementById('encryptProgress'); if(ep) ep.style.display = 'block';
+    runEncryption();
+  }
+}
 
+function runEncryption() {
+  const pbs = ['pb1','pb2','pb3','pb4','pb5'], pds = ['pd1','pd2','pd3','pd4','pd5'];
+  let idx = 0;
+  function next() {
+    if (idx >= pbs.length) { setTimeout(finishSend, 500); return; }
+    const ci = idx;
+    const pdEl = document.getElementById(pds[ci]), pbEl = document.getElementById(pbs[ci]);
+    if (!pdEl || !pbEl) { idx++; next(); return; }
+    pdEl.textContent = '実行中...';
+    let w = 0;
+    const interval = setInterval(() => {
+      w += Math.random() * 15 + 5;
+      if (w >= 100) {
+        w = 100; clearInterval(interval);
+        pbEl.style.width = '100%'; pdEl.textContent = '完了 [OK]';
+        idx++; setTimeout(next, 200);
+      } else { pbEl.style.width = w + '%'; }
+    }, 60);
+  }
+  next();
+}
+
+async function finishSend() {
+  document.getElementById('sendModal').classList.remove('active');
+  const subject = document.getElementById('compose-subject').value || '（件名なし）';
+  const body = document.getElementById('compose-body').value;
+  const pw = document.getElementById('compose-pass').value;
+  const timerVal = parseInt(document.getElementById('compose-timer').value);
+  const to = document.getElementById('compose-to').value.trim();
+  const isOnetime = document.getElementById('compose-onetime').checked;
+  const newMsg = {
+    from: currentUser.user_id, to,
+    subject, body, images: [...selectedImages],
+    password: pw, timer: timerVal, remaining: timerVal,
+    sent: new Date().toLocaleString('ja-JP').replace(/\//g,'-').slice(0,16),
+    deleted: false, isOnetime
+  };
+  try {
+    await saveMessage(newMsg);
+    await loadMessages();
+    showToast('[OK] メッセージを暗号化して送信しました', 'success');
+    showCompose();
+  } catch(e) {
+    if (e.message !== 'too large') showToast('[ERROR] 送信に失敗しました', 'error');
+  }
+}
+
+// ===== IMAGE HANDLING =====
+let selectedImages = [];
+function handleImgSelect(e) { addImageFiles(Array.from(e.target.files)); e.target.value = ''; }
+function handleImgDrop(e) {
+  e.preventDefault(); document.getElementById('imgUploadArea').classList.remove('dragover');
+  addImageFiles(Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/')));
+}
+function compressImage(file) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const img = new Image();
+      img.onload = () => {
+        const MAX = 900; let w = img.width, h = img.height;
+        if (w > MAX || h > MAX) {
+          if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+          else { w = Math.round(w * MAX / h); h = MAX; }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', 0.65));
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+function addImageFiles(files) {
+  files.forEach(async file => {
+    if (selectedImages.length >= 10) { showToast('[WARN] 画像は最大10枚まで', 'error'); return; }
+    const dataUrl = await compressImage(file);
+    const kb = Math.round(dataUrl.length * 0.75 / 1024);
+    selectedImages.push({ name: file.name, dataUrl, size: kb });
+    renderImgPreviews();
+  });
+}
+function renderImgPreviews() {
+  const grid = document.getElementById('imgPreviewGrid'); if(!grid) return;
+  grid.innerHTML = '';
+  selectedImages.forEach((img, i) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'img-preview-item';
+    wrap.innerHTML = `<img src="${img.dataUrl}" alt="${img.name}"><button class="img-preview-remove" onclick="removeImg(${i})">×</button><div class="img-preview-name">${img.name}</div>`;
+    grid.appendChild(wrap);
+  });
+}
+function removeImg(i) { selectedImages.splice(i, 1); renderImgPreviews(); }
+async function encryptImages(images, password) {
+  const results = [];
+  for (const img of images) { const enc = await encryptText(img.dataUrl, password); results.push({ name: img.name, data: enc }); }
+  return results;
+}
+async function decryptImages(encImages, password) {
+  const results = [];
+  for (const img of encImages) { const dec = await decryptText(img.data, password); if(dec) results.push({ name: img.name, dataUrl: dec }); }
+  return results;
+}
+function openLightbox(src, name, index, total) {
+  document.getElementById('lightboxImg').src = src;
+  document.getElementById('lightboxInfo').textContent = `[DECRYPTED] ${name} — ${index+1} / ${total}`;
+  document.getElementById('lightbox').classList.add('active');
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('active');
+  document.getElementById('lightboxImg').src = '';
+}
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeLightbox(); });
+
+// ===== TITLE / AUTH FLOW =====
+const PW1_HASH = '7ac25d5d84cae3dcc037c52a93dfe320fe83b2a6abe787451b4fc15aeba2c9e7';
+const ADMIN_HASH = '98c0b442ed73fcc84caa293b7c3c6bff0d5df781487f3f7277946e10153ee954'; // aleph-console
+const PW2_HASH = 'aeb32cfe00d196040e9758c276853282721fbd222038a54e9ae04d6686066e1b';
+let idleTimer = null;
+const IDLE_SECONDS = 60; // 1 min → auto logout + close tab
+let pwGateAttempts = 0;
+
+function showTitleScreen() {
+  document.getElementById('titleScreen').classList.remove('hidden');
+  document.getElementById('titlePwInput').value = '';
+  document.getElementById('titlePwError').textContent = '';
+  document.getElementById('termsOverlay').classList.remove('active');
+  document.getElementById('pwGateOverlay').classList.remove('active');
+  startIdleBar();
+}
+
+function startIdleBar() {
+  const bar = document.getElementById('idleBar');
+  if (bar) {
+    bar.style.transition = 'none'; bar.style.width = '100%';
+    setTimeout(() => { bar.style.transition = `width ${IDLE_SECONDS}s linear`; bar.style.width = '0%'; }, 50);
+  }
+}
+
+function resetIdleTimer() {
+  clearTimeout(idleTimer);
+  idleTimer = setTimeout(() => {
+    if (!currentUser) return;
+    // Auto logout
+    logSecurityEvent('logout', `アイドルタイムアウト: ${currentUser.user_id}`);
+    currentUser = null;
+    messages = [];
+    renderInbox();
+    document.getElementById('headerAvatarWrap').style.display = 'none';
+    document.getElementById('termsOverlay').classList.remove('active');
+    document.getElementById('pwGateOverlay').classList.remove('active');
+    document.getElementById('accountScreen').classList.add('hidden');
+    showTitleScreen();
+    showToast('[TIMEOUT] セッションタイムアウト — タブを閉じます', 'error');
+    // Try to close tab after short delay
+    setTimeout(() => {
+      try { window.close(); } catch(e) {}
+      // Fallback: replace with blank if window.close() blocked
+      try { window.location.replace('about:blank'); } catch(e) {}
+    }, 1500);
+  }, IDLE_SECONDS * 1000);
+}
+
+['mousemove','keydown','mousedown','touchstart','scroll','click'].forEach(ev => {
+  document.addEventListener(ev, resetIdleTimer, true);
+});
+
+async function titlePwSubmit() {
+  const val = document.getElementById('titlePwInput').value;
+  const hash = await sha256(val);
+  if (hash === PW1_HASH) {
+    document.getElementById('titleScreen').classList.add('hidden');
+    clearTimeout(idleTimer);
+    // Show account login/register
+    document.getElementById('accountScreen').classList.remove('hidden');
+  } else {
+    const input = document.getElementById('titlePwInput');
+    input.classList.add('error');
+    document.getElementById('titlePwError').textContent = '[DENIED] アクセスコードが無効です';
+    input.value = '';
+    setTimeout(() => input.classList.remove('error'), 600);
+    logSecurityEvent('pw_fail', '第1関門: パスワード失敗');
+  }
+}
+
+function clearTitleError() { document.getElementById('titlePwError').textContent = ''; }
+
+function handleTAgree() {
+  document.getElementById('pwGateInput').value = '';
+  document.getElementById('pwGateError').textContent = '';
+  document.getElementById('pwGateOverlay').classList.add('active');
+  document.getElementById('pwGateInput').focus();
+  hideTerms();
+}
+
+async function pwGateSubmit() {
+  const val = document.getElementById('pwGateInput').value;
+  const hash = await sha256(val);
+  if (hash === PW2_HASH) {
+    document.getElementById('pwGateOverlay').classList.remove('active');
+    showToast('[OK] 認証完了。システムへのアクセスが許可されました。', 'success');
+    resetIdleTimer();
+    loadMessages();
+    loadOnlineUsers();
+    setInterval(loadOnlineUsers, 30000);
+    setInterval(() => loadMessages(), 8000);
+  } else {
+    pwGateAttempts++;
+    const input = document.getElementById('pwGateInput');
+    input.classList.add('error'); input.value = '';
+    setTimeout(() => input.classList.remove('error'), 600);
+    logSecurityEvent('pw_fail', `第2関門: パスワード失敗 (${pwGateAttempts}回目)`);
+    if (pwGateAttempts >= 3) {
+      document.getElementById('pwGateError').textContent = '[CRITICAL] 3回失敗。セッションリセット...';
+      setTimeout(() => { showTitleScreen(); pwGateAttempts = 0; }, 1500);
+    } else {
+      document.getElementById('pwGateError').textContent = `[DENIED] コードが無効です。残り: ${3 - pwGateAttempts} 回`;
+    }
+  }
+}
+
+// ===== TAB SWITCHING =====
+function switchTab(tab) {
+  ['mail','game','canvas'].forEach(t => {
+    document.getElementById('tab-' + t).classList.toggle('active', t === tab);
+  });
+  const mainLayout = document.querySelector('.main');
+  const gameScreen = document.getElementById('gameScreen');
+  const canvasScreen = document.getElementById('canvasScreen');
+  if (mainLayout) mainLayout.style.display = tab === 'mail' ? 'grid' : 'none';
+  if (gameScreen) gameScreen.classList.toggle('active', tab === 'game');
+  if (canvasScreen) canvasScreen.classList.toggle('active', tab === 'canvas');
+  if (tab === 'canvas') initCanvas();
+  if (tab === 'game') joinGame();
+}
+
+// ===== GAME =====
+let gBoard=[], gSize=5, gWin=5, gActive=false, gRoomId=null, gScoreO=0, gScoreX=0, gPollInterval=null, gLastMove=0;
+
+async function joinGame() {
+  gSize = parseInt(document.getElementById('boardSizeSelect').value);
+  gWin = Math.min(parseInt(document.getElementById('winCondSelect').value), gSize);
+  gRoomId = 'game_global';
+  const existing = await sbFetch(`game_rooms?room_id=eq.${gRoomId}&limit=1`);
+  if (existing && existing.length > 0 && !existing[0].is_finished) {
+    const g = existing[0]; gSize = g.board_size; gWin = g.win_cond;
+    gBoard = JSON.parse(g.board_state); gLastMove = g.move_count || 0;
+  } else {
+    gBoard = Array(gSize * gSize).fill(null);
+    await fetch(SUPABASE_URL + '/rest/v1/game_rooms', {
+      method:'POST', headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},
+      body: JSON.stringify({ room_id:gRoomId, board_state:JSON.stringify(gBoard), board_size:gSize, win_cond:gWin, current_turn:'O', is_finished:false, move_count:0 })
+    });
+    gLastMove = 0;
+  }
+  gActive = true; renderBoard(); updateStatus();
+  if (gPollInterval) clearInterval(gPollInterval);
+  gPollInterval = setInterval(pollGame, 1500);
+}
+
+async function pollGame() {
+  if (!gRoomId) return;
+  const rows = await sbFetch(`game_rooms?room_id=eq.${gRoomId}&limit=1`);
+  if (!rows || !rows.length) return;
+  const g = rows[0]; const sc = g.move_count || 0;
+  if (sc > gLastMove || (sc === 0 && gLastMove > 0)) {
+    gLastMove = sc; gBoard = JSON.parse(g.board_state); gActive = !g.is_finished;
+    renderBoard(); updateStatus();
+  }
+}
+
+async function placeMove(idx) {
+  if (!gActive || !gRoomId || gBoard[idx]) return;
+  const rows = await sbFetch(`game_rooms?room_id=eq.${gRoomId}&limit=1`);
+  if (!rows || !rows.length) return;
+  const g = rows[0]; const currentTurn = g.current_turn || 'O';
+  gBoard = JSON.parse(g.board_state);
+  if (gBoard[idx]) return;
+  gBoard[idx] = currentTurn;
+  const winner = checkWinner(gBoard), isDraw = !winner && gBoard.every(c=>c);
+  await fetch(SUPABASE_URL + '/rest/v1/game_rooms?id=eq.' + g.id, {
+    method:'PATCH', headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},
+    body: JSON.stringify({ board_state:JSON.stringify(gBoard), current_turn:currentTurn==='O'?'X':'O', is_finished:!!(winner||isDraw), move_count:(g.move_count||0)+1 })
+  });
+  gLastMove = (g.move_count||0)+1;
+  if (winner) { if(winner==='O') gScoreO++; else gScoreX++; gActive = false; }
+  else if (isDraw) { gActive = false; }
+  renderBoard(); updateStatus(winner, isDraw);
+}
+
+function checkWinner(board) {
+  const check = (cells) => { for(let i=0;i<=cells.length-gWin;i++){const s=cells.slice(i,i+gWin);if(s[0]&&s.every(c=>c===s[0]))return s[0];}return null; };
+  for(let r=0;r<gSize;r++){const w=check(board.slice(r*gSize,r*gSize+gSize));if(w)return w;}
+  for(let c=0;c<gSize;c++){const w=check(Array.from({length:gSize},(_,r)=>board[r*gSize+c]));if(w)return w;}
+  for(let r=0;r<=gSize-gWin;r++)for(let c=0;c<=gSize-gWin;c++){
+    const d1=Array.from({length:gWin},(_,i)=>board[(r+i)*gSize+(c+i)]);
+    if(d1[0]&&d1.every(x=>x===d1[0]))return d1[0];
+    const d2=Array.from({length:gWin},(_,i)=>board[(r+i)*gSize+(c+gWin-1-i)]);
+    if(d2[0]&&d2.every(x=>x===d2[0]))return d2[0];
+  }
+  return null;
+}
+
+function getWinCells(board) {
+  const cells = new Set();
+  const mark = (indices) => { for(let i=0;i<=indices.length-gWin;i++){const s=indices.slice(i,i+gWin);if(board[s[0]]&&s.every(j=>board[j]===board[s[0]]))s.forEach(j=>cells.add(j));} };
+  for(let r=0;r<gSize;r++) mark(Array.from({length:gSize},(_,c)=>r*gSize+c));
+  for(let c=0;c<gSize;c++) mark(Array.from({length:gSize},(_,r)=>r*gSize+c));
+  for(let r=0;r<=gSize-gWin;r++)for(let c=0;c<=gSize-gWin;c++){mark(Array.from({length:gWin},(_,i)=>(r+i)*gSize+(c+i)));mark(Array.from({length:gWin},(_,i)=>(r+i)*gSize+(c+gWin-1-i)));}
+  return cells;
+}
+
+function renderBoard() {
+  const el = document.getElementById('gameBoard');
+  el.style.gridTemplateColumns = `repeat(${gSize}, 1fr)`;
+  const winCells = getWinCells(gBoard); el.innerHTML = '';
+  gBoard.forEach((cell,i) => {
+    const div = document.createElement('div');
+    div.className = 'game-cell'+(cell?' taken '+cell:'')+(winCells.has(i)?' win-cell':'');
+    div.textContent = cell||'';
+    if(!cell&&gActive) div.onclick = ()=>placeMove(i);
+    el.appendChild(div);
+  });
+  document.getElementById('gameScoreO').textContent = `○: ${gScoreO}勝`;
+  document.getElementById('gameScoreX').textContent = `✕: ${gScoreX}勝`;
+}
+
+function updateStatus(winner, isDraw) {
+  const el = document.getElementById('gameTurnIndicator');
+  if (winner) { el.textContent = (winner==='O'?'○':'✕')+' の勝ち！'; el.className = 'game-turn-indicator win'; }
+  else if (isDraw) { el.textContent = '引き分け！'; el.className = 'game-turn-indicator draw'; }
+  else {
+    sbFetch(`game_rooms?room_id=eq.${gRoomId}&limit=1`).then(rows => {
+      if(rows&&rows.length){const turn=rows[0].current_turn||'O';el.textContent=(turn==='O'?'○':'✕')+' の番';el.className='game-turn-indicator';}
+    });
+  }
+}
+
+async function resetGame() {
+  if (!gRoomId) return;
+  gSize = parseInt(document.getElementById('boardSizeSelect').value);
+  gWin = Math.min(parseInt(document.getElementById('winCondSelect').value), gSize);
+  gBoard = Array(gSize * gSize).fill(null); gActive = true; gLastMove = -1;
+  const rows = await sbFetch(`game_rooms?room_id=eq.${gRoomId}&limit=1`);
+  if(rows&&rows.length){
+    await fetch(SUPABASE_URL+'/rest/v1/game_rooms?id=eq.'+rows[0].id,{
+      method:'PATCH',headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},
+      body:JSON.stringify({board_state:JSON.stringify(gBoard),board_size:gSize,win_cond:gWin,current_turn:'O',is_finished:false,move_count:0})
+    });
+  }
+  renderBoard(); updateStatus();
+}
+
+// ===== CANVAS =====
+let canvasTool='pen', canvasColor='#c084fc', isDrawing=false, lastX=0, lastY=0;
+let canvasRoomId=null, canvasCtx=null, canvasEl=null, lineStartX=0, lineStartY=0, canvasSnapshot=null;
+let lastCanvasVersion=0, canvasPollInterval=null;
+
+function initCanvas() {
+  canvasEl = document.getElementById('mainCanvas');
+  if (!canvasEl || canvasEl._initialized) return;
+  canvasEl._initialized = true;
+  const wrap = document.getElementById('canvasWrap');
+  canvasEl.width = wrap.offsetWidth||800; canvasEl.height = wrap.offsetHeight||500;
+  canvasCtx = canvasEl.getContext('2d');
+  canvasCtx.fillStyle = '#080d1a'; canvasCtx.fillRect(0,0,canvasEl.width,canvasEl.height);
+  canvasEl.addEventListener('mousedown', canvasStart);
+  canvasEl.addEventListener('mousemove', canvasDraw);
+  canvasEl.addEventListener('mouseup', canvasEnd);
+  canvasEl.addEventListener('mouseleave', canvasEnd);
+  canvasEl.addEventListener('touchstart', e=>{e.preventDefault();canvasStart(e.touches[0]);},{passive:false});
+  canvasEl.addEventListener('touchmove', e=>{e.preventDefault();canvasDraw(e.touches[0]);},{passive:false});
+  canvasEl.addEventListener('touchend', e=>{e.preventDefault();canvasEnd();},{passive:false});
+}
+
+function getCanvasPos(e) {
+  const rect = canvasEl.getBoundingClientRect();
+  return {x:(e.clientX-rect.left)*(canvasEl.width/rect.width),y:(e.clientY-rect.top)*(canvasEl.height/rect.height)};
+}
+
+function canvasStart(e) {
+  isDrawing=true; const pos=getCanvasPos(e);
+  lastX=pos.x; lastY=pos.y; lineStartX=pos.x; lineStartY=pos.y;
+  if(canvasTool==='line'||canvasTool==='rect') canvasSnapshot=canvasCtx.getImageData(0,0,canvasEl.width,canvasEl.height);
+  if(canvasTool==='fill'){floodFill(Math.round(pos.x),Math.round(pos.y));isDrawing=false;}
+  if(canvasTool==='pen'||canvasTool==='eraser'){canvasCtx.beginPath();canvasCtx.arc(pos.x,pos.y,(parseInt(document.getElementById('brushSize').value)||4)/2,0,Math.PI*2);canvasCtx.fillStyle=canvasTool==='eraser'?'#080d1a':hexToRgba(canvasColor,(parseInt(document.getElementById('brushOpacity').value)||100)/100);canvasCtx.fill();}
+}
+
+function canvasDraw(e) {
+  if(!isDrawing) return;
+  const pos=getCanvasPos(e);
+  const sz=parseInt(document.getElementById('brushSize').value)||4;
+  const op=(parseInt(document.getElementById('brushOpacity').value)||100)/100;
+  canvasCtx.lineWidth=sz; canvasCtx.lineCap='round'; canvasCtx.lineJoin='round';
+  if(canvasTool==='pen'){canvasCtx.strokeStyle=hexToRgba(canvasColor,op);canvasCtx.beginPath();canvasCtx.moveTo(lastX,lastY);canvasCtx.lineTo(pos.x,pos.y);canvasCtx.stroke();}
+  else if(canvasTool==='eraser'){canvasCtx.strokeStyle='#080d1a';canvasCtx.beginPath();canvasCtx.moveTo(lastX,lastY);canvasCtx.lineTo(pos.x,pos.y);canvasCtx.stroke();}
+  else if(canvasTool==='line'){canvasCtx.putImageData(canvasSnapshot,0,0);canvasCtx.strokeStyle=hexToRgba(canvasColor,op);canvasCtx.beginPath();canvasCtx.moveTo(lineStartX,lineStartY);canvasCtx.lineTo(pos.x,pos.y);canvasCtx.stroke();}
+  else if(canvasTool==='rect'){canvasCtx.putImageData(canvasSnapshot,0,0);canvasCtx.strokeStyle=hexToRgba(canvasColor,op);canvasCtx.strokeRect(lineStartX,lineStartY,pos.x-lineStartX,pos.y-lineStartY);}
+  lastX=pos.x; lastY=pos.y;
+}
+
+function canvasEnd() {
+  if(!isDrawing) return; isDrawing=false; canvasSnapshot=null;
+  if(canvasRoomId) setTimeout(autoSyncCanvas,100);
+}
+
+function hexToRgba(hex, alpha) {
+  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
+function floodFill(sx,sy) {
+  const imgData=canvasCtx.getImageData(0,0,canvasEl.width,canvasEl.height),data=imgData.data,w=canvasEl.width;
+  const ti=(sy*w+sx)*4,tr=data[ti],tg=data[ti+1],tb=data[ti+2];
+  const fr=parseInt(canvasColor.slice(1,3),16),fg=parseInt(canvasColor.slice(3,5),16),fb=parseInt(canvasColor.slice(5,7),16);
+  if(tr===fr&&tg===fg&&tb===fb) return;
+  const stack=[[sx,sy]],visited=new Set();
+  while(stack.length){
+    const [x,y]=stack.pop();
+    if(x<0||x>=w||y<0||y>=canvasEl.height) continue;
+    const idx=(y*w+x)*4,key=y*w+x;
+    if(visited.has(key)) continue;
+    if(Math.abs(data[idx]-tr)>30||Math.abs(data[idx+1]-tg)>30||Math.abs(data[idx+2]-tb)>30) continue;
+    visited.add(key); data[idx]=fr;data[idx+1]=fg;data[idx+2]=fb;data[idx+3]=255;
+    stack.push([x+1,y],[x-1,y],[x,y+1],[x,y-1]);
+  }
+  canvasCtx.putImageData(imgData,0,0);
+}
+
+function setTool(tool) {
+  canvasTool=tool;
+  ['Pen','Eraser','Line','Rect','Fill'].forEach(t=>{const btn=document.getElementById('tool'+t);if(btn)btn.classList.toggle('active',t.toLowerCase()===tool);});
+}
+
+function setColor(c) {
+  canvasColor=c;
+  document.getElementById('colorPicker').value=c.startsWith('#')&&c.length===7?c:'#c084fc';
+  document.querySelectorAll('.color-swatch').forEach(s=>s.classList.toggle('active',s.dataset.color===c));
+}
+
+function clearCanvas() { if(!canvasCtx) return; canvasCtx.fillStyle='#080d1a'; canvasCtx.fillRect(0,0,canvasEl.width,canvasEl.height); if(canvasRoomId) autoSyncCanvas(); }
+function downloadCanvas() { if(!canvasEl) return; const a=document.createElement('a'); a.download='cryptmail-canvas-'+Date.now()+'.png'; a.href=canvasEl.toDataURL(); a.click(); }
+function importImageToCanvas() { document.getElementById('imgImportInput').click(); }
+function handleCanvasImport(e) {
+  const file=e.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=(ev)=>{const img=new Image();img.onload=()=>{if(!canvasCtx)initCanvas();canvasCtx.drawImage(img,0,0,canvasEl.width,canvasEl.height);};img.src=ev.target.result;};
+  reader.readAsDataURL(file); e.target.value='';
+}
+
+async function joinCanvasRoom() {
+  const room=document.getElementById('canvasRoomInput').value.trim();
+  if(!room){showToast('[WARN] ルームIDを入力してください','error');return;}
+  if(!canvasEl) initCanvas();
+  canvasRoomId='canvas_'+room;
+  document.getElementById('canvasRoomLabel').textContent=`// ROOM: ${room} // LIVE`;
+  if(canvasPollInterval) clearInterval(canvasPollInterval);
+  const rows=await sbFetch(`canvas_rooms?room_id=eq.${canvasRoomId}&limit=1`);
+  if(rows&&rows.length&&rows[0].canvas_data){
+    lastCanvasVersion=rows[0].version||0;
+    const img=new Image(); img.onload=()=>{if(canvasCtx)canvasCtx.drawImage(img,0,0);}; img.src=rows[0].canvas_data;
+  } else {
+    const dataUrl=canvasEl.toDataURL('image/jpeg',0.6);
+    await fetch(SUPABASE_URL+'/rest/v1/canvas_rooms',{method:'POST',headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify({room_id:canvasRoomId,canvas_data:dataUrl,version:0})});
+    lastCanvasVersion=0;
+  }
+  canvasPollInterval=setInterval(pollCanvas,2000);
+  showToast(`[CANVAS] ルーム「${room}」に参加`,'success');
+}
+
+async function syncCanvas() { if(!canvasRoomId||!canvasEl) return; await autoSyncCanvas(); showToast('[CANVAS] 同期しました','success'); }
+
+async function autoSyncCanvas() {
+  if(!canvasRoomId||!canvasEl) return;
+  try {
+    const rows=await sbFetch(`canvas_rooms?room_id=eq.${canvasRoomId}&limit=1`);
+    if(!rows||!rows.length) return;
+    const nv=(rows[0].version||0)+1, dataUrl=canvasEl.toDataURL('image/jpeg',0.6);
+    await fetch(SUPABASE_URL+'/rest/v1/canvas_rooms?id=eq.'+rows[0].id,{method:'PATCH',headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify({canvas_data:dataUrl,version:nv})});
+    lastCanvasVersion=nv;
+  } catch(e) {}
+}
+
+async function pollCanvas() {
+  if(!canvasRoomId) return;
+  try {
+    const rows=await sbFetch(`canvas_rooms?room_id=eq.${canvasRoomId}&limit=1`);
+    if(!rows||!rows.length) return;
+    const v=rows[0].version||0;
+    if(v>lastCanvasVersion){lastCanvasVersion=v;const img=new Image();img.onload=()=>{if(canvasCtx)canvasCtx.drawImage(img,0,0);};img.src=rows[0].canvas_data;}
+  } catch(e) {}
+}
+
+// ===== THEME =====
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme',theme);
+  try{localStorage.setItem('cryptmail-theme',theme);}catch(e){}
+  document.querySelectorAll('#themePicker button[data-theme]').forEach(btn=>{
+    btn.style.border=btn.dataset.theme===theme?'2px solid white':'2px solid transparent';
+    btn.style.boxShadow=btn.dataset.theme===theme?'0 0 8px rgba(255,255,255,0.5)':'none';
+  });
+}
+(function(){try{const s=localStorage.getItem('cryptmail-theme')||'';document.documentElement.setAttribute('data-theme',s);setTimeout(()=>{document.querySelectorAll('#themePicker button[data-theme]').forEach(btn=>{btn.style.border=btn.dataset.theme===s?'2px solid white':'2px solid transparent';btn.style.boxShadow=btn.dataset.theme===s?'0 0 8px rgba(255,255,255,0.5)':'none';});},100);}catch(e){}})();
+
+// ===== TERMS =====
+function showTerms() {
+  document.getElementById('termsOverlay').classList.add('active');
+  const scroll=document.getElementById('termsScroll');
+  if(scroll){scroll.scrollTop=0;scroll.addEventListener('scroll',updateTProgress);}
+  updateTProgress();
+}
+function hideTerms() { document.getElementById('termsOverlay').classList.remove('active'); }
+function tocScroll(e,id) {
+  e.preventDefault();
+  const el=document.getElementById(id),scroll=document.getElementById('termsScroll');
+  if(el&&scroll) scroll.scrollTo({top:el.offsetTop-20,behavior:'smooth'});
+}
+function updateTProgress() {
+  const scroll=document.getElementById('termsScroll'),bar=document.getElementById('tReadBar'),pct=document.getElementById('tReadPct');
+  if(!scroll||!bar) return;
+  const p=scroll.scrollHeight-scroll.clientHeight;
+  const pctVal=p>0?Math.min(100,Math.round((scroll.scrollTop/p)*100)):0;
+  bar.style.width=pctVal+'%'; if(pct) pct.textContent=pctVal+'%';
+}
+function updateTAgree() {
+  const items=document.querySelectorAll('#tAgreeList input[type=checkbox]');
+  const allChecked=Array.from(items).every(i=>i.checked);
+  const btn=document.getElementById('tAgreeBtn');
+  if(btn){btn.disabled=!allChecked;btn.textContent=allChecked?'[UNLOCKED] 同意して続行する':'[LOCKED] 同意して続行する';}
+  items.forEach(inp=>{const label=inp.closest('.t-agree-item');if(inp.checked)label.classList.add('checked');else label.classList.remove('checked');});
+}
+
+// ===== VOICE CALL =====
+let pc=null,localStream=null,callTimer=null,callSeconds=0,isMuted=false,callRole=null;
+const ICE_SERVERS={iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun2.l.google.com:19302'},{urls:['turn:openrelay.metered.ca:80','turn:openrelay.metered.ca:443'],username:'openrelayproject',credential:'openrelayproject'}]};
+
+async function sendSignal(type,data){await fetch(SUPABASE_URL+'/rest/v1/signals',{method:'POST',headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify({type,data:JSON.stringify(data),created_at:new Date().toISOString()})});}
+async function waitForSignal(type,timeoutMs=30000){const start=Date.now();while(Date.now()-start<timeoutMs){const res=await fetch(`${SUPABASE_URL}/rest/v1/signals?type=eq.${type}&order=id.desc&limit=1`,{headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}});const rows=await res.json();if(rows&&rows.length>0){const row=rows[0];if(callRole==='caller'&&row.type==='offer'){await new Promise(r=>setTimeout(r,800));continue;}await fetch(`${SUPABASE_URL}/rest/v1/signals?id=eq.${row.id}`,{method:'DELETE',headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}});return JSON.parse(row.data);}await new Promise(r=>setTimeout(r,800));}return null;}
+function setupIceSending(peerConn,iceType){peerConn.onicecandidate=async(e)=>{if(e.candidate)await sendSignal(iceType,e.candidate.toJSON());};}
+async function startIceReceiving(peerConn,iceType){for(let i=0;i<20;i++){await new Promise(r=>setTimeout(r,500));if(!peerConn||peerConn.signalingState==='closed')break;const res=await fetch(`${SUPABASE_URL}/rest/v1/signals?type=eq.${iceType}&order=id.asc&limit=10`,{headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}});const rows=await res.json();if(rows&&rows.length>0){for(const row of rows){try{await peerConn.addIceCandidate(new RTCIceCandidate(JSON.parse(row.data)));}catch(e){}await fetch(`${SUPABASE_URL}/rest/v1/signals?id=eq.${row.id}`,{method:'DELETE',headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}});}}}}
+async function checkIncoming(){if(pc)return;const res=await fetch(`${SUPABASE_URL}/rest/v1/signals?type=eq.offer&order=id.desc&limit=1`,{headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}});const rows=await res.json();if(rows&&rows.length>0&&!pc)document.getElementById('callIncoming').classList.add('active');else document.getElementById('callIncoming').classList.remove('active');}
+
+async function startCall(){if(pc){endCall();return;}callRole='caller';try{localStream=await navigator.mediaDevices.getUserMedia({audio:true,video:false});}catch(e){showToast('[ERROR] マイクへのアクセスが拒否されました','error');return;}await cleanSignals();pc=new RTCPeerConnection(ICE_SERVERS);localStream.getTracks().forEach(t=>pc.addTrack(t,localStream));pc.ontrack=(e)=>{document.getElementById('remoteAudio').srcObject=e.streams[0];onCallConnected();};pc.onconnectionstatechange=()=>{if(pc&&(pc.connectionState==='failed'||pc.connectionState==='disconnected')){showToast('[CALL] 接続が切断されました','error');endCall();}};setupIceSending(pc,'ice-caller');const offer=await pc.createOffer({offerToReceiveAudio:true});await pc.setLocalDescription(offer);await sendSignal('offer',offer);showCallOverlay('発信中...','相手の応答を待っています');document.getElementById('callBtn').classList.add('calling');const answer=await waitForSignal('answer',30000);if(!answer){showToast('[CALL] 応答がありません','error');endCall();return;}await pc.setRemoteDescription(new RTCSessionDescription(answer));startIceReceiving(pc,'ice-callee');}
+async function acceptCall(){document.getElementById('callIncoming').classList.remove('active');callRole='callee';try{localStream=await navigator.mediaDevices.getUserMedia({audio:true,video:false});}catch(e){showToast('[ERROR] マイクへのアクセスが拒否されました','error');return;}const res=await fetch(`${SUPABASE_URL}/rest/v1/signals?type=eq.offer&order=id.desc&limit=1`,{headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}});const rows=await res.json();if(!rows||!rows.length){showToast('[ERROR] 接続情報が見つかりません','error');return;}const offerRow=rows[0];await fetch(`${SUPABASE_URL}/rest/v1/signals?id=eq.${offerRow.id}`,{method:'DELETE',headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}});const offer=JSON.parse(offerRow.data);pc=new RTCPeerConnection(ICE_SERVERS);localStream.getTracks().forEach(t=>pc.addTrack(t,localStream));pc.ontrack=(e)=>{document.getElementById('remoteAudio').srcObject=e.streams[0];onCallConnected();};pc.onconnectionstatechange=()=>{if(pc&&(pc.connectionState==='failed'||pc.connectionState==='disconnected')){showToast('[CALL] 接続が切断されました','error');endCall();}};setupIceSending(pc,'ice-callee');await pc.setRemoteDescription(new RTCSessionDescription(offer));const answer=await pc.createAnswer();await pc.setLocalDescription(answer);await sendSignal('answer',answer);showCallOverlay('接続中...','暗号化チャンネルを確立しています');startIceReceiving(pc,'ice-caller');}
+function declineCall(){document.getElementById('callIncoming').classList.remove('active');cleanSignals();}
+async function cleanSignals(){['offer','answer','ice-caller','ice-callee'].forEach(async t=>{await fetch(`${SUPABASE_URL}/rest/v1/signals?type=eq.${t}`,{method:'DELETE',headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}});});}
+function onCallConnected(){document.getElementById('callRing').className='call-status-ring connected';document.getElementById('callRing').textContent='🔒';document.getElementById('callTitle').textContent='通話中';document.getElementById('callSub').textContent='// E2E ENCRYPTED // P2P DIRECT';document.getElementById('callTimer').style.display='block';document.getElementById('callBtn').className='call-btn active';document.getElementById('callBtn').textContent='[END] 通話中';document.querySelectorAll('.call-wave-bar').forEach(b=>b.classList.add('active'));callSeconds=0;callTimer=setInterval(()=>{callSeconds++;const m=String(Math.floor(callSeconds/60)).padStart(2,'0'),s=String(callSeconds%60).padStart(2,'0');document.getElementById('callTimer').textContent=m+':'+s;},1000);}
+function endCall(){if(pc){try{pc.close();}catch(e){}pc=null;}if(localStream){localStream.getTracks().forEach(t=>t.stop());localStream=null;}if(callTimer){clearInterval(callTimer);callTimer=null;}try{document.getElementById('remoteAudio').srcObject=null;}catch(e){}hideCallOverlay();document.getElementById('callBtn').className='call-btn';document.getElementById('callBtn').textContent='[CALL] 通話';document.getElementById('callIncoming').classList.remove('active');cleanSignals();isMuted=false;callRole=null;}
+function toggleMute(){if(!localStream)return;isMuted=!isMuted;localStream.getAudioTracks().forEach(t=>t.enabled=!isMuted);const btn=document.getElementById('muteBtn');btn.textContent=isMuted?'🔇':'🎤';btn.classList.toggle('muted',isMuted);}
+function toggleSpeaker(){const audio=document.getElementById('remoteAudio');audio.muted=!audio.muted;document.getElementById('speakerBtn').textContent=audio.muted?'🔈':'🔊';}
+function showCallOverlay(title,sub){document.getElementById('callTitle').textContent=title;document.getElementById('callSub').textContent=sub;document.getElementById('callTimer').style.display='none';document.getElementById('callOverlay').classList.add('active');}
+function hideCallOverlay(){document.getElementById('callOverlay').classList.remove('active');}
+setInterval(checkIncoming,5000);
+
+// ===== NOTIFICATIONS =====
+let _notifPermission = false;
+async function requestNotifPermission(){if(!('Notification'in window))return;if(Notification.permission==='granted'){_notifPermission=true;return;}if(Notification.permission!=='denied'){const perm=await Notification.requestPermission();_notifPermission=perm==='granted';}}
+function sendNotif(title,body,urgent=false){if(!_notifPermission||Notification.permission!=='granted')return;const n=new Notification(title,{body,icon:'https://www.google.com/s2/favicons?domain=classroom.google.com',tag:'cryptmail-'+Date.now(),requireInteraction:urgent,silent:false});n.onclick=()=>{window.focus();n.close();};if(!urgent)setTimeout(()=>n.close(),6000);}
+
+// ===== UTILS =====
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = `toast ${type} show`;
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function updateClock() { document.getElementById('clock').textContent = new Date().toTimeString().substr(0,8); }
+function updateLastScan() { document.getElementById('lastScan').textContent = new Date().toTimeString().substr(0,8); }
+
+async function logSecurityEvent(type, detail) {
+  try {
+    await fetch(SUPABASE_URL + '/rest/v1/security_log', {
+      method:'POST',
+      headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},
+      body:JSON.stringify({event_type:type,detail,ip_hint:'masked',created_at:new Date().toISOString()})
+    });
+  } catch(e) {}
+}
+
+async function checkSystemLock() {
+  try {
+    const rows = await sbFetch('system_status?limit=1');
+    if(rows&&rows.length&&rows[0].is_locked){
+      const adminOpen=document.getElementById('adminConsoleOverlay')?.classList.contains('active');
+      if(!adminOpen){
+        document.getElementById('lockReasonDisplay').textContent='理由: '+(rows[0].lock_reason||'管理者による閉鎖');
+        document.getElementById('lockedScreen').style.display='flex';
+        return true;
+      }
+    }
+    document.getElementById('lockedScreen').style.display='none';
+    return false;
+  } catch(e) { return false; }
+}
+
+// ===== PROFILE / SETTINGS =====
+const AVATAR_EMOJIS = ['🐉','🦊','🐺','🦋','🐙','🦂','🐍','🦅','🐱','🐻','🦁','🐸','🦖','🐬','🦄','🤖','👾','💀','🎭','🎯','⚡','🔥','🌊','🌙','💎','🗡️','🛸','🎲'];
+const AVATAR_COLORS = ['#7c3aed','#ec4899','#06b6d4','#16a34a','#ef4444','#f59e0b','#0ea5e9','#8b5cf6','#14b8a6','#f97316'];
+
+let cameraStream = null;
+let capturedPhotoData = null; // base64 data URL of captured/uploaded photo
+
+function openProfile() {
+  if (!currentUser) return;
+  document.getElementById('profileOverlay').classList.add('active');
+  document.getElementById('profileDisplayName').value = currentUser.display_name || '';
+  document.getElementById('profileBio').value = currentUser.bio || '';
+  document.getElementById('profileUidDisplay').textContent = '@' + currentUser.user_id;
+  document.getElementById('profileOldPw').value = '';
+  document.getElementById('profileNewPw').value = '';
+  document.getElementById('profileNewPw2').value = '';
+  document.getElementById('profilePwMsg').textContent = '';
+  capturedPhotoData = currentUser.avatar_image || null;
+  // Default to photo tab
+  switchPhotoTab('photo', document.querySelector('.photo-tab'));
+  renderAvatarGrid();
+  updateProfilePreview();
+}
+
+function closeProfile() {
+  document.getElementById('profileOverlay').classList.remove('active');
+  stopCamera();
+}
+
+function switchPhotoTab(tab, btn) {
+  document.querySelectorAll('.photo-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.photo-tab-panel').forEach(p => p.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  const panel = document.getElementById('photoTab' + tab.charAt(0).toUpperCase() + tab.slice(1));
+  if (panel) panel.classList.add('active');
+  if (tab !== 'photo') stopCamera();
+}
+
+function switchCameraMode(mode) {
+  const uploadArea = document.getElementById('uploadArea');
+  const cameraArea = document.getElementById('cameraArea');
+  const upBtn = document.getElementById('modeUploadBtn');
+  const camBtn = document.getElementById('modeCameraBtn');
+  if (mode === 'camera') {
+    uploadArea.style.display = 'none';
+    cameraArea.style.display = 'block';
+    upBtn.style.background = 'transparent'; upBtn.style.borderColor = 'var(--border-bright)'; upBtn.style.color = 'var(--text-dim)';
+    camBtn.style.background = 'rgba(124,58,237,0.2)'; camBtn.style.borderColor = 'var(--purple)'; camBtn.style.color = 'var(--purple-glow)';
+    startCamera();
+  } else {
+    cameraArea.style.display = 'none';
+    uploadArea.style.display = 'block';
+    camBtn.style.background = 'transparent'; camBtn.style.borderColor = 'var(--border-bright)'; camBtn.style.color = 'var(--text-dim)';
+    upBtn.style.background = 'rgba(124,58,237,0.2)'; upBtn.style.borderColor = 'var(--purple)'; upBtn.style.color = 'var(--purple-glow)';
+    stopCamera();
+  }
+}
+
+async function startCamera() {
+  try {
+    cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
+    const video = document.getElementById('cameraVideo');
+    video.srcObject = cameraStream;
+    video.style.display = 'block';
+    document.getElementById('cameraCanvas').style.display = 'none';
+    document.getElementById('cameraSnapBtn').style.display = 'block';
+    document.getElementById('cameraRetakeBtn').style.display = 'none';
+  } catch(e) {
+    showToast('[ERROR] カメラへのアクセスが拒否されました', 'error');
+  }
+}
+
+function stopCamera() {
+  if (cameraStream) {
+    cameraStream.getTracks().forEach(t => t.stop());
+    cameraStream = null;
+  }
+  const video = document.getElementById('cameraVideo');
+  if (video) { video.srcObject = null; video.style.display = 'none'; }
+}
+
+function snapPhoto() {
+  const video = document.getElementById('cameraVideo');
+  const canvas = document.getElementById('cameraCanvas');
+  if (!video || !cameraStream) return;
+  canvas.width = video.videoWidth || 320;
+  canvas.height = video.videoHeight || 240;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(video, 0, 0);
+  const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+  setPhotoPreview(dataUrl);
+  video.style.display = 'none';
+  canvas.style.display = 'block';
+  document.getElementById('cameraSnapBtn').style.display = 'none';
+  document.getElementById('cameraRetakeBtn').style.display = 'block';
+  stopCamera();
+}
+
+function retakePhoto() {
+  document.getElementById('cameraCanvas').style.display = 'none';
+  document.getElementById('cameraRetakeBtn').style.display = 'none';
+  capturedPhotoData = null;
+  startCamera();
+}
+
+function handlePhotoUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  if (file.size > 2 * 1024 * 1024) { showToast('[ERROR] ファイルサイズは2MB以下にしてください', 'error'); return; }
+  const reader = new FileReader();
+  reader.onload = (e) => setPhotoPreview(e.target.result);
+  reader.readAsDataURL(file);
+}
+
+function setPhotoPreview(dataUrl) {
+  capturedPhotoData = dataUrl;
+  // Clear emoji so photo takes priority
+  currentUser.avatar_emoji = null;
+  // Update upload area preview
+  const preview = document.getElementById('photoUploadPreview');
+  if (preview) {
+    preview.innerHTML = `<img src="${dataUrl}" alt="preview" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+  }
+  document.getElementById('removePhotoBtn').style.display = 'block';
+  updateProfilePreview();
+}
+
+function removePhoto() {
+  capturedPhotoData = null;
+  currentUser.avatar_image = null;
+  const preview = document.getElementById('photoUploadPreview');
+  if (preview) { preview.innerHTML = '<span id="photoUploadIcon">＋</span>'; }
+  document.getElementById('removePhotoBtn').style.display = 'none';
+  document.getElementById('photoFileInput').value = '';
+  updateProfilePreview();
+}
+
+function renderAvatarGrid() {
+  const grid = document.getElementById('avatarGrid');
+  const selected = currentUser.avatar_emoji || null;
+  grid.innerHTML = AVATAR_EMOJIS.map(e => `
+    <div class="avatar-option ${e === selected ? 'selected' : ''}" onclick="selectAvatarEmoji('${e}')" title="${e}">${e}</div>
+  `).join('');
+  const colorRow = document.getElementById('avatarColorRow');
+  const selColor = currentUser.avatar_color || '#7c3aed';
+  colorRow.innerHTML = AVATAR_COLORS.map(c => `
+    <div class="avatar-color-chip ${c === selColor ? 'selected' : ''}"
+      style="background:${c};" onclick="selectAvatarColor('${c}')" title="${c}"></div>
+  `).join('');
+}
+
+function selectAvatarEmoji(emoji) {
+  capturedPhotoData = null; // photo cleared when emoji chosen
+  currentUser.avatar_emoji = emoji;
+  document.querySelectorAll('.avatar-option').forEach(el => el.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+  updateProfilePreview();
+}
+
+function selectAvatarColor(color) {
+  capturedPhotoData = null;
+  currentUser.avatar_color = color;
+  currentUser.avatar_emoji = null;
+  document.querySelectorAll('.avatar-color-chip').forEach(el => el.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+  document.querySelectorAll('.avatar-option').forEach(el => el.classList.remove('selected'));
+  updateProfilePreview();
+}
+
+function updateProfilePreview() {
+  const big = document.getElementById('profileAvatarBig');
+  const nameEl = document.getElementById('profileNameDisplay');
+  const bioEl = document.getElementById('profileBioPreview');
+  const nameInput = document.getElementById('profileDisplayName');
+  const bioInput = document.getElementById('profileBio');
+  const name = (nameInput ? nameInput.value : '') || currentUser.display_name || currentUser.user_id;
+  if (nameEl) nameEl.textContent = name;
+  if (bioEl && bioInput) bioEl.textContent = bioInput.value || '';
+
+  if (!big) return;
+  if (capturedPhotoData) {
+    big.innerHTML = `<img src="${capturedPhotoData}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+    big.style.background = 'transparent';
+    big.style.fontSize = 'inherit';
+  } else if (currentUser.avatar_emoji) {
+    big.innerHTML = currentUser.avatar_emoji;
+    big.style.background = 'rgba(124,58,237,0.15)';
+    big.style.fontSize = '32px';
+  } else {
+    const initials = name.slice(0,2).toUpperCase();
+    big.innerHTML = initials;
+    big.style.background = `linear-gradient(135deg, ${currentUser.avatar_color||'#7c3aed'}, ${(currentUser.avatar_color||'#7c3aed')}88)`;
+    big.style.fontSize = '22px';
+  }
+}
+
+async function saveProfile() {
+  if (!currentUser) return;
+  const displayName = document.getElementById('profileDisplayName').value.trim();
+  const bio = document.getElementById('profileBio').value.trim();
+  const oldPw = document.getElementById('profileOldPw').value;
+  const newPw = document.getElementById('profileNewPw').value;
+  const newPw2 = document.getElementById('profileNewPw2').value;
+  const pwMsg = document.getElementById('profilePwMsg');
+
+  const updates = {
+    display_name: displayName || currentUser.user_id,
+    bio: bio,
+    avatar_emoji: capturedPhotoData ? null : (currentUser.avatar_emoji || null),
+    avatar_color: currentUser.avatar_color || '#7c3aed',
+    avatar_image: capturedPhotoData || null
+  };
+
+  // Password change
+  if (oldPw || newPw || newPw2) {
+    if (!oldPw) { pwMsg.textContent = '[ERROR] 現在のパスワードを入力してください'; pwMsg.className='to-field-validate err'; return; }
+    if (newPw.length < 6) { pwMsg.textContent = '[ERROR] 新しいパスワードは6文字以上必要です'; pwMsg.className='to-field-validate err'; return; }
+    if (newPw !== newPw2) { pwMsg.textContent = '[ERROR] パスワードが一致しません'; pwMsg.className='to-field-validate err'; return; }
+    const rows = await sbFetch(`cm_users?user_id=eq.${encodeURIComponent(currentUser.user_id)}&limit=1`);
+    if (!rows || rows.length === 0) { pwMsg.textContent = '[ERROR] ユーザー情報取得失敗'; pwMsg.className='to-field-validate err'; return; }
+    const oldHash = await sha256(oldPw);
+    if (oldHash !== rows[0].pw_hash) { pwMsg.textContent = '[DENIED] 現在のパスワードが違います'; pwMsg.className='to-field-validate err'; return; }
+    updates.pw_hash = await sha256(newPw);
+    pwMsg.textContent = '[OK] パスワードを変更します'; pwMsg.className = 'to-field-validate ok';
+  }
+
+  try {
+    await sbFetch(`cm_users?user_id=eq.${encodeURIComponent(currentUser.user_id)}`, {
+      method:'PATCH', body: JSON.stringify(updates)
+    });
+    currentUser.display_name = updates.display_name;
+    currentUser.bio = bio;
+    currentUser.avatar_emoji = updates.avatar_emoji;
+    currentUser.avatar_image = updates.avatar_image;
+    updateUserBadge();
+    showToast('[OK] プロフィールを保存しました', 'success');
+    closeProfile();
+  } catch(e) {
+    showToast('[ERROR] 保存に失敗しました', 'error');
+  }
+}
+
+
+// ===== ADMIN CONSOLE =====
+const ADMIN_PW_HASH_CONST = 'admin'; // Change this to actual admin password
+
+let adminAuthed = false;
+
+function openAdminConsole() {
+  document.getElementById('adminConsoleOverlay').classList.add('active');
+  if (!adminAuthed) {
+    document.getElementById('adminAuthGate').style.display = 'flex';
+    document.getElementById('adminBody').style.display = 'none';
+    document.getElementById('adminPwInput').value = '';
+    document.getElementById('adminPwError').textContent = '';
+    setTimeout(() => document.getElementById('adminPwInput').focus(), 100);
+  } else {
+    document.getElementById('adminAuthGate').style.display = 'none';
+    document.getElementById('adminBody').style.display = 'flex';
+    adminRefreshAll();
+  }
+}
+
+function closeAdminConsole() {
+  document.getElementById('adminConsoleOverlay').classList.remove('active');
+  adminAuthed = false;
+}
+
+async function adminAuthSubmit() {
+  const pw = document.getElementById('adminPwInput').value;
+  const errEl = document.getElementById('adminPwError');
+  if (!pw) { errEl.textContent = '[ERROR] コードを入力してください'; return; }
+  // Hash check against ADMIN constant or env
+  const hash = await sha256(pw);
+  // For flexibility, check against ADMIN_HASH (aleph-console)
+  if (hash === ADMIN_HASH) {
+    adminAuthed = true;
+    document.getElementById('adminAuthGate').style.display = 'none';
+    document.getElementById('adminBody').style.display = 'flex';
+    await logSecurityEvent('admin_access', 'Admin console opened');
+    adminRefreshAll();
+  } else {
+    errEl.textContent = '[DENIED] 認証コードが違います';
+    await logSecurityEvent('admin_fail', 'Admin auth failed');
+    document.getElementById('adminPwInput').value = '';
+  }
+}
+
+async function adminRefreshAll() {
+  adminRefreshStatus();
+  adminRefreshLog();
+  adminRefreshUsers();
+  adminRefreshMsgCount();
+}
+
+async function adminRefreshStatus() {
+  try {
+    const rows = await sbFetch('system_status?limit=1');
+    const el = document.getElementById('acSysStatus');
+    if (rows && rows.length && rows[0].is_locked) {
+      el.textContent = 'LOCKED';
+      el.className = 'ac-status-big locked';
+      document.getElementById('acLockReason').value = rows[0].lock_reason || '';
+    } else {
+      el.textContent = 'ONLINE';
+      el.className = 'ac-status-big online';
+    }
+  } catch(e) {}
+}
+
+async function adminRefreshLog() {
+  try {
+    const rows = await sbFetch('security_log?order=id.desc&limit=50');
+    const list = document.getElementById('acLogList');
+    if (!rows || rows.length === 0) {
+      list.innerHTML = '<div style="padding:14px;font-size:10px;color:var(--text-muted);">ログなし</div>';
+      return;
+    }
+    list.innerHTML = rows.map(r => {
+      const dt = r.created_at ? new Date(r.created_at).toLocaleString('ja-JP') : '--';
+      return `<div style="display:flex;gap:10px;align-items:flex-start;padding:8px 16px;border-bottom:1px solid rgba(30,41,59,0.3);font-size:10px;">
+        <span class="ac-badge ${r.event_type||''}">${r.event_type||'?'}</span>
+        <span style="color:var(--text-dim);flex:1;line-height:1.6;">${r.detail||''}</span>
+        <span style="color:var(--text-muted);white-space:nowrap;font-size:9px;">${dt}</span>
+      </div>`;
+    }).join('');
+  } catch(e) {}
+}
+
+async function adminRefreshUsers() {
+  try {
+    const rows = await sbFetch('cm_users?order=created_at.desc&select=user_id,display_name,last_seen,created_at');
+    const list = document.getElementById('acUserList');
+    const countEl = document.getElementById('acUserCount');
+    if (!rows) return;
+    countEl.textContent = rows.length;
+    list.innerHTML = rows.map(u => {
+      const seen = u.last_seen ? new Date(u.last_seen).toLocaleString('ja-JP') : '--';
+      return `<div style="display:flex;gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid rgba(30,41,59,0.3);font-size:10px;">
+        <span style="color:var(--purple-glow);font-family:'Orbitron',monospace;font-size:9px;min-width:100px;">${u.user_id}</span>
+        <span style="color:var(--text-dim);flex:1;">${u.display_name||'-'}</span>
+        <span style="color:var(--text-muted);font-size:9px;">最終: ${seen}</span>
+        <button onclick="adminBanUser('${u.user_id}')" style="background:transparent;border:1px solid rgba(239,68,68,0.3);color:var(--red);padding:2px 8px;font-family:'Share Tech Mono',monospace;font-size:9px;cursor:pointer;" title="削除">[DEL]</button>
+      </div>`;
+    }).join('');
+  } catch(e) {}
+}
+
+async function adminRefreshMsgCount() {
+  try {
+    const rows = await sbFetch('messages?select=id');
+    document.getElementById('acMsgCount').textContent = rows ? rows.length : '?';
+  } catch(e) {}
+}
+
+async function adminLockSystem() {
+  const reason = document.getElementById('acLockReason').value || '管理者による一時閉鎖';
+  if (!confirm(`システムをロックしますか?\n理由: ${reason}`)) return;
+  try {
+    const rows = await sbFetch('system_status?limit=1');
+    if (rows && rows.length > 0) {
+      await sbFetch(`system_status?id=eq.${rows[0].id}`, {
+        method:'PATCH', body:JSON.stringify({ is_locked:true, lock_reason:reason })
+      });
+    } else {
+      await sbFetch('system_status', {
+        method:'POST', body:JSON.stringify({ is_locked:true, lock_reason:reason })
+      });
+    }
+    await logSecurityEvent('lock', `システムロック: ${reason}`);
+    showToast('[OK] システムをロックしました', 'error');
+    adminRefreshStatus();
+  } catch(e) { showToast('[ERROR] 操作失敗', 'error'); }
+}
+
+async function adminUnlockSystem() {
+  if (!confirm('ロックを解除しますか?')) return;
+  try {
+    const rows = await sbFetch('system_status?limit=1');
+    if (rows && rows.length > 0) {
+      await sbFetch(`system_status?id=eq.${rows[0].id}`, {
+        method:'PATCH', body:JSON.stringify({ is_locked:false, lock_reason:'' })
+      });
+    }
+    await logSecurityEvent('unlock', 'システムロック解除');
+    showToast('[OK] ロックを解除しました', 'success');
+    adminRefreshStatus();
+    document.getElementById('lockedScreen').style.display = 'none';
+  } catch(e) { showToast('[ERROR] 操作失敗', 'error'); }
+}
+
+async function adminPurgeMessages() {
+  if (!confirm('[DANGER] 全てのメッセージを完全に削除します。この操作は取り消せません。実行しますか？')) return;
+  try {
+    await sbFetch('messages?id=gt.0', { method:'DELETE' });
+    messages = [];
+    renderInbox();
+    document.getElementById('emptyState').style.display = 'flex';
+    document.getElementById('composeForm').style.display = 'none';
+    document.getElementById('messageView').style.display = 'none';
+    await logSecurityEvent('purge', '全メッセージを削除');
+    showToast('[OK] 全メッセージを消去しました', 'success');
+    adminRefreshMsgCount();
+  } catch(e) { showToast('[ERROR] 消去失敗', 'error'); }
+}
+
+async function adminBanUser(userId) {
+  if (!confirm(`ユーザー「${userId}」を削除しますか？この操作は元に戻せません。`)) return;
+  try {
+    await sbFetch(`cm_users?user_id=eq.${encodeURIComponent(userId)}`, { method:'DELETE' });
+    await logSecurityEvent('user_delete', `ユーザー削除: ${userId}`);
+    showToast(`[OK] ユーザー「${userId}」を削除しました`, 'success');
+    adminRefreshUsers();
+  } catch(e) { showToast('[ERROR] 削除失敗', 'error'); }
+}
+
+// ===== INIT =====
+window.addEventListener('DOMContentLoaded', () => {
+  // Admin button hover
+  const ab = document.getElementById('adminBtn');
+  if (ab) {
+    ab.addEventListener('mouseenter', () => { ab.style.borderColor='var(--red)'; ab.style.color='var(--red)'; });
+    ab.addEventListener('mouseleave', () => { ab.style.borderColor='rgba(239,68,68,0.4)'; ab.style.color='#664444'; });
+  }
+  // Profile display name live preview
+  const dnInput = document.getElementById('profileDisplayName');
+  if (dnInput) dnInput.addEventListener('input', updateProfilePreview);
+
+  requestNotifPermission();
+  document.getElementById('sessionId').textContent = sessionId;
+  setInterval(updateClock, 1000);
+  updateClock();
+  setInterval(tickTimers, 1000);
+  setInterval(updateLastScan, 5000);
+  updateLastScan();
+  setInterval(checkSystemLock, 5000);
+  checkSystemLock();
+
+  document.getElementById('compose-body').addEventListener('input', function() {
+    const len = this.value.length;
+    document.getElementById('charCount').textContent = len;
+    document.getElementById('encSize').textContent = Math.ceil(len * 1.6 + 28);
+  });
+  document.getElementById('compose-pass').addEventListener('input', function() {
+    updatePasswordStrength(this.value);
+  });
+
+  // Try restore theme
+  try { const t=localStorage.getItem('cryptmail-theme')||''; document.documentElement.setAttribute('data-theme',t); } catch(e) {}
+
+  // Show title screen first (PW1 gate)
+  showTitleScreen();
+});
+</script>
+
+<!-- NOTE: Supabaseに cm_users テーブルが必要です:
+  CREATE TABLE cm_users (
+    id BIGSERIAL PRIMARY KEY,
+    user_id TEXT UNIQUE NOT NULL,
+    display_name TEXT,
+    bio TEXT,
+    avatar_emoji TEXT,
+    avatar_color TEXT DEFAULT '#7c3aed',
+    pw_hash TEXT NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    last_seen TIMESTAMPTZ DEFAULT NOW()
+  );
+  -- 既存テーブルへの追加:
+  ALTER TABLE cm_users ADD COLUMN IF NOT EXISTS bio TEXT;
+  ALTER TABLE cm_users ADD COLUMN IF NOT EXISTS avatar_emoji TEXT;
+  ALTER TABLE cm_users ADD COLUMN IF NOT EXISTS avatar_color TEXT DEFAULT '#7c3aed';
+  -- messages テーブル:
+  ALTER TABLE messages ADD COLUMN IF NOT EXISTS to_addr TEXT;
+  ALTER TABLE messages ADD COLUMN IF NOT EXISTS from_addr TEXT;
+  CREATE INDEX IF NOT EXISTS idx_messages_to_addr ON messages(to_addr);
+  CREATE INDEX IF NOT EXISTS idx_messages_from_addr ON messages(from_addr);
+  -- system_status テーブル（admin用）:
+  CREATE TABLE IF NOT EXISTS system_status (
+    id BIGSERIAL PRIMARY KEY,
+    is_locked BOOLEAN DEFAULT FALSE,
+    lock_reason TEXT,
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+  );
+-->
+</body>
+</html>
